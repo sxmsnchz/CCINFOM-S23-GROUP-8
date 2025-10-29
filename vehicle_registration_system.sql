@@ -71,16 +71,16 @@ CREATE TABLE Branch (
 );
 
 INSERT INTO Branch VALUES
-('1001', 'LTO Paranaque District Office', 'Olivarez Plaza', 'San Dionisio', 'Paranaque', 'Metro Manila', '1700', 'NCR'),
-('1002', 'LTO Las Pinas District Office', 'Alabang Zapote', 'Talon Uno', 'Las Pinas', 'Metro Manila', '1747', 'NCR'),
-('1003', 'LTO San Juan District Office', 'North Domingo', 'Rivera', 'San Juan', 'Metro Manila', '1500', 'NCR'),
-('1004', 'LTO Pateros Extension Office', 'M. Amelda', 'San Roque', 'Pateros', 'Metro Manila', '1620', 'NCR'),
-('1005', 'LTO Quezon City District Office', 'East Ave.', 'Pinyahan', 'Quezon City', 'Metro Manila', '1100', 'NCR'),
-('1006', 'LTO Taguig Extension Office', 'Radiant St.', 'Western Bicutan', 'Taguig', 'Metro Manila', '1630', 'NCR'),
-('1007', 'LTO Cebu City District Office', 'General Maxilom Ave.', 'Carreta', 'Cebu City', 'Cebu', '6000', 'Region VII'),
-('1008', 'LTO Mandaue City District Office', 'Fortuna St.', 'Bakilid', 'Mandaue', 'Cebu', '6014', 'Region VII'),
-('1009', 'LTO Baguio Office', 'Polo Field', 'Pacdal', 'Baguio', 'Benguet', '2600', 'CAR'),
-('1010', 'LTO Regional Office XII - Koronadal City', 'Yellowbell', 'Sta. Cruz', 'Koronadal', 'South Cotabato', '9506', 'Region XII');
+(1001, 'LTO Paranaque District Office', 'Olivarez Plaza', 'San Dionisio', 'Paranaque', 'Metro Manila', 1700, 'NCR'),
+(1002, 'LTO Las Pinas District Office', 'Alabang Zapote', 'Talon Uno', 'Las Pinas', 'Metro Manila', 1747, 'NCR'),
+(1003, 'LTO San Juan District Office', 'North Domingo', 'Rivera', 'San Juan', 'Metro Manila', 1500, 'NCR'),
+(1004, 'LTO Pateros Extension Office', 'M. Amelda', 'San Roque', 'Pateros', 'Metro Manila', 1620, 'NCR'),
+(1005, 'LTO Quezon City District Office', 'East Ave.', 'Pinyahan', 'Quezon City', 'Metro Manila', 1100, 'NCR'),
+(1006, 'LTO Taguig Extension Office', 'Radiant St.', 'Western Bicutan', 'Taguig', 'Metro Manila', 1630, 'NCR'),
+(1007, 'LTO Cebu City District Office', 'General Maxilom Ave.', 'Carreta', 'Cebu City', 'Cebu', 6000, 'Region VII'),
+(1008, 'LTO Mandaue City District Office', 'Fortuna St.', 'Bakilid', 'Mandaue', 'Cebu', 6014, 'Region VII'),
+(1009, 'LTO Baguio Office', 'Polo Field', 'Pacdal', 'Baguio', 'Benguet', 2600, 'CAR'),
+(1010, 'LTO Regional Office XII - Koronadal City', 'Yellowbell', 'Sta. Cruz', 'Koronadal', 'South Cotabato', 9506, 'Region XII');
 
 /*(JP) add officer and at least 10 records. refer to eerd*/
 
@@ -130,7 +130,7 @@ INSERT INTO Violation VALUES
 
 
 CREATE TABLE Payment (
-    payment_id INT AUTO_INCREMENT PRIMARY KEY.
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
     officer_id INT,
     branch_id INT,
     amount_paid DECIMAL(10,2),
