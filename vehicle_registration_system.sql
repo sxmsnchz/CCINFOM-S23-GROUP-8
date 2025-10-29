@@ -35,7 +35,11 @@ INSERT INTO Branch VALUES
 
 /*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
 
+
+
 /*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs)*/
+
+
 
 CREATE TABLE Payment (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
