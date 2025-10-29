@@ -1,11 +1,39 @@
 CREATE DATABASE vehicle_registration_system;
 USE vehicle_registration_system;
 
-/*(SAM) add table and at least 10 records for owner. refer to eerd & include fks if needed */
+/*research abt actual LTO process/info needed*/
 
-/*(AYA) add vehicle and at least 10 records. refer to eerd & include fks if needed */
+/*(SAM) add table and at least 10 records for owner. refer to eerd*/
+CREATE TABLE Owner (
+	owner_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    street VARCHAR(100),
+    barangay VARCHAR(100),
+    city VARCHAR(50),
+    province VARCHAR(50),
+    region VARCHAR(50),
+    postal_code VARCHAR(10),
+    password VARCHAR(50),
+    license_number VARCHAR(13)
+);
+    
+INSERT INTO Owner VALUES
+('0001', 'Samantha', 'Sanchez', 'Jennys Avenue', 'Maybunga', 'Pasig City', 'Metro Manila', 'NCR', '1607', 'password123', 'N03-24-013583'),
+('0002', 'Myrna', 'Sanchez', 'Jennys Avenue', 'Maybunga', 'Pasig City', 'Metro Manila', 'NCR', '1607', 'P@SSWORD', 'D16-97-169064'),
+('0003', 'Patrick', 'Perez', 'Dona Lucia St.', 'Commonwealth', 'Quezon City', 'Metro Manila', 'NCR', '1121', '123password!', 'N25-23-011859'),
+('0004', 'Fiona', 'Tano', 'M. Vicente St.', 'Malamig', 'Mandaluyong City', 'Metro Manila', 'NCR', '1550', 'password!!!', 'N01-24-023812'),
+('0005', 'Jeck', 'Sanchez', 'Arguelles St.', 'Pio Del Pilar', 'Makati City', 'Metro Manila', 'NCR', '1230', 'passwordkohehe', 'D37-23-004584'),
+('0006', 'Gabriel', 'Avila', 'J. Rizal St.', 'Poblacion', 'Pateros', 'Metro Manila', 'NCR', '1620', 'thisismypassword', 'N03-18-024438'),
+('0007', 'Megan', 'Dasal', 'Alice Crisostomo St.', 'Talon Dos', 'Las Pinas City', 'Metro Manila', 'NCR', '1747', 'p@ssword12345!!', 'N03-12-123456'),
+('0008', 'Alexa', 'Pleyto', '3rd St.', 'St. Ignatius', 'Quezon City', 'Metro Manila', 'NCR', '1110', 'pass123word', 'N02-25-026327'),
+('0009', 'Lara', 'Turk', 'Rome St.', 'B.F. International Village', 'Las Pinas City', 'Metro Manila', 'NCR', '1740', 'passw0rd123', 'N04-10-021355'),
+('0010', 'Rohann', 'Dizon', 'Leon Guinto St.', 'Malate', 'Manila', 'Metro Manila', 'NCR', '1004', 'p4ssw0rd123!!', 'N01-12-123456');
 
-/*(JP) add officer and at least 10 records. refer to eerd & include fks if needed*/
+
+/*(AYA) add vehicle and at least 10 records. refer to eerd*/
+
+/*(JP) add officer and at least 10 records. refer to eerd*/
 
 CREATE TABLE Branch (
     branch_id INT PRIMARY KEY,
@@ -19,8 +47,8 @@ CREATE TABLE Branch (
 );
 
 INSERT INTO Branch VALUES
-('1001', 'LTO Paranaque District Office', 'Ninoy Aquino Ave.', 'San Dionisio', 'Paranaque', 'Metro Manila', '1700', 'NCR'),
-('1002', 'LTO Las Pinas District Office', 'Alabang Zapote Rd', 'Talon Uno', 'Las Pinas', 'Metro Manila', '1747', 'NCR'),
+('1001', 'LTO Paranaque District Office', 'Olivarez Plaza', 'San Dionisio', 'Paranaque', 'Metro Manila', '1700', 'NCR'),
+('1002', 'LTO Las Pinas District Office', 'Alabang Zapote', 'Talon Uno', 'Las Pinas', 'Metro Manila', '1747', 'NCR'),
 ('1003', 'LTO San Juan District Office', 'North Domingo', 'Rivera', 'San Juan', 'Metro Manila', '1500', 'NCR'),
 ('1004', 'LTO Pateros Extension Office', 'M. Amelda', 'San Roque', 'Pateros', 'Metro Manila', '1620', 'NCR'),
 ('1005', 'LTO Quezon City District Office', 'East Ave.', 'Pinyahan', 'Quezon City', 'Metro Manila', '1100', 'NCR'),
@@ -35,8 +63,27 @@ INSERT INTO Branch VALUES
 
 
 
-/*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs for violation type and fine amount)*/
+/*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs)*/
+CREATE TABLE Violation (
+	violation_id INT PRIMARY KEY,
+    violation_type VARCHAR(150),
+    status VARCHAR(20),
+    fine_amount DECIMAL(10,2),
+    violation_date DATE
+);
 
+INSERT INTO Violation VALUES
+('120', 'Expired License', 'Cleared', '3000.00', '2025-10-27'),
+('121', 'Reckless Driving', 'Unpaid', '2000.00', '2025-09-22'),
+('122', 'Unregistered Motor Vehicle', 'Cleared', '10000.00', '2025-04-15'),
+('123', 'Smoke Belching', 'Cleared', '2000.00', '2025-02-13'),
+('124', 'Unauthorized Modification', 'Unpaid', '5000.00', '2025-10-01'),
+('125', 'Defective Parts', 'Cleared', '5000.00', '2025-08-23'),
+('126', 'Expired Registration', 'Unpaid', '2000.00', '2025-04-15'),
+('127', 'No Seatbelt', 'Cleared', '1000.00', '2025-01-29'),
+('128', 'Unregistered Motor Vehicle', 'Unpaid', '10000.00', '2025-07-31'),
+('129', 'Expired License', 'Unpaid', '3000.00', '2025-06-05'),
+('130', 'Defective Parts', 'Unpaid', '5000.00', '2025-03-04');
 
 
 CREATE TABLE Payment (
