@@ -47,16 +47,16 @@ CREATE TABLE Owner (
 );
     
 INSERT INTO Owner VALUES
-('123450', 'Samantha', 'Sanchez', 'Jennys Avenue', 'Maybunga', 'Pasig City', 'Metro Manila', 'NCR', '1607', 'password123', 'N03-24-013583'),
-('123451', 'Myrna', 'Sanchez', 'Jennys Avenue', 'Maybunga', 'Pasig City', 'Metro Manila', 'NCR', '1607', 'P@SSWORD', 'D16-97-169064'),
-('123452', 'Patrick', 'Perez', 'Dona Lucia St.', 'Commonwealth', 'Quezon City', 'Metro Manila', 'NCR', '1121', '123password!', 'N25-23-011859'),
-('123453', 'Fiona', 'Tano', 'M. Vicente St.', 'Malamig', 'Mandaluyong City', 'Metro Manila', 'NCR', '1550', 'password!!!', 'N01-24-023812'),
-('123454', 'Jeck', 'Sanchez', 'Arguelles St.', 'Pio Del Pilar', 'Makati City', 'Metro Manila', 'NCR', '1230', 'passwordkohehe', 'D37-23-004584'),
-('123455', 'Gabriel', 'Avila', 'J. Rizal St.', 'Poblacion', 'Pateros', 'Metro Manila', 'NCR', '1620', 'thisismypassword', 'N03-18-024438'),
-('123456', 'Megan', 'Dasal', 'Alice Crisostomo St.', 'Talon Dos', 'Las Pinas City', 'Metro Manila', 'NCR', '1747', 'p@ssword12345!!', 'N03-12-123456'),
-('123457', 'Alexa', 'Pleyto', '3rd St.', 'St. Ignatius', 'Quezon City', 'Metro Manila', 'NCR', '1110', 'pass123word', 'N02-25-026327'),
-('123458', 'Lara', 'Turk', 'Rome St.', 'B.F. International Village', 'Las Pinas City', 'Metro Manila', 'NCR', '1740', 'passw0rd123', 'N04-10-021355'),
-('123459', 'Rohann', 'Dizon', 'Leon Guinto St.', 'Malate', 'Manila', 'Metro Manila', 'NCR', '1004', 'p4ssw0rd123!!', 'N01-12-123456');
+(123450, 'Samantha', 'Sanchez', 'Jennys Avenue', 'Maybunga', 'Pasig City', 'Metro Manila', 'NCR', 1607, 'password123', 'N03-24-013583'),
+(123451, 'Myrna', 'Sanchez', 'Jennys Avenue', 'Maybunga', 'Pasig City', 'Metro Manila', 'NCR', 1607, 'P@SSWORD', 'D16-97-169064'),
+(123452, 'Patrick', 'Perez', 'Dona Lucia St.', 'Commonwealth', 'Quezon City', 'Metro Manila', 'NCR', 1121, '123password!', 'N25-23-011859'),
+(123453, 'Fiona', 'Tano', 'M. Vicente St.', 'Malamig', 'Mandaluyong City', 'Metro Manila', 'NCR', 1550, 'password!!!', 'N01-24-023812'),
+(123454, 'Jeck', 'Sanchez', 'Arguelles St.', 'Pio Del Pilar', 'Makati City', 'Metro Manila', 'NCR', 1230, 'passwordkohehe', 'D37-23-004584'),
+(123455, 'Gabriel', 'Avila', 'J. Rizal St.', 'Poblacion', 'Pateros', 'Metro Manila', 'NCR', 1620, 'thisismypassword', 'N03-18-024438'),
+(123456, 'Megan', 'Dasal', 'Alice Crisostomo St.', 'Talon Dos', 'Las Pinas City', 'Metro Manila', 'NCR', 1747, 'p@ssword12345!!', 'N03-12-123456'),
+(123457, 'Alexa', 'Pleyto', '3rd St.', 'St. Ignatius', 'Quezon City', 'Metro Manila', 'NCR', 1110, 'pass123word', 'N02-25-026327'),
+(123458, 'Lara', 'Turk', 'Rome St.', 'B.F. International Village', 'Las Pinas City', 'Metro Manila', 'NCR', 1740, 'passw0rd123', 'N04-10-021355'),
+(123459, 'Rohann', 'Dizon', 'Leon Guinto St.', 'Malate', 'Manila', 'Metro Manila', 'NCR', 1004, 'p4ssw0rd123!!', 'N01-12-123456');
 
 
 CREATE TABLE Branch (
@@ -116,17 +116,17 @@ CREATE TABLE Violation (
 );
 
 INSERT INTO Violation VALUES
-('120', 'Expired License', 'Cleared', '3000.00', '2025-10-27'),
-('121', 'Reckless Driving', 'Unpaid', '2000.00', '2025-09-22'),
-('122', 'Unregistered Motor Vehicle', 'Cleared', '10000.00', '2025-04-15'),
-('123', 'Smoke Belching', 'Cleared', '2000.00', '2025-02-13'),
-('124', 'Unauthorized Modification', 'Unpaid', '5000.00', '2025-10-01'),
-('125', 'Defective Parts', 'Cleared', '5000.00', '2025-08-23'),
-('126', 'Expired Registration', 'Unpaid', '2000.00', '2025-04-15'),
-('127', 'No Seatbelt', 'Cleared', '1000.00', '2025-01-29'),
-('128', 'Unregistered Motor Vehicle', 'Unpaid', '10000.00', '2025-07-31'),
-('129', 'Expired License', 'Unpaid', '3000.00', '2025-06-05'),
-('130', 'Defective Parts', 'Unpaid', '5000.00', '2025-03-04');
+(120, 'Expired License', 'Cleared', 3000.00, '2025-10-27'),
+(121, 'Reckless Driving', 'Unpaid', 2000.00, '2025-09-22'),
+(122, 'Unregistered Motor Vehicle', 'Cleared', 10000.00, '2025-04-15'),
+(123, 'Smoke Belching', 'Cleared', 2000.00, '2025-02-13'),
+(124, 'Unauthorized Modification', 'Unpaid', 5000.00, '2025-10-01'),
+(125, 'Defective Parts', 'Cleared', 5000.00, '2025-08-23'),
+(126, 'Expired Registration', 'Unpaid', 2000.00, '2025-04-15'),
+(127, 'No Seatbelt', 'Cleared', 1000.00, '2025-01-29'),
+(128, 'Unregistered Motor Vehicle', 'Unpaid', 10000.00, '2025-07-31'),
+(129, 'Expired License', 'Unpaid', 3000.00, '2025-06-05'),
+(130, 'Defective Parts', 'Unpaid', 5000.00, '2025-03-04');
 
 
 CREATE TABLE Payment (
