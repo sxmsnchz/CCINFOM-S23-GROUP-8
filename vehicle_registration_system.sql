@@ -1,13 +1,11 @@
 CREATE DATABASE vehicle_registration_system;
 USE vehicle_registration_system;
 
-/*research abt actual LTO process/info needed*/
+/*(SAM) add table and at least 10 records for owner. refer to eerd & include fks if needed */
 
-/*(SAM) add table and at least 10 records for owner. refer to eerd*/
+/*(AYA) add vehicle and at least 10 records. refer to eerd & include fks if needed */
 
-/*(AYA) add vehicle and at least 10 records. refer to eerd*/
-
-/*(JP) add officer and at least 10 records. refer to eerd*/
+/*(JP) add officer and at least 10 records. refer to eerd & include fks if needed*/
 
 CREATE TABLE Branch (
     branch_id INT PRIMARY KEY,
@@ -37,7 +35,7 @@ INSERT INTO Branch VALUES
 
 
 
-/*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs)*/
+/*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs for violation type and fine amount)*/
 
 
 
