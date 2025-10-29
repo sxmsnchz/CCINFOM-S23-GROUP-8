@@ -135,23 +135,23 @@ CREATE TABLE Payment (
     branch_id INT,
     amount_paid DECIMAL(10,2),
     date_paid DATE,
-    receipt_number VARCHAR(20),
+    receipt_number VARCHAR(20) UNIQUE NOT NULL,
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
 );
 
-INSERT INTO Payment
-(officer_id, branch_id, amount_paid, date_paid, receipt_numbe) VALUES
-(4, 1003, 5000.00, '2025-07-08', 'R003'),
-(4, 1003, 3000.00, '2025-07-20', 'R004'),
-(2, 1001, 3000.00, '2025-08-03', 'R005'),
-(2, 1001, 1000.00, '2025-08-04', 'R006'),
-(3, 1002, 2000.00, '2025-08-10', 'R007'),
-(5, 1005, 3000.00, '2025-09-12', 'R008'),
-(5, 1009, 2000.00, '2025-09-14', 'R009'),
-(1, 1002, 10000.00, '2025-09-20', 'R010'),
-(4, 1005, 1000.00, '2025-10-05', 'R011'),
-(3, 1003, 2000.00, '2025-10-08', 'R012');
+INSERT INTO Payment 
+(officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
+(4, 1003, 5000.00, '2025-07-08', 'V001'),
+(4, 1003, 3000.00, '2025-07-20', 'V002'),
+(2, 1001, 3000.00, '2025-08-03', 'V003'),
+(2, 1001, 1000.00, '2025-08-04', 'V004'),
+(3, 1002, 7410.00, '2025-08-10', 'R001'),
+(5, 1005, 7410.00, '2025-09-12', 'R002'),
+(5, 1009, 7410.00, '2025-09-14', 'R003'),
+(1, 1002, 7410.00, '2025-09-20', 'R004'),
+(4, 1005, 7410.00, '2025-10-05', 'R005'),
+(3, 1003, 7410.00, '2025-10-08', 'R006');
 
 
 
