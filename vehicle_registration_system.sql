@@ -29,7 +29,7 @@ INSERT INTO Branch VALUES
 ('6', 'LTO Taguig Extension Office', 'Radiant St.', 'Western Bicutan', 'Taguig', 'Metro Manila', '1630', 'NCR'),
 ('7', 'LTO Cebu City District Office', 'General Maxilom Ave.', 'Carreta', 'Cebu City', 'Cebu', '6000', 'Region VII'),
 ('8', 'LTO Mandaue City District Office', 'Fortuna St.', 'Bakilid', 'Mandaue', 'Cebu', '6014', 'Region VII'),
-('9', 'LTO Baguio Center', 'Polo Field', 'Pacdal', 'Baguio', 'Benguet', '2600', 'CAR'),
+('9', 'LTO Baguio Office', 'Polo Field', 'Pacdal', 'Baguio', 'Benguet', '2600', 'CAR'),
 ('10', 'LTO Regional Office XII - Koronadal City', 'Yellowbell', 'Sta.Cruz', 'Koronadal', 'South Cotabato', '9506', 'Region XII');
 
 
