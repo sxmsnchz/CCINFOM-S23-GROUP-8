@@ -3,6 +3,33 @@ USE vehicle_registration_system;
 
 /*research abt actual LTO process/info needed*/
 
+/*(AYA) add table and at least 10 records. refer to eerd*/
+CREATE TABLE Vehicle (
+	vehicle_id INT,
+    plate_no VARCHAR(7) UNIQUE NOT NULL,
+	manufacture_date DATE,
+    mv_file_no INT(15) UNIQUE NOT NULL,
+    chassis_no VARCHAR(17) UNIQUE NOT NULL,
+    engine_no VARCHAR(12) UNIQUE NOT NULL,
+    make VARCHAR(15),
+    series VARCHAR(15),
+    color VARCHAR(15),
+    PRIMARY KEY (vehicle_id)
+);
+
+INSERT INTO Vehicle VALUES
+(1001, 123450, 'NAA1234', '2018-06-15', 230145678912345, 'MA3EKEB1S00567891', 'ENG123456789', 'Toyota', 'Vios', 'Silver'),
+(1002, 123451, 'BAE4567', '2020-03-22', 230198765412345, 'PA2BLFB1T00891234', 'ENG234567890', 'Honda', 'City', 'White'),
+(1003, 123452, 'CAZ7890', '2019-11-05', 230123498712345, 'NB1ZDFB1S00234567', 'ENG345678901', 'Mitsubishi', 'Mirage G4', 'Red'),
+(1004, 123453, 'DAN2345', '2017-08-17', 230145612378945, 'MA3HDEB1S00789123', 'ENG456789012', 'Hyundai', 'Accent', 'Blue'),
+(1005, 123454, 'EAP5678', '2021-01-10', 230167894512376, 'PA1JKLB1T00456289', 'ENG567890123', 'Nissan', 'Almera', 'Gray'),
+(1006, 123455, 'FAA9012', '2022-04-25', 230198754612347, 'MA2GHEB1S00123849', 'ENG678901234', 'Suzuki', 'Dzire', 'White'),
+(1007, 123456, 'GAB3456', '2015-09-12', 230187965412398, 'PA3LKEB1T00345678', 'ENG789012345', 'Ford', 'EcoSport', 'Black'),
+(1008, 123457, 'HAI6789', '2016-05-30', 230134987512398, 'MA2QWEB1S00478912', 'ENG890123456', 'Chevrolet', 'Spark', 'Yellow'),
+(1009, 123458, 'JAX0123', '2023-02-11', 230176543219084, 'NB3UIEB1S00981234', 'ENG901234567', 'Kia', 'Soluto', 'White'),
+(1010, 123459, 'KAM4567', '2018-10-21', 230145987654321, 'PA2TREB1T00567891', 'ENG012345678', 'Toyota', 'Corolla Altis', 'Gray');
+
+
 /*(SAM) add table and at least 10 records for owner. refer to eerd*/
 CREATE TABLE Owner (
 	owner_id INT PRIMARY KEY,
@@ -31,10 +58,6 @@ INSERT INTO Owner VALUES
 ('123459', 'Rohann', 'Dizon', 'Leon Guinto St.', 'Malate', 'Manila', 'Metro Manila', 'NCR', '1004', 'p4ssw0rd123!!', 'N01-12-123456');
 
 
-/*(AYA) add vehicle and at least 10 records. refer to eerd*/
-
-/*(JP) add officer and at least 10 records. refer to eerd*/
-
 CREATE TABLE Branch (
     branch_id INT PRIMARY KEY,
     branch_name VARCHAR(100),
@@ -58,9 +81,26 @@ INSERT INTO Branch VALUES
 ('1009', 'LTO Baguio Office', 'Polo Field', 'Pacdal', 'Baguio', 'Benguet', '2600', 'CAR'),
 ('1010', 'LTO Regional Office XII - Koronadal City', 'Yellowbell', 'Sta. Cruz', 'Koronadal', 'South Cotabato', '9506', 'Region XII');
 
+/*(JP) add officer and at least 10 records. refer to eerd*/
 
 /*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
-
+/*Note: we add payment_id to registration right? or not?*/
+CREATE TABLE registration (
+	registration_id INT,
+    vehicle_id INT,
+    owner_id INT, 
+    payment_id INT,
+    branch_id INT,
+    first_date_registered DATE,
+    current_date_registered DATE,
+    expiry_date DATE,
+    status VARCHAR(20),
+    PRIMARY KEY (registration_id, vehicle_id, owner_id, payment_id, branch_id),
+    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
+    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
+	FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+);
 
 
 /*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs)*/
