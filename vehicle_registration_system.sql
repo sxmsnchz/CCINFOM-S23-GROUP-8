@@ -6,15 +6,16 @@ USE vehicle_registration_system;
 /*(AYA) add table and at least 10 records. refer to eerd*/
 CREATE TABLE Vehicle (
 	vehicle_id INT,
-    plate_no VARCHAR(7) UNIQUE NOT NULL,
+    plate_no VARCHAR(7) NOT NULL,
 	manufacture_date DATE,
-    mv_file_no INT(15) UNIQUE NOT NULL,
-    chassis_no VARCHAR(17) UNIQUE NOT NULL,
-    engine_no VARCHAR(12) UNIQUE NOT NULL,
+    mv_file_no INT(15) NOT NULL,
+    chassis_no VARCHAR(17) NOT NULL,
+    engine_no VARCHAR(12) NOT NULL,
     make VARCHAR(15),
     series VARCHAR(15),
     color VARCHAR(15),
-    PRIMARY KEY (vehicle_id)
+    PRIMARY KEY (vehicle_id),
+    UNIQUE(plate_no, mv_file_no, chassis_no, engine_no)
 );
 
 INSERT INTO Vehicle VALUES
@@ -91,15 +92,17 @@ CREATE TABLE registration (
     owner_id INT, 
     payment_id INT,
     branch_id INT,
+    officer_id INT,
     first_date_registered DATE,
     current_date_registered DATE,
     expiry_date DATE,
     status VARCHAR(20),
-    PRIMARY KEY (registration_id, vehicle_id, owner_id, payment_id, branch_id),
+    PRIMARY KEY (registration_id),
     FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
     FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
 	FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
 );
 
 
