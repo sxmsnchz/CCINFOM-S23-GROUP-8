@@ -85,7 +85,7 @@ INSERT INTO Branch VALUES
 
 /*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
 /*Note: we add payment_id to registration right? or not?*/
-CREATE TABLE registration (
+CREATE TABLE Registration (
 	registration_id INT,
     vehicle_id INT,
     owner_id INT, 
