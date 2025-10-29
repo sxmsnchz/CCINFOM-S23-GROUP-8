@@ -130,31 +130,28 @@ INSERT INTO Violation VALUES
 
 
 CREATE TABLE Payment (
-    payment_id INT AUTO_INCREMENT PRIMARY KEY,
-    violation_id INT,
+    payment_id INT AUTO_INCREMENT PRIMARY KEY.
     officer_id INT,
     branch_id INT,
     amount_paid DECIMAL(10,2),
     date_paid DATE,
     receipt_number VARCHAR(20),
-    status VARCHAR(20),
-    FOREIGN KEY (violation_id) REFERENCES Violation(violation_id),
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
 );
 
 INSERT INTO Payment
-(violation_id, officer_id, branch_id, amount_paid, date_paid, receipt_number, status) VALUES
-(0001, 4, 1003, 5000.00, '2025-07-08', 'R003', 'Cleared'),
-(0002, 4, 1003, 3000.00, '2025-07-20', 'R004', 'Cleared'),
-(0213, 2, 1001, 3000.00, '2025-08-03', 'R005', 'Cleared'),
-(0204, 2, 1001, 1000.00, '2025-08-04', 'R006', 'Cleared'),
-(0008, 3, 1002, 2000.00, '2025-08-10', 'R007', 'Cleared'),
-(0067, 5, 1005, 3000.00, '2025-09-12', 'R008', 'Cleared'),
-(0192, 5, 1009, 2000.00, '2025-09-14', 'R009', 'Cleared'),
-(0109, 1, 1002, 10000.00, '2025-09-20', 'R010', 'Cleared'),
-(0490, 4, 1005, 1000.00, '2025-10-05', 'R011', 'Cleared'),
-(0004, 3, 1003, 2000.00, '2025-10-08', 'R012', 'Cleared');
+(officer_id, branch_id, amount_paid, date_paid, receipt_numbe) VALUES
+(4, 1003, 5000.00, '2025-07-08', 'R003'),
+(4, 1003, 3000.00, '2025-07-20', 'R004'),
+(2, 1001, 3000.00, '2025-08-03', 'R005'),
+(2, 1001, 1000.00, '2025-08-04', 'R006'),
+(3, 1002, 2000.00, '2025-08-10', 'R007'),
+(5, 1005, 3000.00, '2025-09-12', 'R008'),
+(5, 1009, 2000.00, '2025-09-14', 'R009'),
+(1, 1002, 10000.00, '2025-09-20', 'R010'),
+(4, 1005, 1000.00, '2025-10-05', 'R011'),
+(3, 1003, 2000.00, '2025-10-08', 'R012');
 
 
 
