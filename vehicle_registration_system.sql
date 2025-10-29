@@ -19,16 +19,16 @@ CREATE TABLE Vehicle (
 );
 
 INSERT INTO Vehicle VALUES
-(1001, 'NAA1234', '2018-06-15', 230145678912345, 'MA3EKEB1S00567891', 'ENG123456789', 'Toyota', 'Vios', 'Silver'),
-(1002, 'BAE4567', '2020-03-22', 230198765412345, 'PA2BLFB1T00891234', 'ENG234567890', 'Honda', 'City', 'White'),
-(1003, 'CAZ7890', '2019-11-05', 230123498712345, 'NB1ZDFB1S00234567', 'ENG345678901', 'Mitsubishi', 'Mirage G4', 'Red'),
-(1004, 'DAN2345', '2017-08-17', 230145612378945, 'MA3HDEB1S00789123', 'ENG456789012', 'Hyundai', 'Accent', 'Blue'),
-(1005, 'EAP5678', '2021-01-10', 230167894512376, 'PA1JKLB1T00456289', 'ENG567890123', 'Nissan', 'Almera', 'Gray'),
-(1006, 'FAA9012', '2022-04-25', 230198754612347, 'MA2GHEB1S00123849', 'ENG678901234', 'Suzuki', 'Dzire', 'White'),
-(1007, 'GAB3456', '2015-09-12', 230187965412398, 'PA3LKEB1T00345678', 'ENG789012345', 'Ford', 'EcoSport', 'Black'),
-(1008, 'HAI6789', '2016-05-30', 230134987512398, 'MA2QWEB1S00478912', 'ENG890123456', 'Chevrolet', 'Spark', 'Yellow'),
-(1009, 'JAX0123', '2023-02-11', 230176543219084, 'NB3UIEB1S00981234', 'ENG901234567', 'Kia', 'Soluto', 'White'),
-(1010, 'KAM4567', '2018-10-21', 230145987654321, 'PA2TREB1T00567891', 'ENG012345678', 'Toyota', 'Corolla Altis', 'Gray');
+(0001, 'NAA1234', '2018-06-15', 230145678912345, 'MA3EKEB1S00567891', 'ENG123456789', 'Toyota', 'Vios', 'Silver'),
+(0002, 'BAE4567', '2020-03-22', 230198765412345, 'PA2BLFB1T00891234', 'ENG234567890', 'Honda', 'City', 'White'),
+(0003, 'CAZ7890', '2019-11-05', 230123498712345, 'NB1ZDFB1S00234567', 'ENG345678901', 'Mitsubishi', 'Mirage G4', 'Red'),
+(0004, 'DAN2345', '2017-08-17', 230145612378945, 'MA3HDEB1S00789123', 'ENG456789012', 'Hyundai', 'Accent', 'Blue'),
+(0005, 'EAP5678', '2021-01-10', 230167894512376, 'PA1JKLB1T00456289', 'ENG567890123', 'Nissan', 'Almera', 'Gray'),
+(0006, 'FAA9012', '2022-04-25', 230198754612347, 'MA2GHEB1S00123849', 'ENG678901234', 'Suzuki', 'Dzire', 'White'),
+(0007, 'GAB3456', '2015-09-12', 230187965412398, 'PA3LKEB1T00345678', 'ENG789012345', 'Ford', 'EcoSport', 'Black'),
+(0008, 'HAI6789', '2016-05-30', 230134987512398, 'MA2QWEB1S00478912', 'ENG890123456', 'Chevrolet', 'Spark', 'Yellow'),
+(0009, 'JAX0123', '2023-02-11', 230176543219084, 'NB3UIEB1S00981234', 'ENG901234567', 'Kia', 'Soluto', 'White'),
+(0010, 'KAM4567', '2018-10-21', 230145987654321, 'PA2TREB1T00567891', 'ENG012345678', 'Toyota', 'Corolla Altis', 'Gray');
 
 /*(SAM) add table and at least 10 records for owner. refer to eerd*/
 CREATE TABLE Owner (
@@ -85,7 +85,7 @@ INSERT INTO Branch VALUES
 
 /*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
 /*Note: we add payment_id to registration right? or not?*/
-CREATE TABLE Registration (
+CREATE TABLE registration (
 	registration_id INT,
     vehicle_id INT,
     owner_id INT, 
@@ -107,26 +107,35 @@ CREATE TABLE Registration (
 
 /*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs)*/
 CREATE TABLE Violation (
-	violation_id INT PRIMARY KEY,
+	violation_id INT AUTO_INCREMENT PRIMARY KEY,
+    owner_id INT,
+    vehicle_id INT,
+    officer_id INT,
+    branch_id INT,
     violation_type VARCHAR(150),
-    status VARCHAR(20),
     fine_amount DECIMAL(10,2),
-    violation_date DATE
+    violation_date DATE,
+    status VARCHAR(20) DEFAULT 'Unpaid',
+    payment_id INT,
+    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
+    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
 );
 
-INSERT INTO Violation VALUES
-(120, 'Expired License', 'Cleared', 3000.00, '2025-10-27'),
-(121, 'Reckless Driving', 'Unpaid', 2000.00, '2025-09-22'),
-(122, 'Unregistered Motor Vehicle', 'Cleared', 10000.00, '2025-04-15'),
-(123, 'Smoke Belching', 'Cleared', 2000.00, '2025-02-13'),
-(124, 'Unauthorized Modification', 'Unpaid', 5000.00, '2025-10-01'),
-(125, 'Defective Parts', 'Cleared', 5000.00, '2025-08-23'),
-(126, 'Expired Registration', 'Unpaid', 2000.00, '2025-04-15'),
-(127, 'No Seatbelt', 'Cleared', 1000.00, '2025-01-29'),
-(128, 'Unregistered Motor Vehicle', 'Unpaid', 10000.00, '2025-07-31'),
-(129, 'Expired License', 'Unpaid', 3000.00, '2025-06-05'),
-(130, 'Defective Parts', 'Unpaid', 5000.00, '2025-03-04');
-
+INSERT INTO Violation 
+(owner_id, vehicle_id, officer_id, branch_id, violation_type, fine_amount, violation_date, status, payment_id) VALUES
+(123450, 0001, 1, 1001, 'Expired License', 3000.00, '2025-10-27', 'Cleared', NULL),
+(123451, 0002, 1, 1002, 'Reckless Driving', 2000.00, '2025-09-22', 'Unpaid', NULL),
+(123452, 0003, 2, 1003, 'Unregistered Motor Vehicle', 10000.00, '2025-04-15', 'Cleared', NULL),
+(123453, 0004, 2, 1004, 'Smoke Belching', 2000.00, '2025-02-13', 'Cleared', NULL),
+(123454, 0005, 3, 1005, 'Unauthorized Modification', 5000.00, '2025-10-01', 'Unpaid', NULL),
+(123455, 0006, 3, 1006, 'Defective Parts', 5000.00, '2025-08-23', 'Cleared', NULL),
+(123456, 0007, 4, 1007, 'Expired Registration', 2000.00, '2025-04-15', 'Unpaid', NULL),
+(123457, 0008, 4, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Cleared', NULL),
+(123458, 0009, 5, 1009, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
+(123459, 0010, 5, 1010, 'Expired License', 3000.00, '2025-06-05', 'Unpaid', NULL);
 
 CREATE TABLE Payment (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
