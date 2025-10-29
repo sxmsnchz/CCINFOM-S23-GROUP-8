@@ -81,7 +81,7 @@ INSERT INTO Branch VALUES
 (1009, 'LTO Baguio Office', 'Polo Field', 'Pacdal', 'Baguio', 'Benguet', 2600, 'CAR'),
 (1010, 'LTO Regional Office XII - Koronadal City', 'Yellowbell', 'Sta. Cruz', 'Koronadal', 'South Cotabato', 9506, 'Region XII');
 
-/*(JP) add officer and at least 10 records. refer to eerd*/
+/*(JP) add officer and at least 10 records. refer to eerd. */
 
 /*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
 /*Note: we add payment_id to registration right? or not?*/
@@ -103,7 +103,7 @@ CREATE TABLE registration (
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
 );
-
+/* add variations for table values. some status EXPIRED, ACTIVE, etc. */
 
 /*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs)*/
 CREATE TABLE Violation (
@@ -126,16 +126,16 @@ CREATE TABLE Violation (
 
 INSERT INTO Violation 
 (owner_id, vehicle_id, officer_id, branch_id, violation_type, fine_amount, violation_date, status, payment_id) VALUES
-(123450, 0001, 1, 1001, 'Expired License', 3000.00, '2025-10-27', 'Cleared', NULL),
-(123451, 0002, 1, 1002, 'Reckless Driving', 2000.00, '2025-09-22', 'Unpaid', NULL),
-(123452, 0003, 2, 1003, 'Unregistered Motor Vehicle', 10000.00, '2025-04-15', 'Cleared', NULL),
-(123453, 0004, 2, 1004, 'Smoke Belching', 2000.00, '2025-02-13', 'Cleared', NULL),
+(123450, 0001, 1, 1003, 'Expired License', 3000.00, '2025-08-01', 'Cleared', 3),
+(123450, 0001, 1, 1002, 'Reckless Driving', 2000.00, '2025-09-22', 'Unpaid', NULL),
+(123452, 0003, 2, 1001, 'Unregistered Motor Vehicle', 10000.00, '2025-07-28', 'Cleared', 4),
+(123453, 0004, 2, 1004, 'Smoke Belching', 2000.00, '2025-07-15', 'Cleared', 2),
 (123454, 0005, 3, 1005, 'Unauthorized Modification', 5000.00, '2025-10-01', 'Unpaid', NULL),
-(123455, 0006, 3, 1006, 'Defective Parts', 5000.00, '2025-08-23', 'Cleared', NULL),
+(123455, 0010, 3, 1001, 'Defective Parts', 5000.00, '2025-07-07', 'Cleared', 1),
 (123456, 0007, 4, 1007, 'Expired Registration', 2000.00, '2025-04-15', 'Unpaid', NULL),
-(123457, 0008, 4, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Cleared', NULL),
-(123458, 0009, 5, 1009, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
-(123459, 0010, 5, 1010, 'Expired License', 3000.00, '2025-06-05', 'Unpaid', NULL);
+(123457, 0008, 4, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
+(123457, 0008, 5, 1009, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
+(123457, 0008, 5, 1003, 'Expired License', 3000.00, '2025-06-05', 'Unpaid', NULL);
 
 CREATE TABLE Payment (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -150,15 +150,15 @@ CREATE TABLE Payment (
 
 INSERT INTO Payment 
 (officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
-(4, 1003, 5000.00, '2025-07-08', 'V001'),
-(4, 1003, 3000.00, '2025-07-20', 'V002'),
-(2, 1001, 3000.00, '2025-08-03', 'V003'),
-(2, 1001, 1000.00, '2025-08-04', 'V004'),
+(4, 1001, 5000.00, '2025-07-08', 'V001'),
+(4, 1004, 2000.00, '2025-07-20', 'V002'),
+(2, 1003, 3000.00, '2025-08-03', 'V003'),
+(2, 1001, 10000.00, '2025-08-04', 'V004'),
 (3, 1002, 7410.00, '2025-08-10', 'R001'),
 (5, 1005, 7410.00, '2025-09-12', 'R002'),
 (5, 1009, 7410.00, '2025-09-14', 'R003'),
-(1, 1002, 1500.00, '2025-09-20', 'R004'),
-(4, 1005, 1500.00, '2025-10-05', 'R005'),
+(1, 1003, 1500.00, '2025-09-20', 'R004'),
+(4, 1007, 1500.00, '2025-10-05', 'R005'),
 (3, 1003, 7410.00, '2025-10-08', 'R006');
 
 
