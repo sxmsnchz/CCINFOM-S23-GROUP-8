@@ -98,27 +98,31 @@ INSERT INTO Branch VALUES
 				OFFICER TABLE
 =========================================
 */
-/*(JP) add officer and at least 10 records. refer to eerd. */
+/*=======================================
+				OFFICER TABLE (UPDATED)
+=========================================
+*/
 CREATE TABLE officer (
     officer_id INT PRIMARY KEY,
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     position VARCHAR(50),
     branch_id INT,
+    password VARCHAR(50),
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
 );
 
-INSERT INTO officer (officer_id, first_name, last_name, position, branch_id) VALUES
-(11100001, 'Maria', 'Santos', 'Branch Manager', 1001),
-(11100002, 'Jose', 'Reyes', 'Assistant Manager', 1002),
-(11100003, 'Anna', 'Cruz', 'Registration Officer', 1002),
-(11100004, 'Mark', 'Lopez', 'Violation Officer', 1002),
-(11100005, 'Ramon', 'Garcia', 'Data Encoder', 1003),
-(11100006, 'Elena', 'Torres', 'Cashier', 1003),
-(11100007, 'Luis', 'Fernandez', 'Registration Officer', 1004),
-(11100008, 'Patricia', 'Mendoza', 'Branch Manager', 1004),
-(11100009, 'Daniel', 'Ramos', 'Inspector', 1005),
-(11100010, 'Sophia', 'Castillo', 'Customer Service Officer', 1005);
+INSERT INTO officer (officer_id, first_name, last_name, position, branch_id, password) VALUES
+(11100001, 'Maria', 'Santos', 'Branch Manager', 1001, 'LtoMaria!23'),
+(11100002, 'Jose', 'Reyes', 'Assistant Manager', 1002, 'Jr_2025pass'),
+(11100003, 'Anna', 'Cruz', 'Registration Officer', 1002, 'RegA_Cruz#12'),
+(11100004, 'Mark', 'Lopez', 'Violation Officer', 1002, 'Viol8Mark*22'),
+(11100005, 'Ramon', 'Garcia', 'Data Encoder', 1003, 'EncRamon_45'),
+(11100006, 'Elena', 'Torres', 'Cashier', 1003, 'CashElen@78'),
+(11100007, 'Luis', 'Fernandez', 'Registration Officer', 1004, 'LuisReg!98'),
+(11100008, 'Patricia', 'Mendoza', 'Branch Manager', 1004, 'PattMend#77'),
+(11100009, 'Daniel', 'Ramos', 'Inspector', 1005, 'InspectDR09!'),
+(11100010, 'Sophia', 'Castillo', 'Customer Service Officer', 1005, 'CSophia*65');
 
 /*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
 /*Note: we add payment_id to registration right? or not?*/
