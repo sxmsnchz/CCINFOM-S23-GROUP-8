@@ -95,11 +95,7 @@ INSERT INTO Branch VALUES
 (1010, 'LTO Regional Office XII - Koronadal City', 'Yellowbell', 'Sta. Cruz', 'Koronadal', 'South Cotabato', 9506, 'Region XII');
 
 /*=======================================
-				OFFICER TABLE
-=========================================
-*/
-/*=======================================
-				OFFICER TABLE (UPDATED)
+				OFFICER TABLE 
 =========================================
 */
 CREATE TABLE officer (
@@ -123,6 +119,33 @@ INSERT INTO officer (officer_id, first_name, last_name, position, branch_id, pas
 (11100008, 'Patricia', 'Mendoza', 'Branch Manager', 1004, 'PattMend#77'),
 (11100009, 'Daniel', 'Ramos', 'Inspector', 1005, 'InspectDR09!'),
 (11100010, 'Sophia', 'Castillo', 'Customer Service Officer', 1005, 'CSophia*65');
+
+/* =======================================================
+   PAYMENT TABLE
+   ======================================================= */
+CREATE TABLE Payment (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    officer_id INT,
+    branch_id INT,
+    amount_paid DECIMAL(10,2),
+    date_paid DATE,
+    receipt_number VARCHAR(20) UNIQUE NOT NULL,
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+);
+
+INSERT INTO Payment (officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
+(11100004, 1003, 5000.00, '2025-07-08', 'V001'),
+(11100006, 1004, 2000.00, '2025-07-20', 'V002'),
+(11100005, 1003, 3000.00, '2025-08-03', 'V003'),
+(11100001, 1001, 10000.00, '2025-08-04', 'V004'),
+(11100002, 1002, 7410.00, '2025-08-10', 'R001'),
+(11100008, 1005, 7410.00, '2025-09-12', 'R002'),
+(11100009, 1005, 7410.00, '2025-09-14', 'R003'),
+(11100003, 1002, 1500.00, '2025-09-20', 'R004'),
+(11100007, 1004, 1500.00, '2025-10-05', 'R005'),
+(11100010, 1006, 7410.00, '2025-10-08', 'R006');
+
 
 /*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
 /*Note: we add payment_id to registration right? or not?*/
