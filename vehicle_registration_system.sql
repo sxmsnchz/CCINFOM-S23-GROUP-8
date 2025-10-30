@@ -57,15 +57,15 @@ CREATE TABLE Owner (
     
 INSERT INTO Owner VALUES
 (123450, 'Samantha', 'Sanchez', 'Jennys Avenue', 'Maybunga', 'Pasig City', 'Metro Manila', 'NCR', 1607, 'password123', 'N03-24-013583'),
-(123451, 'Myrna', 'Sanchez', 'Jennys Avenue', 'Maybunga', 'Pasig City', 'Metro Manila', 'NCR', 1607, 'P@SSWORD', 'D16-97-169064'),
+(123451, 'Myrna', 'Sanchez', 'Juan St.', 'Mandaue', 'Cebu City', 'Cebu', 'Region VII', 6014, 'P@SSWORD', 'D16-97-169064'),
 (123452, 'Patrick', 'Perez', 'Dona Lucia St.', 'Commonwealth', 'Quezon City', 'Metro Manila', 'NCR', 1121, '123password!', 'N25-23-011859'),
-(123453, 'Fiona', 'Tano', 'M. Vicente St.', 'Malamig', 'Mandaluyong City', 'Metro Manila', 'NCR', 1550, 'password!!!', 'N01-24-023812'),
-(123454, 'Jeck', 'Sanchez', 'Arguelles St.', 'Pio Del Pilar', 'Makati City', 'Metro Manila', 'NCR', 1230, 'passwordkohehe', 'D37-23-004584'),
+(123453, 'Fiona', 'Tano', 'M. Vicente St.', 'Mandaue', 'Cebu City', 'Cebu', 'Region VII', 6014, 'password!!!', 'N01-24-023812'),
+(123454, 'Jeck', 'Sanchez', 'Arguelles St.', 'Carreta', 'Cebu City', 'Cebu', 'Region VII', 6000, 'passwordkohehe', 'D37-23-004584'),
 (123455, 'Gabriel', 'Avila', 'J. Rizal St.', 'Poblacion', 'Pateros', 'Metro Manila', 'NCR', 1620, 'thisismypassword', 'N03-18-024438'),
-(123456, 'Megan', 'Dasal', 'Alice Crisostomo St.', 'Talon Dos', 'Las Pinas City', 'Metro Manila', 'NCR', 1747, 'p@ssword12345!!', 'N03-12-123456'),
+(123456, 'Megan', 'Dasal', 'Alice Crisostomo St.', 'Pacdal', 'Baguio City', 'Benguet', 'CAR', 2600, 'p@ssword12345!!', 'N03-12-123456'),
 (123457, 'Alexa', 'Pleyto', '3rd St.', 'St. Ignatius', 'Quezon City', 'Metro Manila', 'NCR', 1110, 'pass123word', 'N02-25-026327'),
 (123458, 'Lara', 'Turk', 'Rome St.', 'B.F. International Village', 'Las Pinas City', 'Metro Manila', 'NCR', 1740, 'passw0rd123', 'N04-10-021355'),
-(123459, 'Rohann', 'Dizon', 'Leon Guinto St.', 'Malate', 'Manila', 'Metro Manila', 'NCR', 1004, 'p4ssw0rd123!!', 'N01-12-123456');
+(123459, 'Rohann', 'Dizon', 'Leon St.', 'Sta. Cruz', 'Koranadal', 'South Cotabato', 'Region XII', 9506, 'p4ssw0rd123!!', 'N01-12-123456');
 
 /*=======================================
 				BRANCH TABLE
@@ -98,7 +98,7 @@ INSERT INTO Branch VALUES
 				OFFICER TABLE 
 =========================================
 */
-CREATE TABLE officer (
+CREATE TABLE Officer (
     officer_id INT PRIMARY KEY,
     first_name VARCHAR(20),
     last_name VARCHAR(20),
@@ -108,7 +108,7 @@ CREATE TABLE officer (
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
 );
 
-INSERT INTO officer (officer_id, first_name, last_name, branch_id, password) VALUES
+INSERT INTO Officer (officer_id, first_name, last_name, branch_id, password) VALUES
 (11100001, 'Maria', 'Santos', 1001, 'LtoMaria!23'),
 (11100002, 'Jose', 'Reyes', 1002, 'Jr_2025pass'),
 (11100003, 'Anna', 'Cruz', 1003, 'RegA_Cruz#12'),
