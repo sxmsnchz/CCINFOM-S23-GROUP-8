@@ -4,6 +4,11 @@ USE vehicle_registration_system;
 /*research abt actual LTO process/info needed*/
 
 /*(AYA) add table and at least 10 records. refer to eerd*/
+
+/*=======================================
+				VEHICLE TABLE
+=========================================
+*/
 CREATE TABLE Vehicle (
 	vehicle_id INT,
     plate_no VARCHAR(7) NOT NULL,
@@ -30,6 +35,11 @@ INSERT INTO Vehicle VALUES
 (0009, 'JAX0123', '2023-02-11', 230176543219084, 'NB3UIEB1S00981234', 'ENG901234567', 'Kia', 'Soluto', 'White'),
 (0010, 'KAM4567', '2018-10-21', 230145987654321, 'PA2TREB1T00567891', 'ENG012345678', 'Toyota', 'Corolla Altis', 'Gray');
 
+
+/*=======================================
+				OWNER TABLE
+=========================================
+*/
 /*(SAM) add table and at least 10 records for owner. refer to eerd*/
 CREATE TABLE Owner (
 	owner_id INT PRIMARY KEY,
@@ -57,7 +67,10 @@ INSERT INTO Owner VALUES
 (123458, 'Lara', 'Turk', 'Rome St.', 'B.F. International Village', 'Las Pinas City', 'Metro Manila', 'NCR', 1740, 'passw0rd123', 'N04-10-021355'),
 (123459, 'Rohann', 'Dizon', 'Leon Guinto St.', 'Malate', 'Manila', 'Metro Manila', 'NCR', 1004, 'p4ssw0rd123!!', 'N01-12-123456');
 
-
+/*=======================================
+				BRANCH TABLE
+=========================================
+*/
 CREATE TABLE Branch (
     branch_id INT PRIMARY KEY,
     branch_name VARCHAR(100),
@@ -81,6 +94,10 @@ INSERT INTO Branch VALUES
 (1009, 'LTO Baguio Office', 'Polo Field', 'Pacdal', 'Baguio', 'Benguet', 2600, 'CAR'),
 (1010, 'LTO Regional Office XII - Koronadal City', 'Yellowbell', 'Sta. Cruz', 'Koronadal', 'South Cotabato', 9506, 'Region XII');
 
+/*=======================================
+				OFFICER TABLE
+=========================================
+*/
 /*(JP) add officer and at least 10 records. refer to eerd. */
 CREATE TABLE officer (
     officer_id INT PRIMARY KEY,
@@ -92,43 +109,24 @@ CREATE TABLE officer (
 );
 
 INSERT INTO officer (officer_id, first_name, last_name, position, branch_id) VALUES
-(12300001, 'Maria', 'Santos', 'Branch Manager', 1001),
-(12300002, 'Jose', 'Reyes', 'Assistant Manager', 1002),
-(12300003, 'Anna', 'Cruz', 'Registration Officer', 1002),
-(12300004, 'Mark', 'Lopez', 'Violation Officer', 1002),
-(12300005, 'Ramon', 'Garcia', 'Data Encoder', 1003),
-(12300006, 'Elena', 'Torres', 'Cashier', 1003),
-(12300007, 'Luis', 'Fernandez', 'Registration Officer', 1004),
-(12300008, 'Patricia', 'Mendoza', 'Branch Manager', 1004),
-(12300009, 'Daniel', 'Ramos', 'Inspector', 1005),
-(12300010, 'Sophia', 'Castillo', 'Customer Service Officer', 1005);
-
-CREATE TABLE Payment (
-    payment_id INT AUTO_INCREMENT PRIMARY KEY,
-    officer_id INT,
-    branch_id INT,
-    amount_paid DECIMAL(10,2),
-    date_paid DATE,
-    receipt_number VARCHAR(20) UNIQUE NOT NULL,
-    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-);
-
-INSERT INTO Payment 
-(officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
-(1230007, 1001, 5000.00, '2025-07-08', 'V001'),
-(1230006, 1004, 2000.00, '2025-07-20', 'V002'),
-(1230002, 1003, 3000.00, '2025-08-03', 'V003'),
-(1230001, 1001, 10000.00, '2025-08-04', 'V004'),
-(1230004, 1002, 7410.00, '2025-08-10', 'R001'),
-(1230003, 1005, 7410.00, '2025-09-12', 'R002'),
-(1230009, 1009, 7410.00, '2025-09-14', 'R003'),
-(1230002, 1003, 1500.00, '2025-09-20', 'R004'),
-(1230001, 1007, 1500.00, '2025-10-05', 'R005'),
-(1230002, 1003, 7410.00, '2025-10-08', 'R006');
+(11100001, 'Maria', 'Santos', 'Branch Manager', 1001),
+(11100002, 'Jose', 'Reyes', 'Assistant Manager', 1002),
+(11100003, 'Anna', 'Cruz', 'Registration Officer', 1002),
+(11100004, 'Mark', 'Lopez', 'Violation Officer', 1002),
+(11100005, 'Ramon', 'Garcia', 'Data Encoder', 1003),
+(11100006, 'Elena', 'Torres', 'Cashier', 1003),
+(11100007, 'Luis', 'Fernandez', 'Registration Officer', 1004),
+(11100008, 'Patricia', 'Mendoza', 'Branch Manager', 1004),
+(11100009, 'Daniel', 'Ramos', 'Inspector', 1005),
+(11100010, 'Sophia', 'Castillo', 'Customer Service Officer', 1005);
 
 /*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
 /*Note: we add payment_id to registration right? or not?*/
+
+/*=======================================
+				REGISTRATION TABLE
+=========================================
+*/
 CREATE TABLE registration (
 	registration_id INT,
     vehicle_id INT,
@@ -151,19 +149,24 @@ CREATE TABLE registration (
 INSERT INTO registration 
 (registration_id, vehicle_id, owner_id, payment_id, branch_id, officer_id, 
  first_date_registered, current_date_registered, expiry_date, status) VALUES
-(10001, 0001, 123450, 5, 1001, 12300001, '2018-06-15', '2025-06-15', '2026-06-15', 'ACTIVE'),
-(10002, 0002, 123451, 6, 1002, 12300002, '2020-03-22', '2025-03-22', '2026-03-22', 'ACTIVE'),
-(10003, 0003, 123452, 4, 1003, 12300005, '2019-11-05', '2024-11-05', '2025-11-05', 'ACTIVE'),
-(10004, 0004, 123453, 2, 1004, 12300004, '2017-08-17', '2024-08-17', '2025-08-17', 'EXPIRED'),
-(10005, 0005, 123454, 7, 1005, 12300009, '2021-01-10', '2025-01-10', '2026-01-10', 'ACTIVE'),
-(10006, 0006, 123455, 8, 1006, 12300010, '2022-04-25', '2025-04-25', '2026-04-25', 'ACTIVE'),
-(10007, 0007, 123456, 9, 1007, 12300007, '2015-09-12', '2024-09-12', '2025-09-12', 'EXPIRED'),
-(10008, 0008, 123457, 3, 1008, 12300006, '2016-05-30', '2024-05-30', '2025-05-30', 'EXPIRED'),
-(10009, 0009, 123458, 10, 1009, 12300008, '2023-02-11', '2025-02-11', '2026-02-11', 'ACTIVE'),
-(10010, 0010, 123459, 1, 1010, 12300009, '2018-10-21', '2025-10-21', '2026-10-21', 'ACTIVE');
+(10001, 0001, 123450, 5, 1001, 11100001, '2018-06-15', '2025-06-15', '2026-06-15', 'ACTIVE'),
+(10002, 0002, 123451, 6, 1002, 11100003, '2020-03-22', '2025-03-22', '2026-03-22', 'ACTIVE'),
+(10003, 0003, 123452, 4, 1003, 11100002, '2019-11-05', '2024-11-05', '2025-11-05', 'ACTIVE'),
+(10004, 0004, 123453, 2, 1004, 11100004, '2017-08-17', '2024-08-17', '2025-08-17', 'EXPIRED'),
+(10005, 0005, 123454, 7, 1005, 11100006, '2021-01-10', '2025-01-10', '2026-01-10', 'ACTIVE'),
+(10006, 0006, 123455, 8, 1006, 11100005, '2022-04-25', '2025-04-25', '2026-04-25', 'ACTIVE'),
+(10007, 0007, 123456, 9, 1007, 11100007, '2015-09-12', '2024-09-12', '2025-09-12', 'EXPIRED'),
+(10008, 0008, 123457, 3, 1008, 11100006, '2016-05-30', '2024-05-30', '2025-05-30', 'EXPIRED'),
+(10009, 0009, 123458, 10, 1009, 11100008, '2023-02-11', '2025-02-11', '2026-02-11', 'ACTIVE'),
+(10010, 0010, 123459, 1, 1010, 11100009, '2018-10-21', '2025-10-21', '2026-10-21', 'ACTIVE');
 
 /* add variations for table values. some status EXPIRED, ACTIVE, etc. */
 
+
+/*=======================================
+				VIOLATION TABLE
+=========================================
+*/
 /*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs)*/
 CREATE TABLE Violation (
 	violation_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -185,16 +188,17 @@ CREATE TABLE Violation (
 
 INSERT INTO Violation 
 (owner_id, vehicle_id, officer_id, branch_id, violation_type, fine_amount, violation_date, status, payment_id) VALUES
-(123450, 0001, 2, 1003, 'Expired License', 3000.00, '2025-08-01', 'Cleared', 3),
-(123450, 0001, 10, 1002, 'Reckless Driving', 2000.00, '2025-09-22', 'Unpaid', NULL),
-(123452, 0003, 2, 1001, 'Unregistered Motor Vehicle', 10000.00, '2025-07-28', 'Cleared', 4),
-(123453, 0004, 4, 1004, 'Smoke Belching', 2000.00, '2025-07-15', 'Cleared', 2),
-(123454, 0005, 3, 1005, 'Unauthorized Modification', 5000.00, '2025-10-01', 'Unpaid', NULL),
-(123455, 0010, 4, 1001, 'Defective Parts', 5000.00, '2025-07-07', 'Cleared', 1),
-(123456, 0007, 4, 1007, 'Expired Registration', 2000.00, '2025-04-15', 'Unpaid', NULL),
-(123457, 0008, 7, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
-(123457, 0008, 5, 1009, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
-(123457, 0008, 9, 1003, 'Expired License', 3000.00, '2025-06-05', 'Unpaid', NULL);
+(123450, 0001, 11100005, 1003, 'Expired License', 3000.00, '2025-08-01', 'Cleared', 3),
+(123450, 0001, 11100010, 1002, 'Reckless Driving', 2000.00, '2025-09-22', 'Unpaid', NULL),
+(123452, 0003, 11100002, 1002, 'Unregistered Motor Vehicle', 10000.00, '2025-07-28', 'Cleared', 4),
+(123453, 0004, 11100004, 1004, 'Smoke Belching', 2000.00, '2025-07-15', 'Cleared', 2),
+(123454, 0005, 11100003, 1005, 'Unauthorized Modification', 5000.00, '2025-10-01', 'Unpaid', NULL),
+(123455, 0010, 11100004, 1002, 'Defective Parts', 5000.00, '2025-07-07', 'Cleared', 1),
+(123456, 0007, 11100004, 1002, 'Expired Registration', 2000.00, '2025-04-15', 'Unpaid', NULL),
+(123457, 0008, 11100007, 1004, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
+(123457, 0008, 11100005, 1003, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
+(123457, 0008, 11100009, 1005, 'Expired License', 3000.00, '2025-06-05', 'Unpaid', NULL);
+
 
 
 
