@@ -82,6 +82,50 @@ INSERT INTO Branch VALUES
 (1010, 'LTO Regional Office XII - Koronadal City', 'Yellowbell', 'Sta. Cruz', 'Koronadal', 'South Cotabato', 9506, 'Region XII');
 
 /*(JP) add officer and at least 10 records. refer to eerd. */
+CREATE TABLE officer (
+    officer_id INT PRIMARY KEY,
+    first_name VARCHAR(20),
+    last_name VARCHAR(20),
+    position VARCHAR(50),
+    branch_id INT,
+    FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
+);
+
+INSERT INTO officer (officer_id, first_name, last_name, position, branch_id) VALUES
+(12300001, 'Maria', 'Santos', 'Branch Manager', 1001),
+(12300002, 'Jose', 'Reyes', 'Assistant Manager', 1002),
+(12300003, 'Anna', 'Cruz', 'Registration Officer', 1002),
+(12300004, 'Mark', 'Lopez', 'Violation Officer', 1002),
+(12300005, 'Ramon', 'Garcia', 'Data Encoder', 1003),
+(12300006, 'Elena', 'Torres', 'Cashier', 1003),
+(12300007, 'Luis', 'Fernandez', 'Registration Officer', 1004),
+(12300008, 'Patricia', 'Mendoza', 'Branch Manager', 1004),
+(12300009, 'Daniel', 'Ramos', 'Inspector', 1005),
+(12300010, 'Sophia', 'Castillo', 'Customer Service Officer', 1005);
+
+CREATE TABLE Payment (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    officer_id INT,
+    branch_id INT,
+    amount_paid DECIMAL(10,2),
+    date_paid DATE,
+    receipt_number VARCHAR(20) UNIQUE NOT NULL,
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+);
+
+INSERT INTO Payment 
+(officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
+(1230007, 1001, 5000.00, '2025-07-08', 'V001'),
+(1230006, 1004, 2000.00, '2025-07-20', 'V002'),
+(1230002, 1003, 3000.00, '2025-08-03', 'V003'),
+(1230001, 1001, 10000.00, '2025-08-04', 'V004'),
+(1230004, 1002, 7410.00, '2025-08-10', 'R001'),
+(1230003, 1005, 7410.00, '2025-09-12', 'R002'),
+(1230009, 1009, 7410.00, '2025-09-14', 'R003'),
+(1230002, 1003, 1500.00, '2025-09-20', 'R004'),
+(1230001, 1007, 1500.00, '2025-10-05', 'R005'),
+(1230002, 1003, 7410.00, '2025-10-08', 'R006');
 
 /*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
 /*Note: we add payment_id to registration right? or not?*/
@@ -103,6 +147,21 @@ CREATE TABLE registration (
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
 );
+
+INSERT INTO registration 
+(registration_id, vehicle_id, owner_id, payment_id, branch_id, officer_id, 
+ first_date_registered, current_date_registered, expiry_date, status) VALUES
+(10001, 0001, 123450, 5, 1001, 12300001, '2018-06-15', '2025-06-15', '2026-06-15', 'ACTIVE'),
+(10002, 0002, 123451, 6, 1002, 12300002, '2020-03-22', '2025-03-22', '2026-03-22', 'ACTIVE'),
+(10003, 0003, 123452, 4, 1003, 12300005, '2019-11-05', '2024-11-05', '2025-11-05', 'ACTIVE'),
+(10004, 0004, 123453, 2, 1004, 12300004, '2017-08-17', '2024-08-17', '2025-08-17', 'EXPIRED'),
+(10005, 0005, 123454, 7, 1005, 12300009, '2021-01-10', '2025-01-10', '2026-01-10', 'ACTIVE'),
+(10006, 0006, 123455, 8, 1006, 12300010, '2022-04-25', '2025-04-25', '2026-04-25', 'ACTIVE'),
+(10007, 0007, 123456, 9, 1007, 12300007, '2015-09-12', '2024-09-12', '2025-09-12', 'EXPIRED'),
+(10008, 0008, 123457, 3, 1008, 12300006, '2016-05-30', '2024-05-30', '2025-05-30', 'EXPIRED'),
+(10009, 0009, 123458, 10, 1009, 12300008, '2023-02-11', '2025-02-11', '2026-02-11', 'ACTIVE'),
+(10010, 0010, 123459, 1, 1010, 12300009, '2018-10-21', '2025-10-21', '2026-10-21', 'ACTIVE');
+
 /* add variations for table values. some status EXPIRED, ACTIVE, etc. */
 
 /*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs)*/
@@ -137,29 +196,7 @@ INSERT INTO Violation
 (123457, 0008, 5, 1009, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
 (123457, 0008, 9, 1003, 'Expired License', 3000.00, '2025-06-05', 'Unpaid', NULL);
 
-CREATE TABLE Payment (
-    payment_id INT AUTO_INCREMENT PRIMARY KEY,
-    officer_id INT,
-    branch_id INT,
-    amount_paid DECIMAL(10,2),
-    date_paid DATE,
-    receipt_number VARCHAR(20) UNIQUE NOT NULL,
-    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-);
 
-INSERT INTO Payment 
-(officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
-(4, 1001, 5000.00, '2025-07-08', 'V001'),
-(4, 1004, 2000.00, '2025-07-20', 'V002'),
-(2, 1003, 3000.00, '2025-08-03', 'V003'),
-(2, 1001, 10000.00, '2025-08-04', 'V004'),
-(8, 1002, 7410.00, '2025-08-10', 'R001'),
-(9, 1005, 7410.00, '2025-09-12', 'R002'),
-(5, 1009, 7410.00, '2025-09-14', 'R003'),
-(10, 1003, 1500.00, '2025-09-20', 'R004'),
-(4, 1007, 1500.00, '2025-10-05', 'R005'),
-(3, 1003, 7410.00, '2025-10-08', 'R006');
 
 
 
