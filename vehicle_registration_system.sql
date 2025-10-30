@@ -108,17 +108,17 @@ CREATE TABLE officer (
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
 );
 
-INSERT INTO officer (officer_id, first_name, last_name, position, branch_id, password) VALUES
-(11100001, 'Maria', 'Santos', 'Branch Manager', 1001, 'LtoMaria!23'),
-(11100002, 'Jose', 'Reyes', 'Assistant Manager', 1002, 'Jr_2025pass'),
-(11100003, 'Anna', 'Cruz', 'Registration Officer', 1003, 'RegA_Cruz#12'),
-(11100004, 'Mark', 'Lopez', 'Violation Officer', 1004, 'Viol8Mark*22'),
-(11100005, 'Ramon', 'Garcia', 'Data Encoder', 1005, 'EncRamon_45'),
-(11100006, 'Elena', 'Torres', 'Cashier', 1006, 'CashElen@78'),
-(11100007, 'Luis', 'Fernandez', 'Registration Officer', 1007, 'LuisReg!98'),
-(11100008, 'Patricia', 'Mendoza', 'Branch Manager', 1008, 'PattMend#77'),
-(11100009, 'Daniel', 'Ramos', 'Inspector', 1009, 'InspectDR09!'),
-(11100010, 'Sophia', 'Castillo', 'Customer Service Officer', 1010, 'CSophia*65');
+INSERT INTO officer (officer_id, first_name, last_name, branch_id, password) VALUES
+(11100001, 'Maria', 'Santos', 1001, 'LtoMaria!23'),
+(11100002, 'Jose', 'Reyes', 1002, 'Jr_2025pass'),
+(11100003, 'Anna', 'Cruz', 1003, 'RegA_Cruz#12'),
+(11100004, 'Mark', 'Lopez', 1004, 'Viol8Mark*22'),
+(11100005, 'Ramon', 'Garcia', 1005, 'EncRamon_45'),
+(11100006, 'Elena', 'Torres', 1006, 'CashElen@78'),
+(11100007, 'Luis', 'Fernandez', 1007, 'LuisReg!98'),
+(11100008, 'Patricia', 'Mendoza', 1008, 'PattMend#77'),
+(11100009, 'Daniel', 'Ramos', 1009, 'InspectDR09!'),
+(11100010, 'Sophia', 'Castillo', 1010, 'CSophia*65');
 
 /* =======================================================
    PAYMENT TABLE
@@ -154,7 +154,7 @@ INSERT INTO Payment (officer_id, branch_id, amount_paid, date_paid, receipt_numb
 				REGISTRATION TABLE
 =========================================
 */
-CREATE TABLE registration (
+CREATE TABLE Registration (
 	registration_id INT,
     vehicle_id INT,
     owner_id INT, 
@@ -173,7 +173,7 @@ CREATE TABLE registration (
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
 );
 
-INSERT INTO registration 
+INSERT INTO Registration 
 (registration_id, vehicle_id, owner_id, payment_id, branch_id, officer_id, 
  first_date_registered, current_date_registered, expiry_date, status) VALUES
 (10001, 0001, 123450, 5, 1003, 11100003, '2024-02-01', '2025-08-03', '2026-08-03', 'ACTIVE'),
