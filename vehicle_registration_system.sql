@@ -136,10 +136,10 @@ CREATE TABLE Payment (
 
 INSERT INTO Payment (officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
 (11100004, 1003, 5000.00, '2025-07-08', 'V001'),
-(11100006, 1004, 2000.00, '2025-07-20', 'V002'),
+(11100004, 1004, 2000.00, '2025-07-20', 'V002'),
 (11100005, 1003, 3000.00, '2025-08-03', 'V003'),
-(11100001, 1001, 10000.00, '2025-08-04', 'V004'),
-(11100001, 1008, 7410.00, '2025-08-10', 'R001'),
+(11100002, 1001, 10000.00, '2025-08-04', 'V004'),
+(11100001, 1008, 1500.00, '2025-08-03', 'R001'),
 (11100003, 1002, 7410.00, '2025-09-12', 'R002'),
 (11100009, 1008, 7410.00, '2024-11-05', 'R003'),
 (11100005, 1006, 1500.00, '2024-03-20', 'R004'),
@@ -176,7 +176,7 @@ CREATE TABLE registration (
 INSERT INTO registration 
 (registration_id, vehicle_id, owner_id, payment_id, branch_id, officer_id, 
  first_date_registered, current_date_registered, expiry_date, status) VALUES
-(10001, 0001, 123450, 5, 1008, 11100001, '2025-08-10', '2025-08-10', '2026-08-10', 'ACTIVE'),
+(10001, 0001, 123450, 5, 1008, 11100001, '2024-02-01', '2025-08-03', '2026-08-03', 'ACTIVE'),
 (10002, 0002, 123451, 6, 1002, 11100003, '2025-09-12', '2025-09-12', '2026-09-12', 'ACTIVE'),
 (10003, 0003, 123452, NULL, 1003, 11100002, '2025-11-10', NULL, NULL, 'INACTIVE'),
 (10004, 0004, 123453, 7, 1008, 11100009, '2024-11-05', '2024-11-05', '2025-11-05', 'EXPIRED'),
@@ -215,16 +215,16 @@ CREATE TABLE Violation (
 
 INSERT INTO Violation 
 (owner_id, vehicle_id, officer_id, branch_id, violation_type, fine_amount, violation_date, status, payment_id) VALUES
-(123450, 0001, 11100005, 1003, 'Expired License', 3000.00, '2025-08-01', 'Cleared', 3),
-(123450, 0001, 11100010, 1002, 'Reckless Driving', 2000.00, '2025-09-22', 'Unpaid', NULL),
-(123452, 0003, 11100002, 1002, 'Unregistered Motor Vehicle', 10000.00, '2025-07-28', 'Cleared', 4),
-(123453, 0004, 11100004, 1004, 'Smoke Belching', 2000.00, '2025-07-15', 'Cleared', 2),
-(123454, 0005, 11100003, 1005, 'Unauthorized Modification', 5000.00, '2025-10-01', 'Unpaid', NULL),
-(123455, 0010, 11100004, 1002, 'Defective Parts', 5000.00, '2025-07-07', 'Cleared', 1),
-(123456, 0007, 11100004, 1002, 'Expired Registration', 2000.00, '2025-04-15', 'Unpaid', NULL),
-(123457, 0008, 11100007, 1004, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
-(123457, 0008, 11100005, 1003, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
-(123457, 0008, 11100009, 1005, 'Expired License', 3000.00, '2025-06-05', 'Unpaid', NULL);
+(123450, 0001, 11100005, 1003, 'Expired Registration', 3000.00, '2025-08-01', 'Cleared', 3),
+(123450, 0001, 11100010, 1002, 'Reckless Driving', 2000.00, '2025-11-17', 'Unpaid', NULL),
+(123455, 0006, 11100002, 1001, 'Unregistered Motor Vehicle', 10000.00, '2025-07-28', 'Cleared', 4),
+(123455, 0006, 11100004, 1004, 'Smoke Belching', 2000.00, '2025-07-15', 'Cleared', 2),
+(123458, 0009, 11100003, 1005, 'Unauthorized Modification', 5000.00, '2025-10-01', 'Unpaid', NULL),
+(123455, 0006, 11100004, 1003, 'Defective Parts', 5000.00, '2025-07-07', 'Cleared', 1),
+(123456, 0007, 11100004, 1002, 'Expired Registration', 2000.00, '2025-09-12', 'Unpaid', NULL),
+(123453, 0004, 11100007, 1004, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
+(123453, 0004, 11100005, 1003, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
+(123453, 0004, 11100009, 1005, 'Expired Registration', 3000.00, '2025-11-05', 'Unpaid', NULL);
 
 
 
