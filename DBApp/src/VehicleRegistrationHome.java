@@ -15,16 +15,33 @@ public class VehicleRegistrationHome {
         System.out.println("==========================================");
         System.out.print("Select an option: ");
 
-        choice = input.nextInt();
-
-        switch (choice) {
-            case 1 -> System.out.println("\nUser Login");
-            case 2 -> System.out.println("\nOfficer Login");
-            case 3 -> System.out.println("\nExiting...");
-            default -> System.out.println("\nInvalid option. Please try again.");
+        if (!input.hasNextInt()) {
+            System.out.println("\nInvalid input. Please enter a number.\n");
+            input.nextLine();
+            continue;
         }
 
-        input.close();
+        choice = input.nextInt();
+        input.nextLine();
+
+        switch (choice) {
+            case 1 -> {
+                System.put.println("\nRedirecting to User Login...\n");
+                UserMenu userMenu = new userMenu();
+                userMenu.login() // handle logic here 
+            }
+            case 2 -> {
+                System.put.println("\nRedirecting to Officer Login...\n");
+                OfficerMenu officerMenu = new officerMenu();
+                officerMenu.login(); // handle logic here
+            }
+            case 3 -> {
+                System.out.println("\nThank you! Exiting system... Goodbye!");
+                input.close();
+                System.exit(0);
+            }
+            default -> System.out.println("\nInvalid option. Please try again.\n");
+            }
+        }
     }
 }
-
