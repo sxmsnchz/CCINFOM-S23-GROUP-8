@@ -6,7 +6,7 @@ public class DatabaseConnection {
 
     private static final String URL = "jdbc:mysql://localhost:3306/vehicle_registration_system";
     private static final String USER = "root";  // MySQL username
-    private static final String PASSWORD = "Bananabread123."; // change to ur own password 
+    private static final String PASSWORD = " "; // change to ur own password 
 
     private static Connection connection = null;
 
@@ -28,4 +28,5 @@ public class DatabaseConnection {
         Connection conn = DatabaseConnection.getConnection();
     }
 }
+
 
