@@ -1,10 +1,6 @@
 CREATE DATABASE vehicle_registration_system;
 USE vehicle_registration_system;
 
-/*research abt actual LTO process/info needed*/
-
-/*(AYA) add table and at least 10 records. refer to eerd*/
-
 /*=======================================
 				VEHICLE TABLE
 =========================================
@@ -40,7 +36,6 @@ INSERT INTO Vehicle VALUES
 				OWNER TABLE
 =========================================
 */
-/*(SAM) add table and at least 10 records for owner. refer to eerd*/
 CREATE TABLE Owner (
 	owner_id INT PRIMARY KEY,
     first_name VARCHAR(50),
@@ -119,35 +114,6 @@ INSERT INTO Officer VALUES
 (11100009, 'Daniel', 'Ramos', 1009, 'InspectDR09!'),
 (11100010, 'Sophia', 'Castillo', 1010, 'CSophia*65');
 
-/* =======================================================
-   PAYMENT TABLE
-   ======================================================= */
-CREATE TABLE Payment (
-    payment_id INT AUTO_INCREMENT PRIMARY KEY,
-    officer_id INT,
-    branch_id INT,
-    amount_paid DECIMAL(10,2),
-    date_paid DATE,
-    receipt_number VARCHAR(20) UNIQUE NOT NULL,
-    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-);
-
-INSERT INTO Payment (officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
-(11100006, 1006, 5000.00, '2025-07-08', 'V001'),
-(11100009, 1009, 2000.00, '2025-07-20', 'V002'),
-(11100003, 1003, 3000.00, '2025-08-03', 'V003'),
-(11100006, 1006, 10000.00, '2025-08-04', 'V004'),
-(11100003, 1003, 1500.00, '2025-08-03', 'R001'),
-(11100008, 1008, 7410.00, '2025-09-12', 'R002'),
-(11100008, 1008, 7410.00, '2024-11-05', 'R003'),
-(11100006, 1006, 1500.00, '2024-03-20', 'R004'),
-(11100009, 1009, 1500.00, '2024-09-12', 'R005'),
-(11100005, 1005, 1500.00, '2025-10-08', 'R006');
-
-
-/*(JP AND AYA) create registration table with at least 10 records (refer to EERD) */
-/*Note: we add payment_id to registration right? or not?*/
 
 /*=======================================
 				REGISTRATION TABLE
@@ -186,14 +152,10 @@ INSERT INTO Registration
 (10009, 0009, 123458, 10, 1005, 1110005, '2023-02-11', '2025-10-08', '2026-10-08', 'ACTIVE'),
 (10010, 0010, 123459, NULL, 1010, 1110010, '2025-10-21', NULL, NULL, 'INACTIVE');
 
-/* add variations for table values. some status EXPIRED,INACTIVE, ACTIVE, etc. */
-
-
 /*=======================================
 				VIOLATION TABLE
 =========================================
 */
-/*(SAM) create violation table with at least 10 records (refer to EERD & research on actual violation & costs)*/
 CREATE TABLE Violation (
 	violation_id INT AUTO_INCREMENT PRIMARY KEY,
     owner_id INT,
@@ -226,6 +188,31 @@ INSERT INTO Violation
 (123453, 0004, 11100008, 1008, 'Expired Registration', 3000.00, '2025-11-05', 'Unpaid', NULL);
 
 
+/* =======================================================
+   PAYMENT TABLE
+   ======================================================= */
+CREATE TABLE Payment (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    officer_id INT,
+    branch_id INT,
+    amount_paid DECIMAL(10,2),
+    date_paid DATE,
+    receipt_number VARCHAR(20) UNIQUE NOT NULL,
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+);
+
+INSERT INTO Payment (officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
+(11100006, 1006, 5000.00, '2025-07-08', 'V001'),
+(11100009, 1009, 2000.00, '2025-07-20', 'V002'),
+(11100003, 1003, 3000.00, '2025-08-03', 'V003'),
+(11100006, 1006, 10000.00, '2025-08-04', 'V004'),
+(11100003, 1003, 1500.00, '2025-08-03', 'R001'),
+(11100008, 1008, 7410.00, '2025-09-12', 'R002'),
+(11100008, 1008, 7410.00, '2024-11-05', 'R003'),
+(11100006, 1006, 1500.00, '2024-03-20', 'R004'),
+(11100009, 1009, 1500.00, '2024-09-12', 'R005'),
+(11100005, 1005, 1500.00, '2025-10-08', 'R006');
 
 
 
