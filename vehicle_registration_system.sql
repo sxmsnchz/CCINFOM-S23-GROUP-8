@@ -78,7 +78,7 @@ CREATE TABLE Branch (
 );
 
 INSERT INTO Branch VALUES
-(1001, 'LTO Paranaque District Office', 'Olivarez Plaza', 'San Dionisio', 'Paranaque City', 'Metro Manila', 1700, 'NCR'),
+(1001, 'LTO Paranaque District Office', 'Irasan', 'San Dionisio', 'Paranaque City', 'Metro Manila', 1700, 'NCR'),
 (1002, 'LTO Las Pinas District Office', 'Alabang Zapote', 'Talon Uno', 'Las Pinas City', 'Metro Manila', 1747, 'NCR'),
 (1003, 'LTO San Juan District Office', 'North Domingo', 'Rivera', 'San Juan City', 'Metro Manila', 1500, 'NCR'),
 (1004, 'LTO Muntinlupa Office', 'Theater Dr', 'Ayala Alabang', 'Muntinlupa City', 'Metro Manila', 1780, 'NCR'),
