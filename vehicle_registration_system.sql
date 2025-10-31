@@ -86,7 +86,7 @@ INSERT INTO Branch VALUES
 (1001, 'LTO Paranaque District Office', 'Olivarez Plaza', 'San Dionisio', 'Paranaque City', 'Metro Manila', 1700, 'NCR'),
 (1002, 'LTO Las Pinas District Office', 'Alabang Zapote', 'Talon Uno', 'Las Pinas City', 'Metro Manila', 1747, 'NCR'),
 (1003, 'LTO San Juan District Office', 'North Domingo', 'Rivera', 'San Juan City', 'Metro Manila', 1500, 'NCR'),
-(1004, 'LTO Pateros Extension Office', 'M. Amelda', 'San Roque', 'Pateros', 'Metro Manila', 1620, 'NCR'),
+(1004, 'LTO Muntinlupa Office', 'Theater Dr', 'Ayala Alabang', 'Muntinlupa City', 'Metro Manila', 1780, 'NCR'),
 (1005, 'LTO Quezon City District Office', 'East Ave.', 'Pinyahan', 'Quezon City', 'Metro Manila', 1100, 'NCR'),
 (1006, 'LTO Taguig Extension Office', 'Radiant St.', 'Western Bicutan', 'Taguig City', 'Metro Manila', 1630, 'NCR'),
 (1007, 'LTO Cebu City District Office', 'General Maxilom Ave.', 'Carreta', 'Cebu City', 'Cebu', 6000, 'Region VII'),
@@ -102,13 +102,12 @@ CREATE TABLE Officer (
     officer_id INT PRIMARY KEY,
     first_name VARCHAR(20),
     last_name VARCHAR(20),
-    position VARCHAR(50),
     branch_id INT,
     password VARCHAR(50),
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
 );
 
-INSERT INTO Officer (officer_id, first_name, last_name, branch_id, password) VALUES
+INSERT INTO Officer VALUES
 (11100001, 'Maria', 'Santos', 1001, 'LtoMaria!23'),
 (11100002, 'Jose', 'Reyes', 1002, 'Jr_2025pass'),
 (11100003, 'Anna', 'Cruz', 1003, 'RegA_Cruz#12'),
