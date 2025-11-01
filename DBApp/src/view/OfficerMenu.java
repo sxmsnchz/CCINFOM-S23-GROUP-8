@@ -53,6 +53,7 @@ public class OfficerMenu {
 					break;
 				case "9":
 					System.out.println("Logging out...");
+					model.Session.clear();
 					running = false;
 					break;
 				default:
@@ -66,6 +67,6 @@ public class OfficerMenu {
 			}
 		}
 
-		// Do not close System.in scanner here; let caller manage lifecycle if needed.
+		    // note: dont add close System.in-scanner here to avoid closing System.in for callers
 	}
 }
