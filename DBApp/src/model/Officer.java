@@ -5,6 +5,7 @@ public class Officer {
     private String firstName;
     private String lastName;
     private int branchId; //referencing branch FK
+    //TO ADD LATER ON: password
     
     public Officer() {}
 
