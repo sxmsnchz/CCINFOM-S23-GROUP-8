@@ -1,24 +1,30 @@
 package model;
 
 public class Owner {
-    private int ownerId;
+    private int ownerId; // primary key
     private String firstName;
     private String lastName;
+    private int postal_code;
     private String street;
+    private String barangay;
     private String city;
     private String province;
+    private String region;
     private int licenseNumber;
 
     public Owner() {} 
 
     public Owner(int ownerId, String firstName, String lastName,
-                String street, String city, String province, int licenseNumber) {
+                int postal_code, String street, String barangay, String city, String province, String region, int licenseNumber) {
         this.ownerId = ownerId;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.postal_code = postal_code;
         this.street = street;
+        this.barangay = barangay;
         this.city = city;
         this.province = province;
+        this.region = region;
         this.licenseNumber = licenseNumber;
     }
 
@@ -37,6 +43,12 @@ public class Owner {
 
     public void setLicenseNumber(int licenseNumber) { this.licenseNumber = licenseNumber; }
 
+    public void setPostalCode(int postal_code) { this.postal_code = postal_code; }
+
+    public void setBarangay(String barangay) { this.barangay = barangay; }
+
+    public void setRegion(String region) { this.region = region; }
+
 
     //getters
     public int getOwnerId() { return ownerId; }
@@ -52,6 +64,12 @@ public class Owner {
     public String getProvince() { return province; }
 
     public int getLicenseNumber() { return licenseNumber; }
+
+    public int getPostalCode() { return postal_code; }
+
+    public String getBarangay() { return barangay; }
+
+    public String getRegion() { return region; }
 
 }
 
