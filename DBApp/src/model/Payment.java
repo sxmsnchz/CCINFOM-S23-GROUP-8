@@ -3,7 +3,7 @@ import java.sql.Date;
 
 public class Payment {
     private int paymentId;
-    private int owner Id;
+    private int ownerId;
     private int officerId;
     private int branchId;
     private double amountPaid;
