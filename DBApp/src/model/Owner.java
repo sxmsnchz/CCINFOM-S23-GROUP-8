@@ -11,6 +11,7 @@ public class Owner {
     private String province;
     private String region;
     private int licenseNumber;
+    //password: to add later 
 
     public Owner() {} 
 
