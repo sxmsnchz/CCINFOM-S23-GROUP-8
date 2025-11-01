@@ -8,6 +8,7 @@ public class Violation {
 	private int ownerId;
 	private int branchId;
 	private int officerId;
+	private int paymentId;
 	private String violationType;
 	private Date violationDate;
 	private double fineAmount;
@@ -30,40 +31,64 @@ public class Violation {
 	}
 
 	// setters
-	public void setViolationId(int violationId) { this.violationId = violationId; }
+	public void setViolationId(int violationId) { 
+		this.violationId = violationId; }
 
-	public void setVehicleId(int vehicleId) { this.vehicleId = vehicleId; }
+	public void setVehicleId(int vehicleId) { 
+		this.vehicleId = vehicleId; }
 
-	public void setOwnerId(int ownerId) { this.ownerId = ownerId; }
+	public void setOwnerId(int ownerId) { 
+		this.ownerId = ownerId; }
 
-	public void setBranchId(int branchId) { this.branchId = branchId; }
+	public void setBranchId(int branchId) { 
+		this.branchId = branchId; }
 
-	public void setOfficerId(int officerId) { this.officerId = officerId; }
+	public void setOfficerId(int officerId) { 
+		this.officerId = officerId; }
 
-	public void setViolationType(String violationType) { this.violationType = violationType; }
+	public void setPaymentId(int paymentId) { 
+		this.paymentId = paymentId; }
 
-	public void setViolationDate(Date violationDate) { this.violationDate = violationDate; }
+	public void setViolationType(String violationType) { 
+		this.violationType = violationType; }
 
-	public void setFineAmount(double fineAmount) { this.fineAmount = fineAmount; }
+	public void setViolationDate(Date violationDate) { 
+		this.violationDate = violationDate; }
 
-	public void setStatus(String status) { this.status = status; }
+	public void setFineAmount(double fineAmount) { 
+		this.fineAmount = fineAmount; }
+
+	public void setStatus(String status) {
+		this.status = status; }
 
 	// getters
-	public int getViolationId() { return violationId; }
+	public int getViolationId() { 
+		return violationId; }
 
-	public int getVehicleId() { return vehicleId; }
+	public int getVehicleId() { 
+		return vehicleId; }
 
-	public int getOwnerId() { return ownerId; }
+	public int getOwnerId() { 
+		return ownerId; }
 
-	public int getBranchId() { return branchId; }
+	public int getBranchId() { 
+		return branchId; }
 
-	public int getOfficerId() { return officerId; }
+	public int getOfficerId() { 
+		return officerId; }
 
-	public String getViolationType() { return violationType; }
+	public int getPaymentId() { 
+		return paymentId; }
 
-	public Date getViolationDate() { return violationDate; }
+	public String getViolationType() { 
+		return violationType; }
 
-	public double getFineAmount() { return fineAmount; }
+	public Date getViolationDate() { 
+		return violationDate; }
 
-	public String getStatus() { return status; }
+	public double getFineAmount() { 
+		return fineAmount; }
+
+	public String getStatus() { 
+		return status; }
 }
