@@ -19,7 +19,7 @@ import view.UserMenu;
  */
 public class PaymentService {
 
-    private Connection conn; // connection object for MySQL database
+    private Connection conn; // connection for MySQL database
 
     // connects to our database
     public PaymentService() {
@@ -37,14 +37,14 @@ public class PaymentService {
 
             int ownerId = Session.loggedInOwnerId; // current logged-in user
 
-            // safety check
+            // check if no user logged in
             if (ownerId == 0) {
                 System.out.println("Error: No user logged in. Redirecting...");
                 redirectToMenu(scanner);
                 return;
             }
 
-            // fetch all UNPAID transactions (violations + registrations)
+            // show all unpaid transactions (violations + valid registrations/renewals)
             String query = """
                 SELECT 'Violation' AS type, v.violation_id AS id, v.violation_type AS description, v.fine_amount AS amount
                 FROM violation v
@@ -53,16 +53,20 @@ public class PaymentService {
                 SELECT 'Registration' AS type, r.registration_id AS id,
                        CASE
                            WHEN r.payment_id IS NULL AND r.expiry_date IS NULL THEN 'New Registration'
-                           WHEN r.payment_id IS NOT NULL AND r.expiry_date IS NOT NULL THEN 'Renewal'
+                           WHEN r.payment_id IS NULL AND r.expiry_date < CURDATE() THEN 'Renewal'
                            ELSE 'Registration Pending'
                        END AS description,
                        CASE
                            WHEN r.payment_id IS NULL AND r.expiry_date IS NULL THEN 7410
-                           WHEN r.payment_id IS NOT NULL AND r.expiry_date IS NOT NULL THEN 2500
+                           WHEN r.payment_id IS NULL AND r.expiry_date < CURDATE() THEN 1500
                            ELSE 0
                        END AS amount
                 FROM registration r
-                WHERE r.owner_id = ? AND (r.payment_id IS NULL OR r.expiry_date < CURDATE());
+                WHERE r.owner_id = ?
+                  AND (
+                        (r.payment_id IS NULL AND r.expiry_date IS NULL)  -- new registration
+                        OR (r.payment_id IS NULL AND r.expiry_date < CURDATE())  -- renewal due
+                      );
                 """;
 
             PreparedStatement ps = conn.prepareStatement(query);
@@ -113,8 +117,9 @@ public class PaymentService {
             int officerId = 0;
             String plateNo = null;
             String transactionDesc = "";
+            String paymentType = "";
 
-            // fetch details depending on type
+            // handle violation
             if (chosenType.equalsIgnoreCase("Violation")) {
                 PreparedStatement ps2 = conn.prepareStatement("""
                     SELECT fine_amount, branch_id, officer_id, v.vehicle_id, ve.plate_no, v.violation_type
@@ -136,8 +141,10 @@ public class PaymentService {
                 officerId = rs2.getInt("officer_id");
                 plateNo = rs2.getString("plate_no");
                 transactionDesc = rs2.getString("violation_type");
+                paymentType = "Violation";
 
-            } else { // Registration or Renewal
+            // handle registration or renewal
+            } else {
                 PreparedStatement ps3 = conn.prepareStatement("""
                     SELECT r.branch_id, r.officer_id, r.vehicle_id, r.payment_id, r.expiry_date, v.plate_no
                     FROM registration r
@@ -159,15 +166,22 @@ public class PaymentService {
                 int prevPay = rs3.getInt("payment_id");
                 Date expiry = rs3.getDate("expiry_date");
 
-                if (prevPay != 0 && expiry != null) {
-                    transactionDesc = "Renewal";
-                    amount = 2500.00;
-                } else {
+                if (expiry == null && prevPay == 0) {
                     transactionDesc = "New Registration";
+                    paymentType = "Registration";
                     amount = 7410.00;
+                } else if (expiry != null && prevPay == 0 && expiry.before(new java.util.Date())) {
+                    transactionDesc = "Renewal";
+                    paymentType = "Renewal";
+                    amount = 1500.00;
+                } else {
+                    System.out.println("This registration is not due for payment.");
+                    redirectToMenu(scanner);
+                    return;
                 }
             }
 
+            // confirm payment
             System.out.println("\nTotal to pay: Php " + amount);
             System.out.print("Enter amount you will pay: ");
             String inputAmount = scanner.nextLine().trim();
@@ -195,7 +209,7 @@ public class PaymentService {
             String nextReceipt = generateNextReceipt(latestReceipt,
                     chosenType.equalsIgnoreCase("Violation") ? "V" : "R");
 
-            // insert into payment table with owner_id and payment_type
+            // insert payment record
             PreparedStatement ps4 = conn.prepareStatement("""
                 INSERT INTO payment (officer_id, branch_id, owner_id, payment_type, amount_paid, date_paid, receipt_number)
                 VALUES (?, ?, ?, ?, ?, ?, ?);
@@ -204,7 +218,7 @@ public class PaymentService {
             ps4.setInt(1, officerId);
             ps4.setInt(2, branchId);
             ps4.setInt(3, ownerId);
-            ps4.setString(4, chosenType.equalsIgnoreCase("Violation") ? "Violation" : transactionDesc);
+            ps4.setString(4, paymentType);
             ps4.setDouble(5, amount);
             ps4.setDate(6, java.sql.Date.valueOf(java.time.LocalDate.now()));
             ps4.setString(7, nextReceipt);
@@ -216,7 +230,7 @@ public class PaymentService {
                 paymentId = genKeys.getInt(1);
             }
 
-            // update table accordingly
+            // update violation or registration record
             if (chosenType.equalsIgnoreCase("Violation")) {
                 PreparedStatement updateV = conn.prepareStatement(
                         "UPDATE violation SET status = 'Cleared', payment_id = ? WHERE violation_id = ?");
@@ -236,44 +250,20 @@ public class PaymentService {
                 updateR.executeUpdate();
             }
 
-            // receipt info
-            PreparedStatement ps5 = conn.prepareStatement("""
-                SELECT o.first_name, o.last_name, b.branch_name, f.first_name AS off_fn, f.last_name AS off_ln
-                FROM owner o
-                JOIN branch b ON b.branch_id = ?
-                JOIN officer f ON f.officer_id = ?
-                WHERE o.owner_id = ?;
-            """);
-            ps5.setInt(1, branchId);
-            ps5.setInt(2, officerId);
-            ps5.setInt(3, ownerId);
-            ResultSet receiptInfo = ps5.executeQuery();
-
-            String ownerName = "", branchName = "", officerName = "";
-            if (receiptInfo.next()) {
-                ownerName = receiptInfo.getString("first_name") + " " + receiptInfo.getString("last_name");
-                branchName = receiptInfo.getString("branch_name");
-                officerName = receiptInfo.getString("off_fn") + " " + receiptInfo.getString("off_ln");
-            }
-
             // display receipt
             System.out.println("\n==================================================");
             System.out.println("                 LTO PAYMENT RECEIPT              ");
             System.out.println("==================================================");
             System.out.println("Receipt no.     : " + nextReceipt);
             System.out.println("Payment ID      : " + paymentId);
-            System.out.println("Owner name      : " + ownerName);
-            System.out.println("Transaction     : " + transactionDesc);
+            System.out.println("Transaction     : " + paymentType);
             if (plateNo != null)
                 System.out.println("Plate Number    : " + plateNo);
             System.out.println("Amount paid     : PHP " + amount);
             System.out.println("Date paid       : " + java.time.LocalDate.now());
-            System.out.println("Processed by    : " + officerName);
-            System.out.println("Branch          : " + branchName);
             System.out.println("Status          : CLEARED");
-            if (change > 0) {
+            if (change > 0)
                 System.out.println("Change given    : PHP " + change);
-            }
             System.out.println("==================================================");
             System.out.println("      Thank you for settling your payment!        ");
             System.out.println("==================================================\n");
@@ -291,7 +281,7 @@ public class PaymentService {
     }
 
     // ==============================================================
-    // 2. VIEW PAYMENT HISTORY (based on actual payment table)
+    // 2. VIEW PAYMENT HISTORY (based on payment table)
     // ==============================================================
     public void viewPaymentHistory(Scanner scanner) {
         try {
