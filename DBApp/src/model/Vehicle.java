@@ -10,7 +10,7 @@ public class Vehicle {
 	// series
 	private String color;
 	private String model;
-	private int manufactureDate; // year
+	private int manufactureDate; 
 	private int ownerId; // foreign key to Owner
 
 	public Vehicle() {}
