@@ -9,12 +9,11 @@ public class Vehicle {
 	// make
 	// series
 	private String color;
-	private String model;
 	private int manufactureDate; 
 
 	public Vehicle() {}
 
-	public Vehicle(int vehicleId, String plateNumber, String model, int manufactureDate,
+	public Vehicle(int vehicleId, String plateNumber, int manufactureDate,
 				   int mvFileNo, int chassisNo, int engineNo, String color) {
 		this.vehicleId = vehicleId;
 		this.plateNumber = plateNumber;
@@ -31,8 +30,6 @@ public class Vehicle {
 
 	public void setPlateNumber(String plateNumber) { this.plateNumber = plateNumber; }
 
-	public void setModel(String model) { this.model = model; }
-
 	public void setManufactureDate(int manufactureDate) { this.manufactureDate = manufactureDate; }
 
 	public void setMvFileNo(int mvFileNo) { this.mvFileNo = mvFileNo; }
@@ -47,8 +44,6 @@ public class Vehicle {
 	public int getVehicleId() { return vehicleId; }
 
 	public String getPlateNumber() { return plateNumber; }
-
-	public String getModel() { return model; }
 
 	public int getManufactureDate() { return manufactureDate; }
 
