@@ -9,7 +9,7 @@ public class PaymentService {
 
     private Connection conn;
 
-    // connects to database when this class is created
+    // connects to database 
     public PaymentService() {
         conn = DatabaseConnection.getConnection();
     }
@@ -23,7 +23,7 @@ public class PaymentService {
             System.out.println("                 SETTLE PAYMENT                   ");
             System.out.println("--------------------------------------------------");
 
-            // turn off auto commit so that everything happens together
+            // turn off auto commit so that everything happens together later on
             conn.setAutoCommit(false);
 
             // ask for id, but make sure it's numeric
@@ -280,3 +280,4 @@ public class PaymentService {
         }
     }
 }
+
