@@ -1,8 +1,8 @@
 package model;
 
 public class Vehicle {
-	private int vehicleId;
-	private String plateNumber; // primary key
+	private int vehicleId; // primary key
+	private String plateNumber;
 	private int mvFileNo;
 	private int chassisNo;
 	private int engineNo;
