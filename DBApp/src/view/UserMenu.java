@@ -1,8 +1,14 @@
 package view;
 import java.util.Scanner;
+import service.PaymentService;
 
 public class UserMenu {
-    
+    private PaymentService paymentService;
+
+    public UserMenu() {
+        this.paymentService = new PaymentService();
+    }
+
     public void viewUserMenu() {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
@@ -37,13 +43,14 @@ public class UserMenu {
                     //viewViolations();
                     break;
                 case "5":
-                    //settlePayment(scanner);
+                    paymentService.settlePayment(scanner);
                     break;
                 case "6":
-                    //viewPaymentHistory();
+                    paymentService.viewPaymentHistory(scanner);
                     break;
                 case "7":
                     System.out.println("Logging out...");
+                    model.Session.clear();
                     running = false;
                     break;
                 default:
@@ -57,6 +64,6 @@ public class UserMenu {
             }
         }
 
-        // Note: do not close System.in-scanner here to avoid closing System.in for callers.
+        // note: dont add close System.in-scanner here to avoid closing System.in for callers
     }
 }
