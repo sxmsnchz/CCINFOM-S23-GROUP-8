@@ -11,12 +11,12 @@ public class Owner {
     private String province;
     private String region;
     private int licenseNumber;
-    //password: to add later 
+    private String password; 
 
     public Owner() {} 
 
-    public Owner(int ownerId, String firstName, String lastName,
-                int postal_code, String street, String barangay, String city, String province, String region, int licenseNumber) {
+    public Owner(int ownerId, String firstName, String lastName, int postal_code, String street,
+                 String barangay, String city, String province, String region, int licenseNumber, String password) {
         this.ownerId = ownerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -27,6 +27,7 @@ public class Owner {
         this.province = province;
         this.region = region;
         this.licenseNumber = licenseNumber;
+        this.password = password;
     }
 
     //setters
@@ -50,7 +51,7 @@ public class Owner {
 
     public void setRegion(String region) { this.region = region; }
 
-
+    public void setPassword(String password) { this.password = password; }
     //getters
     public int getOwnerId() { return ownerId; }
 
@@ -71,6 +72,8 @@ public class Owner {
     public String getBarangay() { return barangay; }
 
     public String getRegion() { return region; }
+
+    public String getPassword() { return password; }
 
 }
 
