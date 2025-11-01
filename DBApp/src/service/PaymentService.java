@@ -1,6 +1,7 @@
 package service;
 
 import database.DatabaseConnection;
+import model.Session;
 import java.sql.*;
 import java.util.Scanner;
 import view.UserMenu;
@@ -16,7 +17,6 @@ import view.UserMenu;
  * It connects directly to the database, performs validation,
  * auto-generates receipts, and updates records accordingly.
  */
-
 public class PaymentService {
 
     private Connection conn; // connection object for MySQL database
@@ -27,7 +27,7 @@ public class PaymentService {
     }
 
     // ==============================================================
-    // 1. SETTLE PAYMENT  (used by user to pay for unpaid violations or registrations)
+    // 1. SETTLE PAYMENT (used by user to pay for unpaid violations or registrations)
     // ==============================================================
     public void settlePayment(Scanner scanner) {
         try {
@@ -35,28 +35,11 @@ public class PaymentService {
             System.out.println("                 SETTLE PAYMENT                   ");
             System.out.println("--------------------------------------------------");
 
-            // ask for id (make sure numeric)
-            System.out.print("Enter your ID: ");
-            String inputId = scanner.nextLine().trim();
+            int ownerId = Session.loggedInOwnerId; // current logged-in user
 
-            // check if id is numeric
-            if (!inputId.matches("\\d+")) {
-                System.out.println("Invalid ID. Please enter numbers only.");
-                redirectToMenu(scanner);
-                return;
-            }
-
-            int ownerId = Integer.parseInt(inputId);
-
-            // check if id exists in owner table
-            PreparedStatement checkOwner = conn.prepareStatement(
-                    "SELECT owner_id FROM owner WHERE owner_id = ?");
-            checkOwner.setInt(1, ownerId);
-            ResultSet ownerResult = checkOwner.executeQuery();
-
-            // if ID not found, redirect user back
-            if (!ownerResult.next()) {
-                System.out.println("ID does not exist. Redirecting back to user page...");
+            // safety check
+            if (ownerId == 0) {
+                System.out.println("Error: No user logged in. Redirecting...");
                 redirectToMenu(scanner);
                 return;
             }
@@ -81,12 +64,12 @@ public class PaymentService {
                 FROM registration r
                 WHERE r.owner_id = ? AND (r.payment_id IS NULL OR r.expiry_date < CURDATE());
                 """;
+
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, ownerId);
             ps.setInt(2, ownerId);
             ResultSet rs = ps.executeQuery();
 
-            // display all unpaid transactions
             System.out.println("\nUnpaid Transactions:");
             System.out.println("--------------------------------------------------");
             boolean hasUnpaid = false;
@@ -104,7 +87,7 @@ public class PaymentService {
                 return;
             }
 
-            // ask user which type and ID they want to pay
+            // ask user which type and ID to pay
             System.out.println("--------------------------------------------------");
             System.out.print("Enter transaction type (Violation / Registration): ");
             String chosenType = scanner.nextLine().trim();
@@ -125,14 +108,13 @@ public class PaymentService {
 
             int chosenId = Integer.parseInt(inputTid);
 
-            // define variables to store transaction info
             double amount = 0;
             int branchId = 0;
             int officerId = 0;
             String plateNo = null;
             String transactionDesc = "";
 
-            // if it's a violation transaction
+            // fetch details depending on type
             if (chosenType.equalsIgnoreCase("Violation")) {
                 PreparedStatement ps2 = conn.prepareStatement("""
                     SELECT fine_amount, branch_id, officer_id, v.vehicle_id, ve.plate_no, v.violation_type
@@ -155,8 +137,7 @@ public class PaymentService {
                 plateNo = rs2.getString("plate_no");
                 transactionDesc = rs2.getString("violation_type");
 
-            // if it's a registration transaction (registration or renewal)
-            } else if (chosenType.equalsIgnoreCase("Registration")) {
+            } else { // Registration or Renewal
                 PreparedStatement ps3 = conn.prepareStatement("""
                     SELECT r.branch_id, r.officer_id, r.vehicle_id, r.payment_id, r.expiry_date, v.plate_no
                     FROM registration r
@@ -178,7 +159,6 @@ public class PaymentService {
                 int prevPay = rs3.getInt("payment_id");
                 Date expiry = rs3.getDate("expiry_date");
 
-                // determine registration type
                 if (prevPay != 0 && expiry != null) {
                     transactionDesc = "Renewal";
                     amount = 2500.00;
@@ -188,7 +168,6 @@ public class PaymentService {
                 }
             }
 
-            // process payment
             System.out.println("\nTotal to pay: Php " + amount);
             System.out.print("Enter amount you will pay: ");
             String inputAmount = scanner.nextLine().trim();
@@ -211,20 +190,24 @@ public class PaymentService {
             double change = userPayment > amount ? userPayment - amount : 0;
             System.out.println("Payment accepted. Processing...");
 
-            // generate next receipt number automatically
+            // auto-generate next receipt
             String latestReceipt = getLastReceiptNumber();
             String nextReceipt = generateNextReceipt(latestReceipt,
                     chosenType.equalsIgnoreCase("Violation") ? "V" : "R");
 
-            // insert payment record into payment table
-            PreparedStatement ps4 = conn.prepareStatement(
-                    "INSERT INTO payment (officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES (?, ?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS);
+            // insert into payment table with owner_id and payment_type
+            PreparedStatement ps4 = conn.prepareStatement("""
+                INSERT INTO payment (officer_id, branch_id, owner_id, payment_type, amount_paid, date_paid, receipt_number)
+                VALUES (?, ?, ?, ?, ?, ?, ?);
+            """, Statement.RETURN_GENERATED_KEYS);
+
             ps4.setInt(1, officerId);
             ps4.setInt(2, branchId);
-            ps4.setDouble(3, amount);
-            ps4.setDate(4, java.sql.Date.valueOf(java.time.LocalDate.now()));
-            ps4.setString(5, nextReceipt);
+            ps4.setInt(3, ownerId);
+            ps4.setString(4, chosenType.equalsIgnoreCase("Violation") ? "Violation" : transactionDesc);
+            ps4.setDouble(5, amount);
+            ps4.setDate(6, java.sql.Date.valueOf(java.time.LocalDate.now()));
+            ps4.setString(7, nextReceipt);
             ps4.executeUpdate();
 
             ResultSet genKeys = ps4.getGeneratedKeys();
@@ -233,7 +216,7 @@ public class PaymentService {
                 paymentId = genKeys.getInt(1);
             }
 
-            // update relevant table (violation or registration)
+            // update table accordingly
             if (chosenType.equalsIgnoreCase("Violation")) {
                 PreparedStatement updateV = conn.prepareStatement(
                         "UPDATE violation SET status = 'Cleared', payment_id = ? WHERE violation_id = ?");
@@ -242,19 +225,18 @@ public class PaymentService {
                 updateV.executeUpdate();
             } else {
                 PreparedStatement updateR = conn.prepareStatement("""
-                        UPDATE registration
-                        SET payment_id = ?, 
-                            current_date_registered = CURDATE(),
-                            expiry_date = DATE_ADD(CURDATE(), INTERVAL 1 YEAR),
-                            status = 'ACTIVE'
-                        WHERE registration_id = ?;
-                        """);
+                    UPDATE registration
+                    SET payment_id = ?, current_date_registered = CURDATE(),
+                        expiry_date = DATE_ADD(CURDATE(), INTERVAL 1 YEAR),
+                        status = 'ACTIVE'
+                    WHERE registration_id = ?;
+                """);
                 updateR.setInt(1, paymentId);
                 updateR.setInt(2, chosenId);
                 updateR.executeUpdate();
             }
 
-            // fetch data for receipt display
+            // receipt info
             PreparedStatement ps5 = conn.prepareStatement("""
                 SELECT o.first_name, o.last_name, b.branch_name, f.first_name AS off_fn, f.last_name AS off_ln
                 FROM owner o
@@ -274,7 +256,7 @@ public class PaymentService {
                 officerName = receiptInfo.getString("off_fn") + " " + receiptInfo.getString("off_ln");
             }
 
-            // display final receipt for user
+            // display receipt
             System.out.println("\n==================================================");
             System.out.println("                 LTO PAYMENT RECEIPT              ");
             System.out.println("==================================================");
@@ -309,49 +291,26 @@ public class PaymentService {
     }
 
     // ==============================================================
-    // 2. VIEW PAYMENT HISTORY (shows all payments)
+    // 2. VIEW PAYMENT HISTORY (based on actual payment table)
     // ==============================================================
     public void viewPaymentHistory(Scanner scanner) {
         try {
+            int ownerId = Session.loggedInOwnerId;
+
             System.out.println("--------------------------------------------------");
             System.out.println("              VIEW PAYMENT HISTORY                ");
             System.out.println("--------------------------------------------------");
-            System.out.print("Enter your ID: ");
-            String inputId = scanner.nextLine().trim();
 
-            if (!inputId.matches("\\d+")) {
-                System.out.println("Invalid ID. Redirecting...");
-                redirectToMenu(scanner);
-                return;
-            }
-
-            int ownerId = Integer.parseInt(inputId);
-
-            // query that shows both violation and registration payments
-            String query = """
-                SELECT p.payment_id, p.amount_paid, p.date_paid, p.receipt_number,
-                       f.first_name AS officer_fn, f.last_name AS officer_ln, b.branch_name,
-                       'Violation' AS type
+            PreparedStatement ps = conn.prepareStatement("""
+                SELECT p.payment_id, p.payment_type, p.amount_paid, p.date_paid, p.receipt_number,
+                       f.first_name AS officer_fn, f.last_name AS officer_ln, b.branch_name
                 FROM payment p
                 JOIN officer f ON p.officer_id = f.officer_id
                 JOIN branch b ON p.branch_id = b.branch_id
-                JOIN violation v ON p.payment_id = v.payment_id
-                WHERE v.owner_id = ?
-                UNION
-                SELECT p.payment_id, p.amount_paid, p.date_paid, p.receipt_number,
-                       f.first_name AS officer_fn, f.last_name AS officer_ln, b.branch_name,
-                       'Registration' AS type
-                FROM payment p
-                JOIN officer f ON p.officer_id = f.officer_id
-                JOIN branch b ON p.branch_id = b.branch_id
-                JOIN registration r ON p.payment_id = r.payment_id
-                WHERE r.owner_id = ?
-                ORDER BY date_paid DESC;
-                """;
-
-            PreparedStatement ps = conn.prepareStatement(query);
+                WHERE p.owner_id = ?
+                ORDER BY p.date_paid DESC;
+            """);
             ps.setInt(1, ownerId);
-            ps.setInt(2, ownerId);
             ResultSet rs = ps.executeQuery();
 
             System.out.println("\nYour payment records:");
@@ -360,7 +319,7 @@ public class PaymentService {
 
             while (rs.next()) {
                 hasResults = true;
-                System.out.println("[" + rs.getString("type") + "]");
+                System.out.println("[" + rs.getString("payment_type") + "]");
                 System.out.println("Payment ID   : " + rs.getInt("payment_id"));
                 System.out.println("Amount Paid  : PHP " + rs.getDouble("amount_paid"));
                 System.out.println("Date Paid    : " + rs.getDate("date_paid"));
@@ -371,7 +330,7 @@ public class PaymentService {
             }
 
             if (!hasResults) {
-                System.out.println("No payments found for this ID.");
+                System.out.println("No payments found for your account.");
             }
 
         } catch (Exception e) {
