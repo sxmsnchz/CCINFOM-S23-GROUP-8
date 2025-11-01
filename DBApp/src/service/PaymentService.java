@@ -125,8 +125,8 @@ public class PaymentService {
 
             // if less than required fine
             if (userPayment < amount) {
-                System.out.println("Insufficient payment. Please pay the full amount.");
-                System.out.println("Redirecting back to unpaid violations...");
+                System.out.println("\nInsufficient payment. Please pay the full amount.");
+                System.out.println("Redirecting back to user page...");
                 redirectToMenu(scanner);
                 return;
             }
