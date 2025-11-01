@@ -3,23 +3,27 @@ import java.sql.Date;
 
 public class Payment {
     private int paymentId;
+    private int owner Id;
     private int officerId;
     private int branchId;
     private double amountPaid;
     private Date datePaid;
     private String receiptNumber;
+    private String paymentType;
 
     // constructors
     public Payment() {}
 
-    public Payment(int paymentId, int officerId, int branchId,
-                   double amountPaid, Date datePaid, String receiptNumber) {
+    public Payment(int paymentId, int ownerId, int officerId, int branchId,
+                   double amountPaid, Date datePaid, String receiptNumber, String paymentType) {
         this.paymentId = paymentId;
+        this.ownerId = ownerId;
         this.officerId = officerId;
         this.branchId = branchId;
         this.amountPaid = amountPaid;
         this.datePaid = datePaid;
         this.receiptNumber = receiptNumber;
+        this.paymentType = paymentType;
     }
 
     // Getters and Setters
@@ -29,6 +33,14 @@ public class Payment {
 
     public void setPaymentId(int paymentId) {
         this.paymentId = paymentId;
+    }
+    
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     public int getOfficerId() {
@@ -71,14 +83,12 @@ public class Payment {
         this.receiptNumber = receiptNumber;
     }
 
-    // to display later on
-    @Override
-    public String toString() {
-        return "Payment ID: " + paymentId +
-               " | Officer ID: " + officerId +
-               " | Branch ID: " + branchId +
-               " | Amount: ₱" + amountPaid +
-               " | Date: " + datePaid +
-               " | Receipt: " + receiptNumber;
+    public String getPaymentType() {
+        return paymentType;
     }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
+
 }
