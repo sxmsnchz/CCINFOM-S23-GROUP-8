@@ -17,7 +17,6 @@ public class Vehicle {
 				   int mvFileNo, int chassisNo, int engineNo, String color) {
 		this.vehicleId = vehicleId;
 		this.plateNumber = plateNumber;
-		this.model = model;
 		this.manufactureDate = manufactureDate;
 		this.mvFileNo = mvFileNo;
 		this.chassisNo = chassisNo;
