@@ -8,21 +8,21 @@ public class Registration {
     private int officerId; //foreign key to officer
     private Date firstDateRegistered;
     private Date currentDateRegistered;
-    private Date validUntil;
+    private Date expiryDate;
     private String status;
 
     public Registration() {}
 
     public Registration(int registrationId, int vehicleid,
                         int ownerId, int officerId, Date firstDateRegistered, Date currentDateRegistered,
-                        Date validUntil, String status) {
+                        Date expiryDate, String status) {
         this.registrationId = registrationId;
         this.vehicleId = vehicleid;
         this.ownerId = ownerId;
         this.officerId = officerId;
         this.firstDateRegistered = firstDateRegistered;
         this.currentDateRegistered = currentDateRegistered;
-        this.validUntil = validUntil;
+        this.expiryDate = expiryDate;
         this.status = status;
     }
 
@@ -39,7 +39,7 @@ public class Registration {
 
     public void setCurrentDateRegistered(Date currentDateRegistered) { this.currentDateRegistered = currentDateRegistered; }
 
-    public void setValidUntil(Date validUntil) { this.validUntil = validUntil; }
+    public void setExpiryDate(Date expiryDate) { this.expiryDate = expiryDate; }
 
     public void setStatus(String status) { this.status = status; }
 
@@ -63,11 +63,11 @@ public class Registration {
         String first = (firstDateRegistered != null) ? firstDateRegistered.toString() : "N/A";
         String current = (currentDateRegistered != null) ? currentDateRegistered.toString() : "N/A";
         String valid = (validUntil != null) ? validUntil.toString() : "N/A";
-        return String.format("RegID:%d | VehicleID:%d | OwnerID:%d | First:%s | Current:%s | ValidUntil:%s | Status:%s",
-                registrationId, vehicleId, ownerId, first, current, valid, status == null ? "N/A" : status);
+        return String.format("RegID:%d | VehicleID:%d | OwnerID:%d | First:%s | Current:%s | Expiry Date:%s | Status:%s",
+                registrationId, vehicleId, ownerId, first, current, expiry, status == null ? "N/A" : status);
     }
 
-    public Date getValidUntil() { return validUntil; }
+    public Date getExpiryDste() { return expiryDate; }
 
     public String getStatus() { return status; }
 }
