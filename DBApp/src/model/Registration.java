@@ -62,7 +62,7 @@ public class Registration {
     public String getSummary() {
         String first = (firstDateRegistered != null) ? firstDateRegistered.toString() : "N/A";
         String current = (currentDateRegistered != null) ? currentDateRegistered.toString() : "N/A";
-        String valid = (validUntil != null) ? validUntil.toString() : "N/A";
+        String expiry = (expiryDate != null) ? expiryDate.toString() : "N/A";
         return String.format("RegID:%d | VehicleID:%d | OwnerID:%d | First:%s | Current:%s | Expiry Date:%s | Status:%s",
                 registrationId, vehicleId, ownerId, first, current, expiry, status == null ? "N/A" : status);
     }
