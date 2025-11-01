@@ -55,7 +55,7 @@ public class Registration {
     public Date getFirstDateRegistered() { return firstDateRegistered; }
 
     public Date getCurrentDateRegistered() { return currentDateRegistered; }
-
+    
     public Date getExpiryDste() { return expiryDate; }
 
     public String getStatus() { return status; }
