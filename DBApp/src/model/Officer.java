@@ -5,15 +5,16 @@ public class Officer {
     private String firstName;
     private String lastName;
     private int branchId; //referencing branch FK
-    //TO ADD LATER ON: password
+    private String password;
     
     public Officer() {}
 
-    public Officer(int officerId, String firstName,String lastName, int branchId) {
+    public Officer(int officerId, String firstName,String lastName, int branchId, String password) {
         this.officerId = officerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.branchId = branchId;
+        this.password = password;
     }
 
     //setters
@@ -25,6 +26,8 @@ public class Officer {
 
     public void setBranchId(int branchId) { this.branchId = branchId; }
 
+    public void setPassword(String password) { this.password = password; }
+
     //getters
     public int getOfficerId() { return officerId; }
 
@@ -35,4 +38,7 @@ public class Officer {
     public int getBranchId() { return branchId; }
 
     public String getFullName() { return firstName + " " + lastName; }
+
+    public String getPassword() { return password; }
+    
 }
