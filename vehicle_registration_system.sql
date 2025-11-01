@@ -114,6 +114,32 @@ INSERT INTO Officer VALUES
 (11100009, 'Daniel', 'Ramos', 1009, 'InspectDR09!'),
 (11100010, 'Sophia', 'Castillo', 1010, 'CSophia*65');
 
+/* =======================================================
+   PAYMENT TABLE
+   ======================================================= */
+CREATE TABLE Payment (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    officer_id INT,
+    branch_id INT,
+    amount_paid DECIMAL(10,2),
+    date_paid DATE,
+    receipt_number VARCHAR(20) UNIQUE NOT NULL,
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+);
+
+INSERT INTO Payment (officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
+(11100006, 1006, 5000.00, '2025-07-08', 'V001'),
+(11100009, 1009, 2000.00, '2025-07-20', 'V002'),
+(11100003, 1003, 3000.00, '2025-08-03', 'V003'),
+(11100006, 1006, 10000.00, '2025-08-04', 'V004'),
+(11100003, 1003, 1500.00, '2025-08-03', 'R001'),
+(11100008, 1008, 7410.00, '2025-09-12', 'R002'),
+(11100008, 1008, 7410.00, '2024-11-05', 'R003'),
+(11100006, 1006, 1500.00, '2024-03-20', 'R004'),
+(11100009, 1009, 1500.00, '2024-09-12', 'R005'),
+(11100005, 1005, 1500.00, '2025-10-08', 'R006');
+
 
 /*=======================================
 				REGISTRATION TABLE
@@ -186,37 +212,3 @@ INSERT INTO Violation
 (123453, 0004, 11100008, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
 (123453, 0004, 11100008, 1008, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
 (123453, 0004, 11100008, 1008, 'Expired Registration', 3000.00, '2025-11-05', 'Unpaid', NULL);
-
-
-/* =======================================================
-   PAYMENT TABLE
-   ======================================================= */
-CREATE TABLE Payment (
-    payment_id INT AUTO_INCREMENT PRIMARY KEY,
-    officer_id INT,
-    branch_id INT,
-    amount_paid DECIMAL(10,2),
-    date_paid DATE,
-    receipt_number VARCHAR(20) UNIQUE NOT NULL,
-    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-);
-
-INSERT INTO Payment (officer_id, branch_id, amount_paid, date_paid, receipt_number) VALUES
-(11100006, 1006, 5000.00, '2025-07-08', 'V001'),
-(11100009, 1009, 2000.00, '2025-07-20', 'V002'),
-(11100003, 1003, 3000.00, '2025-08-03', 'V003'),
-(11100006, 1006, 10000.00, '2025-08-04', 'V004'),
-(11100003, 1003, 1500.00, '2025-08-03', 'R001'),
-(11100008, 1008, 7410.00, '2025-09-12', 'R002'),
-(11100008, 1008, 7410.00, '2024-11-05', 'R003'),
-(11100006, 1006, 1500.00, '2024-03-20', 'R004'),
-(11100009, 1009, 1500.00, '2024-09-12', 'R005'),
-(11100005, 1005, 1500.00, '2025-10-08', 'R006');
-
-
-
-
-
-
-
