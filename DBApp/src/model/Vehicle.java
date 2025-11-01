@@ -3,6 +3,7 @@ package model;
 import java.sql.Date;
 
 public class Vehicle {
+    private int vehicleId;
 	private String plateNumber; // primary key
 	private String model;
 	private int manufactureYear;
@@ -10,7 +11,8 @@ public class Vehicle {
 
 	public Vehicle() {}
 
-	public Vehicle(String plateNumber, String model, int manufactureYear, int ownerId) {
+	public Vehicle(int vehicleId, String plateNumber, String model, int manufactureYear, int ownerId) {
+        this.vehicleId = vehicleId;
 		this.plateNumber = plateNumber;
 		this.model = model;
 		this.manufactureYear = manufactureYear;
