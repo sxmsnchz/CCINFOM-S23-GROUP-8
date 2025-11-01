@@ -42,7 +42,7 @@ public class VehicleRegistrationHome {
     }
 
     // -------------------------------------------
-    // USER LOGIN
+    // USER LOGIN HERE
     // -------------------------------------------
     private static void userLogin(Scanner input) {
         try {
@@ -103,7 +103,7 @@ public class VehicleRegistrationHome {
     }
 
     // -------------------------------------------
-    // OFFICER LOGIN
+    // OFFICER LOGIN HERE
     // -------------------------------------------
     private static void officerLogin(Scanner input) {
         try {
