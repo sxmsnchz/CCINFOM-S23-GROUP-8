@@ -26,6 +26,18 @@ public class Registration {
         this.status = status;
     }
 
+    public Registration(int registrationId, int vehicleid,
+                        int ownerId, Date firstDateRegistered, Date currentDateRegistered,
+                        Date expiryDate, String status) {
+        this.registrationId = registrationId;
+        this.vehicleId = vehicleid;
+        this.ownerId = ownerId;
+        this.firstDateRegistered = firstDateRegistered;
+        this.currentDateRegistered = currentDateRegistered;
+        this.expiryDate = expiryDate;
+        this.status = status;
+    }
+
     // setters
     public void setRegistrationId(int registrationId) { this.registrationId = registrationId; }
 
@@ -56,7 +68,7 @@ public class Registration {
 
     public Date getCurrentDateRegistered() { return currentDateRegistered; }
     
-    public Date getExpiryDste() { return expiryDate; }
+    public Date getExpiryDate() { return expiryDate; }
 
     public String getStatus() { return status; }
 }

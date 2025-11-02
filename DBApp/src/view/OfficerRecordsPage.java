@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import model.Officer;
+import model.Registration;
 import service.OfficerService;
 
 public class OfficerRecordsPage {
@@ -27,10 +28,10 @@ public class OfficerRecordsPage {
 
             switch (input) {
                 case "1":
-                    printAllOfficers();
+                    viewAllOfficers();
                     break;
                 case "2":
-                    // viewRegistrationsProcessedByOfficer
+                    viewRegistrationsProcessedByOfficer(scanner);
                     break;
                 case "3":
                     //viewViolationsIssuedByOfficer
@@ -51,7 +52,7 @@ public class OfficerRecordsPage {
             }
         }
     }
-    public void printAllOfficers() {
+    public void viewAllOfficers() {
         OfficerService officerService = new OfficerService();
         List<Officer> officers = officerService.getAllOfficers();
 
@@ -70,5 +71,46 @@ public class OfficerRecordsPage {
             }
             System.out.println("--------------------------------------------------");
         }
+    }
+
+    public void viewRegistrationsProcessedByOfficer(Scanner scanner) {
+        OfficerService officerService = new OfficerService();
+        System.out.println("---------------------------------");
+        System.out.print("Please enter an officer ID: ");
+        String line = scanner.nextLine().trim();
+        int officerId;
+        try {
+            officerId = Integer.parseInt(line);
+        } catch (NumberFormatException nfe) {
+            System.out.println("Invalid officer ID. Returning to menu.");
+            return;
+        }
+
+        List<Registration> regs = officerService.getRegistrationsByOfficer(officerId);
+        if (regs == null || regs.isEmpty()) {
+            System.out.println("No registrations found for officer " + officerId + ".");
+            return;
+        }
+
+    // Print table header (Officer name instead of ID)
+    System.out.println("-------------------------------------------------------------------------------------------------------------");
+    System.out.printf("%-10s %-10s %-10s %-12s %-12s %-12s %-10s%n",
+        "RegID", "VehID", "OwnerID", "FirstReg", "CurrentReg", "Expiry", "Status");
+    System.out.println("-------------------------------------------------------------------------------------------------------------");
+
+    for (Registration r : regs) {
+        String first = r.getFirstDateRegistered() == null ? "" : r.getFirstDateRegistered().toString();
+        String current = r.getCurrentDateRegistered() == null ? "" : r.getCurrentDateRegistered().toString();
+        String expiry = r.getExpiryDate() == null ? "" : r.getExpiryDate().toString();
+
+        String status = r.getStatus() == null ? "" : r.getStatus();
+
+        // print: RegID, VehID, OwnerID, FirstReg, CurrentReg, Expiry, Status
+        System.out.printf("%-10d %-10d %-10d %-12s %-12s %-12s %-10s%n",
+            r.getRegistrationId(), r.getVehicleId(), r.getOwnerId(),
+            first, current, expiry, status);
+    }
+
+    System.out.println("-------------------------------------------------------------------------------------------------------------");
     }
 }
