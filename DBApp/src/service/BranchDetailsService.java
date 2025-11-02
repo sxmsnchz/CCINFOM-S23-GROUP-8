@@ -33,8 +33,9 @@ public class BranchDetailsService {
             PreparedStatement ps = conn.prepareStatement(branchQuery);
             ResultSet branchRS = ps.executeQuery();
 
-            boolean hasBranches = false;
-
+            boolean hasBranches = false; //flag to track if any branches exist
+            
+            // iterate through all branch records
             while (branchRS.next()) {
                 hasBranches = true;
 
@@ -76,6 +77,7 @@ public class BranchDetailsService {
                     System.out.println(" - " + formattedName);
                 }
 
+                // if no officers are recorded in that branch
                 if (!hasOfficers) {
                     System.out.println(" - No officers recorded for this branch.");
                 }
@@ -95,6 +97,7 @@ public class BranchDetailsService {
                 System.out.println("\nRegistrations Processed:");
                 boolean hasRegistrations = false;
 
+                // list each registration record found for this branch
                 while (regRS.next()) {
                     hasRegistrations = true;
                     int regId = regRS.getInt("registration_id");
@@ -122,9 +125,10 @@ public class BranchDetailsService {
             System.out.println("         End of Branch Directory.                 ");
             System.out.println("==================================================");
 
-        } catch (Exception e) {
+        } catch (Exception e) { // error handling in case of SQL issues
             System.out.println("Error displaying branch details: " + e.getMessage());
         }
     }
 }
+
 
