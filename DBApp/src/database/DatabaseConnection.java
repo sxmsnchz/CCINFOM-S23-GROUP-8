@@ -16,7 +16,7 @@ public class DatabaseConnection {
         try {
             if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                System.out.println("Connected to MySQL successfully!");
+                System.out.println("Welcome!");
             }
         } catch (SQLException e) {
             System.out.println("Database connection failed: " + e.getMessage());
