@@ -82,7 +82,7 @@ public class RegistrationsByBranch {
             int grandTotal = 0;
 
             System.out.println("----------------------------------------------------------------------------------");
-            System.out.printf("%-10s %-35s %s%n", "Branch ID", "Branch Name", "Total Registrations");
+            System.out.printf("%-10s %-45s %s%n", "Branch ID", "Branch Name", "Total Registrations");
             System.out.println("----------------------------------------------------------------------------------");
 
             while (rs.next()) { // moves cursor to next row; returns false when no more rows
@@ -91,7 +91,7 @@ public class RegistrationsByBranch {
                 String branchName = rs.getString("branch_name");
                 int total = rs.getInt("total_registrations"); // alias from COUNT(...)
 
-                System.out.printf("%-10d %-35s %d%n", branchId, branchName, total);
+                System.out.printf("%-10d %-45s %d%n", branchId, branchName, total);
                 grandTotal += total;
             }
 
@@ -130,4 +130,5 @@ public class RegistrationsByBranch {
         };
     }
 }
+
 
