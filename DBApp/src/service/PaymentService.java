@@ -205,9 +205,10 @@ public class PaymentService {
             System.out.println("Payment accepted. Processing...");
 
             // auto-generate next receipt
-            String latestReceipt = getLastReceiptNumber();
-            String nextReceipt = generateNextReceipt(latestReceipt,
-                    chosenType.equalsIgnoreCase("Violation") ? "V" : "R");
+            String prefix = chosenType.equalsIgnoreCase("Violation") ? "V" : "R";
+            String latestReceipt = getLastReceiptNumber(prefix);
+            String nextReceipt = generateNextReceipt(latestReceipt, prefix);
+
 
             // insert payment record
             PreparedStatement ps4 = conn.prepareStatement("""
@@ -328,17 +329,24 @@ public class PaymentService {
         }
     }
 
-    // helper: get last receipt number
-    private String getLastReceiptNumber() throws SQLException {
-        String last = null;
+    // helper: get last receipt number by prefix (V or R)
+    private String getLastReceiptNumber(String prefix) throws SQLException {
+    String last = null;
+
+        // finds the most recent receipt that starts with that prefix
         PreparedStatement ps = conn.prepareStatement(
-                "SELECT receipt_number FROM payment ORDER BY payment_id DESC LIMIT 1");
+            "SELECT receipt_number FROM payment WHERE receipt_number LIKE ? ORDER BY payment_id DESC LIMIT 1"
+        );
+
+        ps.setString(1, prefix + "%"); // will look like "V%" or "R%"
         ResultSet rs = ps.executeQuery();
+
         if (rs.next()) {
             last = rs.getString("receipt_number");
         }
         return last;
     }
+
 
     // helper: generate next receipt number
     private String generateNextReceipt(String lastReceipt, String prefix) {
