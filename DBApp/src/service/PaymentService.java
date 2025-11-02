@@ -84,7 +84,7 @@ public class PaymentService {
                         " | " + rs.getString("description") +
                         " | Amount: Php " + rs.getDouble("amount"));
             }
-
+            // If no unpaid transactions found, go back to menu
             if (!hasUnpaid) {
                 System.out.println("You have no unpaid violations or registrations.");
                 redirectToMenu(scanner);
@@ -96,22 +96,24 @@ public class PaymentService {
             System.out.print("Enter transaction type (Violation / Registration): ");
             String chosenType = scanner.nextLine().trim();
 
+            // Validate type
             if (!chosenType.equalsIgnoreCase("Violation") && !chosenType.equalsIgnoreCase("Registration")) {
                 System.out.println("Invalid type. Redirecting...");
                 redirectToMenu(scanner);
                 return;
             }
 
-            System.out.print("Enter ID to pay: ");
+            System.out.print("Enter ID to pay: "); // Ask for ID to pay
             String inputTid = scanner.nextLine().trim();
-            if (!inputTid.matches("\\d+")) {
-                System.out.println("Invalid ID format.");
+            if (!inputTid.matches("\\d+")) { // must be numeric
+                System.out.println("Invalid ID format."); 
                 redirectToMenu(scanner);
                 return;
             }
 
             int chosenId = Integer.parseInt(inputTid);
 
+            // initialize variables to store details of the payment
             double amount = 0;
             int branchId = 0;
             int officerId = 0;
@@ -119,8 +121,9 @@ public class PaymentService {
             String transactionDesc = "";
             String paymentType = "";
 
-            // handle violation
+            // retrieve specific details based on transaction type
             if (chosenType.equalsIgnoreCase("Violation")) {
+                // Query violation details for the given violation_id
                 PreparedStatement ps2 = conn.prepareStatement("""
                     SELECT fine_amount, branch_id, officer_id, v.vehicle_id, ve.plate_no, v.violation_type
                     FROM violation v
@@ -136,6 +139,7 @@ public class PaymentService {
                     return;
                 }
 
+                // Extract data for payment
                 amount = rs2.getDouble("fine_amount");
                 branchId = rs2.getInt("branch_id");
                 officerId = rs2.getInt("officer_id");
@@ -166,6 +170,7 @@ public class PaymentService {
                 int prevPay = rs3.getInt("payment_id");
                 Date expiry = rs3.getDate("expiry_date");
 
+                // Determine whether it’s a new registration or renewal
                 if (expiry == null && prevPay == 0) {
                     transactionDesc = "New Registration";
                     paymentType = "Registration";
@@ -201,6 +206,7 @@ public class PaymentService {
                 return;
             }
 
+            // Calculate change (if paid more than amount)
             double change = userPayment > amount ? userPayment - amount : 0;
             System.out.println("Payment accepted. Processing...");
 
@@ -208,7 +214,6 @@ public class PaymentService {
             String prefix = chosenType.equalsIgnoreCase("Violation") ? "V" : "R";
             String latestReceipt = getLastReceiptNumber(prefix);
             String nextReceipt = generateNextReceipt(latestReceipt, prefix);
-
 
             // insert payment record
             PreparedStatement ps4 = conn.prepareStatement("""
@@ -225,6 +230,7 @@ public class PaymentService {
             ps4.setString(7, nextReceipt);
             ps4.executeUpdate();
 
+            // Retrieve auto-generated payment_id
             ResultSet genKeys = ps4.getGeneratedKeys();
             int paymentId = 0;
             if (genKeys.next()) {
@@ -348,7 +354,7 @@ public class PaymentService {
     }
 
 
-    // helper: generate next receipt number
+    // helper: generate next receipt number by incrementing numeric portion
     private String generateNextReceipt(String lastReceipt, String prefix) {
         if (lastReceipt == null) {
             return prefix + "001";
@@ -361,3 +367,4 @@ public class PaymentService {
         }
     }
 }
+
