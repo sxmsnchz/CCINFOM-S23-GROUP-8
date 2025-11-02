@@ -1,6 +1,7 @@
 package view;
 
 import java.util.Scanner;
+import service.BranchDetailsService;
 
 public class OfficerMenu {
 
@@ -46,7 +47,8 @@ public class OfficerMenu {
 					//viewVehicleList();
 					break;
 				case "7":
-					//viewBranchList();
+					BranchDetailsService branchService = new BranchDetailsService();
+					branchService.viewAllBranchDetails();
 					break;
 				case "8":
 					//generateReports();
