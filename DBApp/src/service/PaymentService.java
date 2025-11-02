@@ -15,7 +15,7 @@ import view.UserMenu;
  *   2. View their complete payment history.
  *
  * It connects directly to the database, performs validation,
- * auto-generates receipts, and updates records accordingly.
+ * auto-generates receipts, and updates the records accordingly.
  */
 public class PaymentService {
 
@@ -367,4 +367,5 @@ public class PaymentService {
         }
     }
 }
+
 
