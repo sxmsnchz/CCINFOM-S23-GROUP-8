@@ -55,9 +55,7 @@ public class BranchDetailsService {
                 System.out.println("Address     : " + street + ", " + barangay + ", " + city + ", " + province + " (" + postalCode + ")");
                 System.out.println("Region      : " + region);
 
-                // =========================================================
                 // OFFICERS ASSIGNED TO THIS BRANCH
-                // =========================================================
                 String officerQuery = """
                     SELECT first_name, last_name
                     FROM officer
@@ -82,9 +80,7 @@ public class BranchDetailsService {
                     System.out.println(" - No officers recorded for this branch.");
                 }
 
-                // =========================================================
                 // REGISTRATIONS PROCESSED IN THIS BRANCH
-                // =========================================================
                 String regQuery = """
                     SELECT r.registration_id, v.plate_no, r.status
                     FROM registration r
@@ -131,3 +127,4 @@ public class BranchDetailsService {
         }
     }
 }
+
