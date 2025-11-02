@@ -18,8 +18,8 @@ public class OfficerRecordsPage {
             System.out.println("                    OFFICER LIST                  ");
             System.out.println("--------------------------------------------------");
             System.out.println("[1] View All Officers");
-            System.out.println("[2] Registrations Processed by an Officer");
-            System.out.println("[3] Violations Issued by an Officer");
+            System.out.println("[2] View Registrations Processed by an Officer");
+            System.out.println("[3] View Violations Issued by an Officer");
             System.out.println("[4] Go Back");
             System.out.println("--------------------------------------------------");
             System.out.print("Enter your choice: ");
@@ -34,7 +34,7 @@ public class OfficerRecordsPage {
                     viewRegistrationsProcessedByOfficer(scanner);
                     break;
                 case "3":
-                    //viewViolationsIssuedByOfficer
+                    viewViolationsIssuedByOfficer(scanner);
                     break;
                 case "4":
                     System.out.println("Going back...");
@@ -112,5 +112,41 @@ public class OfficerRecordsPage {
     }
 
     System.out.println("-------------------------------------------------------------------------------------------------------------");
+    }
+
+    public void viewViolationsIssuedByOfficer(Scanner scanner) {
+        OfficerService officerService = new OfficerService();
+        System.out.println("---------------------------------");
+        System.out.print("Please enter an officer ID: ");
+        String line = scanner.nextLine().trim();
+        int officerId;
+        try {
+            officerId = Integer.parseInt(line);
+        } catch (NumberFormatException nfe) {
+            System.out.println("Invalid officer ID. Returning to menu.");
+            return;
+        }
+
+        List<model.Violation> violations = officerService.getViolationsByOfficer(officerId);
+        if (violations == null || violations.isEmpty()) {
+            System.out.println("No violations found for officer " + officerId + ".");
+            return;
+        }
+
+        // Print header
+        System.out.println("---------------------------------------------------------------------------------------");
+        System.out.printf("%-12s %-12s %-10s %-20s %-12s %-10s %-10s%n",
+                "ViolationID", "VehicleID", "OwnerID", "Type", "Date", "Fine", "Status");
+        System.out.println("---------------------------------------------------------------------------------------");
+
+        for (model.Violation v : violations) {
+            String date = v.getViolationDate() == null ? "" : v.getViolationDate().toString();
+            String type = v.getViolationType() == null ? "" : v.getViolationType();
+            String status = v.getStatus() == null ? "" : v.getStatus();
+            System.out.printf("%-12d %-12d %-10d %-20s %-12s %-10.2f %-10s%n",
+                    v.getViolationId(), v.getVehicleId(), v.getOwnerId(), type, date, v.getFineAmount(), status);
+        }
+
+        System.out.println("----------------------------------------------------------------------------------------");
     }
 }

@@ -17,6 +17,46 @@ public class OfficerService {
     public OfficerService() {
         con = DatabaseConnection.getConnection();
     }
+
+    /**
+     * Return violations issued by a specific officer.
+     * @param officerId the officer_id to filter by
+     * @return list of Violation objects (may be empty)
+     */
+    public List<model.Violation> getViolationsByOfficer(int officerId) {
+        List<model.Violation> violations = new ArrayList<>();
+        if (con == null) return violations;
+
+        String sql = "SELECT violation_id, vehicle_id, owner_id, branch_id, officer_id, payment_id, violation_type, violation_date, fine_amount, status "
+                   + "FROM violation WHERE officer_id = ? ORDER BY violation_date DESC";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, officerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("violation_id");
+                    int vehicleId = rs.getInt("vehicle_id");
+                    int ownerId = rs.getInt("owner_id");
+                    int branchId = rs.getInt("branch_id");
+                    int offId = rs.getInt("officer_id");
+                    int paymentId = rs.getInt("payment_id");
+                    String type = rs.getString("violation_type");
+                    java.sql.Date date = rs.getDate("violation_date");
+                    double fine = rs.getDouble("fine_amount");
+                    String status = rs.getString("status");
+
+                    model.Violation v = new model.Violation(id, vehicleId, ownerId, branchId, offId, type, date, fine, status);
+                    v.setPaymentId(paymentId);
+                    violations.add(v);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to query violations for officer " + officerId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return violations;
+    }
     
     /**
      * Return registrations processed by a specific officer.

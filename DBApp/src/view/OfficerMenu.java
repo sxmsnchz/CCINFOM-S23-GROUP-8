@@ -12,8 +12,9 @@ import model.Session;
  * to branch records, reports, and other administrative features.
  */
 public class OfficerMenu {
-
+	OfficerRecordsPage officerRecordsPage = new OfficerRecordsPage();
     public void viewOfficerMenu() {
+		
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
@@ -24,7 +25,7 @@ public class OfficerMenu {
             System.out.println("[1] Record New Violation");
             System.out.println("[2] View All Violations");
             System.out.println("[3] View All Registrations");
-            System.out.println("[4] View Officer List");
+            System.out.println("[4] View Officer Records");
             System.out.println("[5] View Owner List");
             System.out.println("[6] View Vehicle List");
             System.out.println("[7] View Branch List");
@@ -49,7 +50,7 @@ public class OfficerMenu {
                     break;
 
                 case "4":
-                    System.out.println("\n[Feature: View Officer List] (to be implemented)\n");
+                    officerRecordsPage.viewOfficerPage();
                     break;
 
                 case "5":
