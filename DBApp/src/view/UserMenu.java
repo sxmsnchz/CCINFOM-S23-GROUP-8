@@ -1,8 +1,18 @@
 package view;
+
 import java.util.Scanner;
 import service.PaymentService;
+import model.Session;
 
+/**
+ * UserMenu.java
+ *
+ * Displays the main dashboard for vehicle owners.
+ * Allows them to manage their registrations, view vehicles, view violations,
+ * make payments, and view payment history.
+ */
 public class UserMenu {
+
     private PaymentService paymentService;
 
     public UserMenu() {
@@ -31,16 +41,16 @@ public class UserMenu {
 
             switch (input) {
                 case "1":
-                   // registerVehicle();
+                    System.out.println("\n[Feature: Register Vehicle] (to be implemented)\n");
                     break;
                 case "2":
-                    //renewRegistration();
+                    System.out.println("\n[Feature: Renew Registration] (to be implemented)\n");
                     break;
                 case "3":
-                    //viewVehicles();
+                    System.out.println("\n[Feature: View Vehicles] (to be implemented)\n");
                     break;
                 case "4":
-                    //viewViolations();
+                    System.out.println("\n[Feature: View Violations] (to be implemented)\n");
                     break;
                 case "5":
                     paymentService.settlePayment(scanner);
@@ -50,7 +60,7 @@ public class UserMenu {
                     break;
                 case "7":
                     System.out.println("Logging out...");
-                    model.Session.clear();
+                    Session.clear();
                     running = false;
                     break;
                 default:
@@ -64,6 +74,6 @@ public class UserMenu {
             }
         }
 
-        // note: dont add close System.in-scanner here to avoid closing System.in for callers
+        // note: do not close System.in-scanner here to avoid closing System.in for callers
     }
 }
