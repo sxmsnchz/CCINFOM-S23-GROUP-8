@@ -17,6 +17,12 @@ public class Officer {
         this.password = password;
     }
 
+    public Officer(int officerId, String firstName, String lastName) {
+        this.officerId = officerId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     //setters
     public void setOfficerId(int officerId) { this.officerId = officerId; }
 
@@ -41,4 +47,13 @@ public class Officer {
 
     public String getPassword() { return password; }
     
+    @Override
+    public String toString() {
+        // print key fields in a compact, human-readable form
+        return String.format("Officer{id=%d, name='%s', branchId=%d}",
+                officerId,
+                getFullName() == null ? "" : getFullName().trim(),
+                branchId);
+    }
+
 }
