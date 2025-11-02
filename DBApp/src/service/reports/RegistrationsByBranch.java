@@ -35,7 +35,7 @@ public class RegistrationsByBranch {
             System.out.print("Enter month (1-12): ");
             String monthInput = scanner.nextLine().trim();
 
-            if (!monthInput.matches("^(0?[1-9]|1[0-2])$")) {
+            if (!monthInput.matches("^(0?[1-9]|1[0-2])$")) { // check if valid
                 System.out.println("Invalid month. Please enter a number between 1 and 12.");
                 return;
             }
@@ -46,7 +46,7 @@ public class RegistrationsByBranch {
             System.out.print("Enter year (e.g., 2025): ");
             String yearInput = scanner.nextLine().trim();
 
-            if (!yearInput.matches("^\\d{4}$")) {
+            if (!yearInput.matches("^\\d{4}$")) { // check if valid
                 System.out.println("Invalid year format. Please enter a 4-digit year.");
                 return;
             }
@@ -56,6 +56,8 @@ public class RegistrationsByBranch {
             System.out.println("\nGenerating report for " + getMonthName(month) + " " + year + "...\n");
 
             // query: total registrations per branch for selected month/year
+            // LEFT JOIN ensures we still see branches even if they have 0 registrations in that month/year
+            // The month/year filters are in the JOIN condition so the COUNT() returns 0 (not NULL) for branches with no rows
             String query = """
                 SELECT 
                     b.branch_id,
@@ -70,9 +72,10 @@ public class RegistrationsByBranch {
                 ORDER BY b.branch_id ASC;
                 """;
 
+            // create a PreparedStatement from the query string
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, month);
-            ps.setInt(2, year);
+            ps.setInt(1, month); // bind month to the 1st ?
+            ps.setInt(2, year); // bind year  to the 2nd ?
             ResultSet rs = ps.executeQuery();
 
             boolean hasResults = false;
@@ -82,11 +85,11 @@ public class RegistrationsByBranch {
             System.out.printf("%-10s %-35s %s%n", "Branch ID", "Branch Name", "Total Registrations");
             System.out.println("----------------------------------------------------------------------------------");
 
-            while (rs.next()) {
+            while (rs.next()) { // moves cursor to next row; returns false when no more rows
                 hasResults = true;
                 int branchId = rs.getInt("branch_id");
                 String branchName = rs.getString("branch_name");
-                int total = rs.getInt("total_registrations");
+                int total = rs.getInt("total_registrations"); // alias from COUNT(...)
 
                 System.out.printf("%-10d %-35s %d%n", branchId, branchName, total);
                 grandTotal += total;
@@ -127,3 +130,4 @@ public class RegistrationsByBranch {
         };
     }
 }
+
