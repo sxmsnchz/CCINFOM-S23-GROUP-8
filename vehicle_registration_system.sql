@@ -82,11 +82,11 @@ CREATE TABLE Payment (
     receipt_number VARCHAR(20) UNIQUE NOT NULL,
 	payment_type ENUM('Violation', 'Registration', 'Renewal') NOT NULL,
 	FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
-		ON DELETE CASCADE ON UPDATE CASCADE,
+		ON UPDATE CASCADE,
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
 	CHECK (amount_paid > 0)
 );
 
@@ -107,15 +107,15 @@ CREATE TABLE Registration (
     status ENUM('ACTIVE', 'INACTIVE', 'EXPIRED') DEFAULT 'INACTIVE',
     PRIMARY KEY (registration_id),
     FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
     FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
 	  FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-        ON DELETE SET NULL ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
-       ON DELETE CASCADE ON UPDATE CASCADE,
+       ON UPDATE CASCADE,
 	CHECK (expiry_date IS NULL OR expiry_date > current_date_registered)
 );
 
@@ -135,15 +135,15 @@ CREATE TABLE Violation (
     status VARCHAR(20) DEFAULT 'Unpaid',
     payment_id INT,
     FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
     FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON UPDATE CASCADE,
     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-       ON DELETE SET NULL ON UPDATE CASCADE,
+       ON UPDATE CASCADE,
 	CHECK (fine_amount > 0)
 );
 
