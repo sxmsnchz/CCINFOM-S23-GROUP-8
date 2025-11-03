@@ -62,7 +62,8 @@ CREATE TABLE Officer (
     last_name VARCHAR(20) NOT NULL,
     branch_id NOT NULL,
     password VARCHAR(50) NOT NULL,
-    FOREIGN KEY (branch_id) REFERENCES branch(branch_id) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
+        ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 /* =======================================================
