@@ -6,9 +6,9 @@ USE vehicle_registration_system;
 =========================================
 */
 CREATE TABLE Vehicle (
-	  vehicle_id INT,
+    vehicle_id INT,
     plate_no VARCHAR(7) NOT NULL UNIQUE,
-	  manufacture_date DATE,
+	manufacture_date DATE,
     mv_file_no BIGINT NOT NULL UNIQUE,
     chassis_no VARCHAR(17) NOT NULL UNIQUE,
     engine_no VARCHAR(12) NOT NULL UNIQUE,
@@ -48,8 +48,8 @@ CREATE TABLE Branch (
     city VARCHAR(50) NOT NULL,
     province VARCHAR(50) NOT NULL,
     postal_code VARCHAR(10) NOT NULL,
-    contact number VARCHAR(15) NOT NULL,
     region VARCHAR(50) NOT NULL,
+	contact number VARCHAR(15) NOT NULL,
 );
 
 /*=======================================
@@ -70,14 +70,14 @@ CREATE TABLE Officer (
    ======================================================= */
 CREATE TABLE Payment (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
-	  owner_id INT NOT NULL,
+	owner_id INT NOT NULL,
     officer_id INT NOT NULL,
     branch_id INT NOT NULL,
     amount_paid DECIMAL(10,2) NOT NULL,
     date_paid DATE NOT NULL,
     receipt_number VARCHAR(20) UNIQUE NOT NULL,
-	  payment_type ENUM('Violation', 'Registration', 'Renewal') NOT NULL,
-	  FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
+	payment_type ENUM('Violation', 'Registration', 'Renewal') NOT NULL,
+	FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
@@ -90,7 +90,7 @@ CREATE TABLE Payment (
 =========================================
 */
 CREATE TABLE Registration (
-	  registration_id INT,
+	registration_id INT,
     vehicle_id INT NOT NULL
     owner_id INT NOT NULL,
     payment_id INT,
@@ -165,16 +165,16 @@ INSERT INTO Owner VALUES
 (123459, 'Rohann', 'Dizon', 'Leon St.', 'Sta. Cruz', 'Koranadal City', 'South Cotabato', 'Region XII', 9506, 'p4ssw0rd123!!', 'N01-12-123456');
 
 INSERT INTO Branch VALUES
-(1001, 'LTO Paranaque District Office', 'Irasan', 'San Dionisio', 'Paranaque City', 'Metro Manila', 1700, 'NCR'),
-(1002, 'LTO Las Pinas District Office', 'Alabang Zapote Rd', 'Talon Uno', 'Las Pinas City', 'Metro Manila', 1747, 'NCR'),
-(1003, 'LTO San Juan District Office', 'North Domingo', 'Rivera', 'San Juan City', 'Metro Manila', 1500, 'NCR'),
-(1004, 'LTO Muntinlupa Office', 'Theater Dr', 'Ayala Alabang', 'Muntinlupa City', 'Metro Manila', 1780, 'NCR'),
-(1005, 'LTO Quezon City District Office', 'East Ave.', 'Pinyahan', 'Quezon City', 'Metro Manila', 1100, 'NCR'),
-(1006, 'LTO Taguig Extension Office', 'Radiant St.', 'Western Bicutan', 'Taguig City', 'Metro Manila', 1630, 'NCR'),
-(1007, 'LTO Cebu City District Office', 'General Maxilom Ave.', 'Carreta', 'Cebu City', 'Cebu', 6000, 'Region VII'),
-(1008, 'LTO Mandaue City District Office', 'Fortuna St.', 'Bakilid', 'Mandaue City', 'Cebu', 6014, 'Region VII'),
-(1009, 'LTO Baguio Office', 'Polo Field', 'Pacdal', 'Baguio City', 'Benguet', 2600, 'CAR'),
-(1010, 'LTO Regional Office XII - Koronadal', 'Yellowbell', 'Sta. Cruz', 'Koronadal City', 'South Cotabato', 9506, 'Region XII');
+(1001, 'LTO Paranaque District Office', 'Irasan', 'San Dionisio', 'Paranaque City', 'Metro Manila', 1700, 'NCR', '+639171234567'),
+(1002, 'LTO Las Pinas District Office', 'Alabang Zapote Rd', 'Talon Uno', 'Las Pinas City', 'Metro Manila', 1747, 'NCR', '+639568902314'),
+(1003, 'LTO San Juan District Office', 'North Domingo', 'Rivera', 'San Juan City', 'Metro Manila', 1500, 'NCR', '+639084561239'),
+(1004, 'LTO Muntinlupa Office', 'Theater Dr', 'Ayala Alabang', 'Muntinlupa City', 'Metro Manila', 1780, 'NCR', '+639772341890'),
+(1005, 'LTO Quezon City District Office', 'East Ave.', 'Pinyahan', 'Quezon City', 'Metro Manila', 1100, 'NCR', '+639632208745'),
+(1006, 'LTO Taguig Extension Office', 'Radiant St.', 'Western Bicutan', 'Taguig City', 'Metro Manila', 1630, 'NCR', '+639958674210'),
+(1007, 'LTO Cebu City District Office', 'General Maxilom Ave.', 'Carreta', 'Cebu City', 'Cebu', 6000, 'Region VII', '+639215439876'),
+(1008, 'LTO Mandaue City District Office', 'Fortuna St.', 'Bakilid', 'Mandaue City', 'Cebu', 6014, 'Region VII', '+639484502361'),
+(1009, 'LTO Baguio Office', 'Polo Field', 'Pacdal', 'Baguio City', 'Benguet', 2600, 'CAR', '+639671122908'),
+(1010, 'LTO Regional Office XII - Koronadal', 'Yellowbell', 'Sta. Cruz', 'Koronadal City', 'South Cotabato', 9506, 'Region XII', '+639958901432');
 
 INSERT INTO Officer VALUES
 (11100001, 'Maria', 'Santos', 1001, 'LtoMaria!23'),
