@@ -108,7 +108,7 @@ public class ReceiptService {
         return null;
     }
 
-    // Helper: generate the next receipt number in sequence (e.g., R001 → R002)
+    // Helper: generate the next receipt number in sequence (e.g. R001 to R002)
     private String generateNextReceipt(String lastReceipt, String prefix) {
         if (lastReceipt == null) {
             return prefix + "001";
@@ -168,3 +168,4 @@ public class ReceiptService {
         }
     }
 }
+
