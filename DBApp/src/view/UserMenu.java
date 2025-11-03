@@ -2,6 +2,7 @@ package view;
 
 import java.util.Scanner;
 import service.PaymentService;
+import service.ReceiptService;
 import model.Session;
 
 /**
@@ -12,12 +13,6 @@ import model.Session;
  * make payments, and view payment history.
  */
 public class UserMenu {
-
-    private PaymentService paymentService;
-
-    public UserMenu() {
-        this.paymentService = new PaymentService();
-    }
 
     public void viewUserMenu() {
         Scanner scanner = new Scanner(System.in);
@@ -32,7 +27,7 @@ public class UserMenu {
             System.out.println("[3] View Vehicles");
             System.out.println("[4] View Violations");
             System.out.println("[5] Settle Payment");
-            System.out.println("[6] View Payment History");
+            System.out.println("[6] View Receipts");
             System.out.println("[7] Logout");
             System.out.println("--------------------------------------------------");
             System.out.print("Enter your choice: ");
@@ -53,10 +48,12 @@ public class UserMenu {
                     System.out.println("\n[Feature: View Violations] (to be implemented)\n");
                     break;
                 case "5":
+                    PaymentService paymentService = new PaymentService();
                     paymentService.settlePayment(scanner);
                     break;
                 case "6":
-                    paymentService.viewPaymentHistory(scanner);
+                    ReceiptService receiptService = new ReceiptService();
+                    receiptService.viewReceipts();
                     break;
                 case "7":
                     System.out.println("Logging out...");
