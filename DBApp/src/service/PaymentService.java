@@ -255,7 +255,6 @@ public class PaymentService {
                 updateR.executeUpdate();
             }
 
-            // ✅ No receipt printing or generation here anymore
             System.out.println("Payment successfully recorded. Receipt will be generated separately.");
 
         } catch (Exception e) {
@@ -317,3 +316,4 @@ public class PaymentService {
         }
     }
 }
+
