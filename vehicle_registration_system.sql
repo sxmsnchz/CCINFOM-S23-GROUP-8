@@ -15,7 +15,8 @@ CREATE TABLE Vehicle (
     make VARCHAR(15),
     series VARCHAR(15),
     color VARCHAR(15),
-    PRIMARY KEY (vehicle_id)
+    PRIMARY KEY (vehicle_id),
+	CHECK (manufacture_date <= CURDATE())
 );
 
 /*=======================================
@@ -33,7 +34,8 @@ CREATE TABLE Owner (
     region VARCHAR(50) NOT NULL,
     postal_code VARCHAR(10) NOT NULL,
     password VARCHAR(50) NOT NULL,
-    license_number VARCHAR(13) UNIQUE NOT NULL
+    license_number VARCHAR(13) UNIQUE NOT NULL,
+	CHECK (CHAR_LENGTH(password) >= 6)
 );
     
 /*=======================================
@@ -50,6 +52,7 @@ CREATE TABLE Branch (
     postal_code VARCHAR(10) NOT NULL,
     region VARCHAR(50) NOT NULL,
 	contact number VARCHAR(15) NOT NULL,
+	CHECK (contact_number REGEXP '^\\+63[0-9]{10}$')
 );
 
 /*=======================================
@@ -63,7 +66,8 @@ CREATE TABLE Officer (
     branch_id NOT NULL,
     password VARCHAR(50) NOT NULL,
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
-        ON DELETE SET NULL ON UPDATE CASCADE
+        ON DELETE SET NULL ON UPDATE CASCADE,
+	CHECK (CHAR_LENGTH(password) >= 6)
 );
 
 /* =======================================================
@@ -83,7 +87,9 @@ CREATE TABLE Payment (
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE,
+	CHECK (amount_paid > 0),
+    CHECK (date_paid <= CURDATE())
 );
 
 /*=======================================
@@ -111,7 +117,8 @@ CREATE TABLE Registration (
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
-       ON DELETE CASCADE ON UPDATE CASCADE
+       ON DELETE CASCADE ON UPDATE CASCADE,
+	CHECK (expiry_date IS NULL OR expiry_date > current_date_registered)
 );
 
 /*=======================================
@@ -138,7 +145,9 @@ CREATE TABLE Violation (
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
         ON DELETE CASCADE ON UPDATE CASCADE
     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-       ON DELETE SET NULL ON UPDATE CASCADE
+       ON DELETE SET NULL ON UPDATE CASCADE,
+	CHECK (fine_amount > 0),
+    CHECK (violation_date <= CURDATE())
 );
 
 INSERT INTO Vehicle VALUES
