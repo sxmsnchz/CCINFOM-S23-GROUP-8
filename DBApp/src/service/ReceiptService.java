@@ -1,6 +1,7 @@
 package service;
 
 import database.DatabaseConnection;
+import model.Session;
 import java.sql.*;
 import java.time.LocalDate;
 
@@ -19,17 +20,13 @@ public class ReceiptService {
         conn = DatabaseConnection.getConnection();
     }
 
-    /**
-     * Generates a new receipt for a given payment ID.
-     *
-     * @param paymentId the payment ID (foreign key)
-     * @param change amount of change to show, if any
-     */
+
+    // Generates a new receipt for a given payment ID.
     public void generateReceipt(int paymentId, double change) {
         try {
             // Retrieve payment details
             String paymentQuery = """
-                SELECT p.payment_id, p.payment_type, p.amount_paid, p.date_paid,
+                SELECT p.payment_type, p.amount_paid, p.date_paid,
                        p.owner_id, p.officer_id, p.branch_id,
                        o.first_name AS officer_fn, o.last_name AS officer_ln,
                        b.branch_name
@@ -52,8 +49,6 @@ public class ReceiptService {
             String paymentType = rs.getString("payment_type");
             double amount = rs.getDouble("amount_paid");
             Date datePaid = rs.getDate("date_paid");
-            int branchId = rs.getInt("branch_id");
-            int officerId = rs.getInt("officer_id");
             String officerName = rs.getString("officer_fn") + " " + rs.getString("officer_ln");
             String branchName = rs.getString("branch_name");
 
@@ -79,10 +74,9 @@ public class ReceiptService {
 
             // Display receipt to user
             System.out.println("\n==================================================");
-            System.out.println("                 LTO OFFICIAL RECEIPT             ");
+            System.out.println("              LTO OFFICIAL RECEIPT                ");
             System.out.println("==================================================");
             System.out.println("Receipt Number  : " + nextReceipt);
-            System.out.println("Payment ID      : " + paymentId);
             System.out.println("Transaction     : " + paymentType);
             System.out.println("Amount Paid     : PHP " + String.format("%.2f", amount));
             System.out.println("Date Issued     : " + LocalDate.now());
@@ -112,7 +106,7 @@ public class ReceiptService {
         return null;
     }
 
-    // Helper: generate the next receipt number in sequence (e.g., R001 will be R002)
+    // Helper: generate the next receipt number in sequence (e.g., R001 → R002)
     private String generateNextReceipt(String lastReceipt, String prefix) {
         if (lastReceipt == null) {
             return prefix + "001";
@@ -124,5 +118,51 @@ public class ReceiptService {
             return prefix + "001";
         }
     }
-}
 
+
+    //Displays all receipts belonging to the current logged in user
+    // Sorted by most recent issue date
+    public void viewReceipts() {
+        try {
+            int ownerId = Session.loggedInOwnerId;
+
+            String query = """
+                SELECT r.receipt_number, r.issue_date, r.printed_by,
+                       p.payment_type, p.amount_paid,
+                       b.branch_name
+                FROM receipt r
+                JOIN payment p ON r.payment_id = p.payment_id
+                JOIN branch b ON p.branch_id = b.branch_id
+                WHERE p.owner_id = ?
+                ORDER BY r.issue_date DESC;
+            """;
+
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, ownerId);
+            ResultSet rs = ps.executeQuery();
+
+            System.out.println("\n==================================================");
+            System.out.println("                  YOUR RECEIPTS                   ");
+            System.out.println("==================================================");
+
+            boolean hasResults = false;
+            while (rs.next()) {
+                hasResults = true;
+                System.out.println("[" + rs.getString("payment_type") + "]");
+                System.out.println("Receipt Number : " + rs.getString("receipt_number"));
+                System.out.println("Amount Paid    : PHP " + String.format("%.2f", rs.getDouble("amount_paid")));
+                System.out.println("Branch         : " + rs.getString("branch_name"));
+                System.out.println("Processed By   : " + rs.getString("printed_by"));
+                System.out.println("Date Issued    : " + rs.getDate("issue_date"));
+                System.out.println("--------------------------------------------------");
+            }
+
+            if (!hasResults) {
+                System.out.println("You haven't made any payments yet.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error displaying receipts: " + e.getMessage());
+        }
+    }
+}
