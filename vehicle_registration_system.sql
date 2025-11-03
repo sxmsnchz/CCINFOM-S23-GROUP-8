@@ -64,8 +64,7 @@ CREATE TABLE Officer (
     last_name VARCHAR(20) NOT NULL,
     branch_id INT,
     password VARCHAR(50) NOT NULL,
-    FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
-		ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (branch_id) REFERENCES branch(branch_id),
 	CHECK (CHAR_LENGTH(password) >= 6)
 );
 
@@ -79,15 +78,20 @@ CREATE TABLE Payment (
     branch_id INT NOT NULL,
     amount_paid DECIMAL(10,2) NOT NULL,
     date_paid DATE NOT NULL,
-    receipt_number VARCHAR(20) UNIQUE NOT NULL,
 	payment_type ENUM('Violation', 'Registration', 'Renewal') NOT NULL,
-	FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
-		ON UPDATE CASCADE,
-    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
-        ON UPDATE CASCADE,
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-        ON UPDATE CASCADE,
+	FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
 	CHECK (amount_paid > 0)
+);
+
+CREATE TABLE Receipt (
+    receipt_id INT AUTO_INCREMENT PRIMARY KEY,
+    payment_id INT NOT NULL UNIQUE,
+    receipt_number VARCHAR(20) NOT NULL UNIQUE,
+    issued_date DATE NOT NULL,
+    printed_by VARCHAR(100) NOT NULL,
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
 );
 
 /*=======================================
@@ -106,16 +110,12 @@ CREATE TABLE Registration (
     expiry_date DATE,
     status ENUM('ACTIVE', 'INACTIVE', 'EXPIRED') DEFAULT 'INACTIVE',
     PRIMARY KEY (registration_id),
-    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id)
-        ON UPDATE CASCADE,
-    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
-        ON UPDATE CASCADE,
-	  FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-        ON UPDATE CASCADE,
+    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
+    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
+	FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-        ON UPDATE CASCADE,
-    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
-       ON UPDATE CASCADE,
+	ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
 	CHECK (expiry_date IS NULL OR expiry_date > current_date_registered)
 );
 
@@ -134,16 +134,11 @@ CREATE TABLE Violation (
     violation_date DATE NOT NULL,
     status VARCHAR(20) DEFAULT 'Unpaid',
     payment_id INT,
-    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
-        ON UPDATE CASCADE,
-    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id)
-        ON UPDATE CASCADE,
-    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
-        ON UPDATE CASCADE,
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-        ON UPDATE CASCADE,
-    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-       ON UPDATE CASCADE,
+    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
+    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
 	CHECK (fine_amount > 0)
 );
 
@@ -195,20 +190,35 @@ INSERT INTO Officer VALUES
 (11100009, 'Daniel', 'Ramos', 1009, 'InspectDR09!'),
 (11100010, 'Sophia', 'Castillo', 1010, 'CSophia*65');
 
-INSERT INTO Payment (owner_id, officer_id, branch_id, amount_paid, date_paid, receipt_number, payment_type) VALUES
-(123455, 11100006, 1006, 5000.00, '2025-07-08', 'V001', 'Violation'),
-(123456, 11100009, 1009, 2000.00, '2025-07-20', 'V002', 'Violation'),
-(123450, 11100003, 1003, 3000.00, '2025-08-03', 'V003', 'Violation'),
-(123455, 11100006, 1006, 10000.00, '2025-08-04', 'V004', 'Violation'),
-(123450, 11100003, 1003, 7410.00, '2024-02-01', 'R001', 'Registration'),
-(123450, 11100003, 1003, 1500.00, '2025-08-03', 'R002', 'Renewal'),
-(123451, 11100008, 1008, 7410.00, '2025-09-12', 'R003', 'Registration'),
-(123453, 11100008, 1008, 7410.00, '2024-11-05', 'R004', 'Registration'),
-(123455, 11100006, 1006, 7410.00, '2024-03-20', 'R005', 'Registration'),
-(123455, 11100006, 1006, 1500.00, '2025-03-20', 'R006', 'Renewal'),
-(123456, 11100009, 1009, 7410.00, '2023-09-12', 'R007', 'Registration'),
-(123456, 11100009, 1009, 1500.00, '2024-09-12', 'R008', 'Renewal'),
-(123458, 11100005, 1005, 1500.00, '2025-08-11', 'R009', 'Renewal');
+INSERT INTO Payment (owner_id, officer_id, branch_id, amount_paid, date_paid, payment_type) VALUES
+(123455, 11100006, 1006, 5000.00, '2025-07-08', 'Violation'),
+(123456, 11100009, 1009, 2000.00, '2025-07-20', 'Violation'),
+(123450, 11100003, 1003, 3000.00, '2025-08-03', 'Violation'),
+(123455, 11100006, 1006, 10000.00, '2025-08-04', 'Violation'),
+(123450, 11100003, 1003, 7410.00, '2024-02-01', 'Registration'),
+(123450, 11100003, 1003, 1500.00, '2025-08-03', 'Renewal'),
+(123451, 11100008, 1008, 7410.00, '2025-09-12', 'Registration'),
+(123453, 11100008, 1008, 7410.00, '2024-11-05', 'Registration'),
+(123455, 11100006, 1006, 7410.00, '2024-03-20', 'Registration'),
+(123455, 11100006, 1006, 1500.00, '2025-03-20', 'Renewal'),
+(123456, 11100009, 1009, 7410.00, '2023-09-12', 'Registration'),
+(123456, 11100009, 1009, 1500.00, '2024-09-12', 'Renewal'),
+(123458, 11100005, 1005, 1500.00, '2025-08-11', 'Renewal');
+
+INSERT INTO Receipt (payment_id, receipt_number, issued_date, printed_by) VALUES
+(1, 'V001', '2025-07-08', 'Elena Torres'),
+(2, 'V002', '2025-07-20', 'Daniel Ramos'),
+(3, 'V003', '2025-08-03', 'Anna Cruz'),
+(4, 'V004', '2025-08-04', 'Elena Torres'),
+(5, 'R001', '2024-02-01', 'Anna Cruz'),
+(6, 'R002', '2025-08-03', 'Anna Cruz'),
+(7, 'R003', '2025-09-12', 'Patricia Mendoza'),
+(8, 'R004', '2024-11-05', 'Patricia Mendoza'),
+(9, 'R005', '2024-03-20', 'Elena Torres'),
+(10, 'R006', '2025-03-20', 'Elena Torres'),
+(11, 'R007', '2023-09-12', 'Daniel Ramos'),
+(12, 'R008', '2024-09-12', 'Daniel Ramos'),
+(13, 'R009', '2025-08-11', 'Ramon Garcia');
 
 INSERT INTO Registration 
 (registration_id, vehicle_id, owner_id, payment_id, branch_id, officer_id, 
