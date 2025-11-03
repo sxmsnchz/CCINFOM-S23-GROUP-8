@@ -205,7 +205,7 @@ INSERT INTO Payment (owner_id, officer_id, branch_id, amount_paid, date_paid, pa
 (123456, 11100009, 1009, 1500.00, '2024-09-12', 'Renewal'),
 (123458, 11100005, 1005, 1500.00, '2025-08-11', 'Renewal');
 
-INSERT INTO Receipt (payment_id, receipt_number, issued_date, printed_by) VALUES
+INSERT INTO Receipt (payment_id, receipt_number, issue_date, printed_by) VALUES
 (1, 'V001', '2025-07-08', 'Elena Torres'),
 (2, 'V002', '2025-07-20', 'Daniel Ramos'),
 (3, 'V003', '2025-08-03', 'Anna Cruz'),
