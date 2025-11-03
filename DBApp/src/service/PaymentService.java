@@ -269,51 +269,6 @@ public class PaymentService {
         new UserMenu().viewUserMenu();
     }
 
-    // ==============================================================
-    // 2. VIEW PAYMENT HISTORY (based on payment table)
-    // ==============================================================
-    public void viewPaymentHistory(Scanner scanner) {
-        try {
-            int ownerId = Session.loggedInOwnerId;
-
-            System.out.println("--------------------------------------------------");
-            System.out.println("              VIEW PAYMENT HISTORY                ");
-            System.out.println("--------------------------------------------------");
-
-            PreparedStatement ps = conn.prepareStatement("""
-                SELECT p.payment_id, p.payment_type, p.amount_paid, p.date_paid,
-                       f.first_name AS officer_fn, f.last_name AS officer_ln, b.branch_name
-                FROM payment p
-                JOIN officer f ON p.officer_id = f.officer_id
-                JOIN branch b ON p.branch_id = b.branch_id
-                WHERE p.owner_id = ?
-                ORDER BY p.date_paid DESC;
-            """);
-            ps.setInt(1, ownerId);
-            ResultSet rs = ps.executeQuery();
-
-            System.out.println("\nYour payment records:");
-            System.out.println("--------------------------------------------------");
-            boolean hasResults = false;
-
-            while (rs.next()) {
-                hasResults = true;
-                System.out.println("[" + rs.getString("payment_type") + "]");
-                System.out.println("Payment ID   : " + rs.getInt("payment_id"));
-                System.out.println("Amount Paid  : PHP " + rs.getDouble("amount_paid"));
-                System.out.println("Date Paid    : " + rs.getDate("date_paid"));
-                System.out.println("Processed By : " + rs.getString("officer_fn") + " " + rs.getString("officer_ln"));
-                System.out.println("Branch       : " + rs.getString("branch_name"));
-                System.out.println("--------------------------------------------------");
-            }
-
-            if (!hasResults) {
-                System.out.println("No payments found for your account.");
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error fetching payment history: " + e.getMessage());
-        }
-    }
 }
+    
 
