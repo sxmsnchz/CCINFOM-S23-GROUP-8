@@ -15,8 +15,7 @@ CREATE TABLE Vehicle (
     make VARCHAR(15) NOT NULL,
     series VARCHAR(15) NOT NULL,
     color VARCHAR(15) NOT NULL,
-    PRIMARY KEY (vehicle_id),
-	CHECK (manufacture_date <= CURDATE())
+    PRIMARY KEY (vehicle_id)
 );
 
 /*=======================================
@@ -51,7 +50,7 @@ CREATE TABLE Branch (
     province VARCHAR(50) NOT NULL,
     postal_code VARCHAR(10) NOT NULL,
     region VARCHAR(50) NOT NULL,
-	contact number VARCHAR(15) NOT NULL,
+	contact_number VARCHAR(15) NOT NULL,
 	CHECK (contact_number REGEXP '^\\+63[0-9]{10}$')
 );
 
@@ -63,10 +62,10 @@ CREATE TABLE Officer (
     officer_id INT PRIMARY KEY,
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
-    branch_id NOT NULL,
+    branch_id INT,
     password VARCHAR(50) NOT NULL,
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
-        ON DELETE SET NULL ON UPDATE CASCADE,
+		ON DELETE SET NULL ON UPDATE CASCADE,
 	CHECK (CHAR_LENGTH(password) >= 6)
 );
 
@@ -83,13 +82,12 @@ CREATE TABLE Payment (
     receipt_number VARCHAR(20) UNIQUE NOT NULL,
 	payment_type ENUM('Violation', 'Registration', 'Renewal') NOT NULL,
 	FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+		ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-	CHECK (amount_paid > 0),
-    CHECK (date_paid <= CURDATE())
+	CHECK (amount_paid > 0)
 );
 
 /*=======================================
@@ -98,12 +96,12 @@ CREATE TABLE Payment (
 */
 CREATE TABLE Registration (
 	registration_id INT,
-    vehicle_id INT NOT NULL
+    vehicle_id INT NOT NULL,
     owner_id INT NOT NULL,
     payment_id INT,
     branch_id INT NOT NULL,
     officer_id INT NOT NULL,
-    first_date_registered DATE NOT NULL
+    first_date_registered DATE NOT NULL,
     current_date_registered DATE,
     expiry_date DATE,
     status ENUM('ACTIVE', 'INACTIVE', 'EXPIRED') DEFAULT 'INACTIVE',
@@ -130,7 +128,7 @@ CREATE TABLE Violation (
     owner_id INT NOT NULL,
     vehicle_id INT NOT NULL,
     officer_id INT NOT NULL, 
-    branch_id INT NOT NULL
+    branch_id INT NOT NULL,
     violation_type VARCHAR(150) NOT NULL,
     fine_amount DECIMAL(10,2) NOT NULL,
     violation_date DATE NOT NULL,
@@ -143,11 +141,10 @@ CREATE TABLE Violation (
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
        ON DELETE SET NULL ON UPDATE CASCADE,
-	CHECK (fine_amount > 0),
-    CHECK (violation_date <= CURDATE())
+	CHECK (fine_amount > 0)
 );
 
 INSERT INTO Vehicle VALUES
@@ -239,4 +236,3 @@ INSERT INTO Violation
 (123453, 0004, 11100008, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
 (123453, 0004, 11100008, 1008, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
 (123453, 0004, 11100008, 1008, 'Expired Registration', 3000.00, '2025-11-05', 'Unpaid', NULL);
-
