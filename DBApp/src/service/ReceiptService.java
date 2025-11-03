@@ -49,7 +49,7 @@ public class ReceiptService {
             String paymentType = rs.getString("payment_type");
             double amount = rs.getDouble("amount_paid");
             Date datePaid = rs.getDate("date_paid");
-            String officerName = rs.getString("officer_fn") + " " + rs.getString("officer_ln");
+            String officerName = rs.getString("officer_ln") + ", " + rs.getString("officer_fn"); // formatted Last, First
             String branchName = rs.getString("branch_name");
 
             // Determine prefix (V for Violation, R for Registration)
@@ -166,3 +166,4 @@ public class ReceiptService {
         }
     }
 }
+
