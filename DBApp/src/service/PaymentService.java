@@ -15,7 +15,7 @@ import view.UserMenu;
  *   2. View their complete payment history.
  *
  * It connects directly to the database, performs validation,
- * auto-generates receipts, and updates the records accordingly.
+ * and updates the records accordingly.
  */
 public class PaymentService {
 
@@ -210,15 +210,10 @@ public class PaymentService {
             double change = userPayment > amount ? userPayment - amount : 0;
             System.out.println("Payment accepted. Processing...");
 
-            // auto-generate next receipt
-            String prefix = chosenType.equalsIgnoreCase("Violation") ? "V" : "R";
-            String latestReceipt = getLastReceiptNumber(prefix);
-            String nextReceipt = generateNextReceipt(latestReceipt, prefix);
-
             // insert payment record
             PreparedStatement ps4 = conn.prepareStatement("""
-                INSERT INTO payment (officer_id, branch_id, owner_id, payment_type, amount_paid, date_paid, receipt_number)
-                VALUES (?, ?, ?, ?, ?, ?, ?);
+                INSERT INTO payment (officer_id, branch_id, owner_id, payment_type, amount_paid, date_paid)
+                VALUES (?, ?, ?, ?, ?, ?);
             """, Statement.RETURN_GENERATED_KEYS);
 
             ps4.setInt(1, officerId);
@@ -227,7 +222,6 @@ public class PaymentService {
             ps4.setString(4, paymentType);
             ps4.setDouble(5, amount);
             ps4.setDate(6, java.sql.Date.valueOf(java.time.LocalDate.now()));
-            ps4.setString(7, nextReceipt);
             ps4.executeUpdate();
 
             // Retrieve auto-generated payment_id
@@ -236,6 +230,10 @@ public class PaymentService {
             if (genKeys.next()) {
                 paymentId = genKeys.getInt(1);
             }
+
+            // Automatically generate receipt after successful payment
+            ReceiptService receiptService = new ReceiptService();
+            receiptService.generateReceipt(paymentId, change);
 
             // update violation or registration record
             if (chosenType.equalsIgnoreCase("Violation")) {
@@ -257,23 +255,8 @@ public class PaymentService {
                 updateR.executeUpdate();
             }
 
-            // display receipt
-            System.out.println("\n==================================================");
-            System.out.println("                 LTO PAYMENT RECEIPT              ");
-            System.out.println("==================================================");
-            System.out.println("Receipt no.     : " + nextReceipt);
-            System.out.println("Payment ID      : " + paymentId);
-            System.out.println("Transaction     : " + paymentType);
-            if (plateNo != null)
-                System.out.println("Plate Number    : " + plateNo);
-            System.out.println("Amount paid     : PHP " + amount);
-            System.out.println("Date paid       : " + java.time.LocalDate.now());
-            System.out.println("Status          : CLEARED");
-            if (change > 0)
-                System.out.println("Change given    : PHP " + change);
-            System.out.println("==================================================");
-            System.out.println("      Thank you for settling your payment!        ");
-            System.out.println("==================================================\n");
+            // ✅ No receipt printing or generation here anymore
+            System.out.println("Payment successfully recorded. Receipt will be generated separately.");
 
         } catch (Exception e) {
             System.out.println("Error settling payment: " + e.getMessage());
@@ -299,7 +282,7 @@ public class PaymentService {
             System.out.println("--------------------------------------------------");
 
             PreparedStatement ps = conn.prepareStatement("""
-                SELECT p.payment_id, p.payment_type, p.amount_paid, p.date_paid, p.receipt_number,
+                SELECT p.payment_id, p.payment_type, p.amount_paid, p.date_paid,
                        f.first_name AS officer_fn, f.last_name AS officer_ln, b.branch_name
                 FROM payment p
                 JOIN officer f ON p.officer_id = f.officer_id
@@ -320,7 +303,6 @@ public class PaymentService {
                 System.out.println("Payment ID   : " + rs.getInt("payment_id"));
                 System.out.println("Amount Paid  : PHP " + rs.getDouble("amount_paid"));
                 System.out.println("Date Paid    : " + rs.getDate("date_paid"));
-                System.out.println("Receipt No.  : " + rs.getString("receipt_number"));
                 System.out.println("Processed By : " + rs.getString("officer_fn") + " " + rs.getString("officer_ln"));
                 System.out.println("Branch       : " + rs.getString("branch_name"));
                 System.out.println("--------------------------------------------------");
@@ -334,38 +316,4 @@ public class PaymentService {
             System.out.println("Error fetching payment history: " + e.getMessage());
         }
     }
-
-    // helper: get last receipt number by prefix (V or R)
-    private String getLastReceiptNumber(String prefix) throws SQLException {
-    String last = null;
-
-        // finds the most recent receipt that starts with that prefix
-        PreparedStatement ps = conn.prepareStatement(
-            "SELECT receipt_number FROM payment WHERE receipt_number LIKE ? ORDER BY payment_id DESC LIMIT 1"
-        );
-
-        ps.setString(1, prefix + "%"); // will look like "V%" or "R%"
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            last = rs.getString("receipt_number");
-        }
-        return last;
-    }
-
-
-    // helper: generate next receipt number by incrementing numeric portion
-    private String generateNextReceipt(String lastReceipt, String prefix) {
-        if (lastReceipt == null) {
-            return prefix + "001";
-        }
-        try {
-            int lastNum = Integer.parseInt(lastReceipt.substring(1));
-            return prefix + String.format("%03d", lastNum + 1);
-        } catch (Exception e) {
-            return prefix + "001";
-        }
-    }
 }
-
-
