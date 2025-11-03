@@ -206,19 +206,19 @@ INSERT INTO Payment (owner_id, officer_id, branch_id, amount_paid, date_paid, pa
 (123458, 11100005, 1005, 1500.00, '2025-08-11', 'Renewal');
 
 INSERT INTO Receipt (payment_id, receipt_number, issue_date, printed_by) VALUES
-(1, 'V001', '2025-07-08', 'Elena Torres'),
-(2, 'V002', '2025-07-20', 'Daniel Ramos'),
-(3, 'V003', '2025-08-03', 'Anna Cruz'),
-(4, 'V004', '2025-08-04', 'Elena Torres'),
-(5, 'R001', '2024-02-01', 'Anna Cruz'),
-(6, 'R002', '2025-08-03', 'Anna Cruz'),
-(7, 'R003', '2025-09-12', 'Patricia Mendoza'),
-(8, 'R004', '2024-11-05', 'Patricia Mendoza'),
-(9, 'R005', '2024-03-20', 'Elena Torres'),
-(10, 'R006', '2025-03-20', 'Elena Torres'),
-(11, 'R007', '2023-09-12', 'Daniel Ramos'),
-(12, 'R008', '2024-09-12', 'Daniel Ramos'),
-(13, 'R009', '2025-08-11', 'Ramon Garcia');
+(1, 'V001', '2025-07-08', 'Torres, Elena'),
+(2, 'V002', '2025-07-20', 'Ramos, Daniel'),
+(3, 'V003', '2025-08-03', 'Cruz, Anna'),
+(4, 'V004', '2025-08-04', 'Torres, Elena'),
+(5, 'R001', '2024-02-01', 'Cruz, Anna'),
+(6, 'R002', '2025-08-03', 'Cruz, Anna'),
+(7, 'R003', '2025-09-12', 'Mendoza, Patricia'),
+(8, 'R004', '2024-11-05', 'Mendoza, Patricia'),
+(9, 'R005', '2024-03-20', 'Torres, Elena'),
+(10, 'R006', '2025-03-20', 'Torres, Elena'),
+(11, 'R007', '2023-09-12', 'Ramos, Daniel'),
+(12, 'R008', '2024-09-12', 'Ramos, Daniel'),
+(13, 'R009', '2025-08-11', 'Garcia, Ramon');
 
 INSERT INTO Registration 
 (registration_id, vehicle_id, owner_id, payment_id, branch_id, officer_id, 
