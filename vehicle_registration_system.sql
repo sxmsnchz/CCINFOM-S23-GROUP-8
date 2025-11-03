@@ -6,17 +6,16 @@ USE vehicle_registration_system;
 =========================================
 */
 CREATE TABLE Vehicle (
-	vehicle_id INT,
-    plate_no VARCHAR(7) NOT NULL,
-	manufacture_date DATE,
-    mv_file_no BIGINT NOT NULL,
-    chassis_no VARCHAR(17) NOT NULL,
-    engine_no VARCHAR(12) NOT NULL,
+	  vehicle_id INT,
+    plate_no VARCHAR(7) NOT NULL UNIQUE,
+	  manufacture_date DATE,
+    mv_file_no BIGINT NOT NULL UNIQUE,
+    chassis_no VARCHAR(17) NOT NULL UNIQUE,
+    engine_no VARCHAR(12) NOT NULL UNIQUE,
     make VARCHAR(15),
     series VARCHAR(15),
     color VARCHAR(15),
-    PRIMARY KEY (vehicle_id),
-    UNIQUE(plate_no, mv_file_no, chassis_no, engine_no)
+    PRIMARY KEY (vehicle_id)
 );
 
 /*=======================================
@@ -25,16 +24,16 @@ CREATE TABLE Vehicle (
 */
 CREATE TABLE Owner (
 	owner_id INT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    street VARCHAR(100),
-    barangay VARCHAR(100),
-    city VARCHAR(50),
-    province VARCHAR(50),
-    region VARCHAR(50),
-    postal_code VARCHAR(10),
-    password VARCHAR(50),
-    license_number VARCHAR(13)
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    street VARCHAR(100) NOT NULL,
+    barangay VARCHAR(100) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    province VARCHAR(50) NOT NULL,
+    region VARCHAR(50) NOT NULL,
+    postal_code VARCHAR(10) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    license_number VARCHAR(13) UNIQUE NOT NULL
 );
     
 /*=======================================
@@ -43,13 +42,14 @@ CREATE TABLE Owner (
 */
 CREATE TABLE Branch (
     branch_id INT PRIMARY KEY,
-    branch_name VARCHAR(100),
-    street VARCHAR(100),
-    barangay VARCHAR(100),
-    city VARCHAR(50),
-    province VARCHAR(50),
-    postal_code VARCHAR(10),
-    region VARCHAR(50)
+    branch_name VARCHAR(100) NOT NULL UNIQUE,
+    street VARCHAR(100) NOT NULL,
+    barangay VARCHAR(100) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    province VARCHAR(50) NOT NULL,
+    postal_code VARCHAR(10) NOT NULL,
+    contact number VARCHAR(15) NOT NULL,
+    region VARCHAR(50) NOT NULL,
 );
 
 /*=======================================
@@ -58,11 +58,11 @@ CREATE TABLE Branch (
 */
 CREATE TABLE Officer (
     officer_id INT PRIMARY KEY,
-    first_name VARCHAR(20),
-    last_name VARCHAR(20),
-    branch_id INT,
-    password VARCHAR(50),
-    FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
+    first_name VARCHAR(20) NOT NULL,
+    last_name VARCHAR(20) NOT NULL,
+    branch_id NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    FOREIGN KEY (branch_id) REFERENCES branch(branch_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 /* =======================================================
@@ -70,16 +70,19 @@ CREATE TABLE Officer (
    ======================================================= */
 CREATE TABLE Payment (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
-	owner_id INT,
-    officer_id INT,
-    branch_id INT,
-    amount_paid DECIMAL(10,2),
-    date_paid DATE,
+	  owner_id INT NOT NULL,
+    officer_id INT NOT NULL,
+    branch_id INT NOT NULL,
+    amount_paid DECIMAL(10,2) NOT NULL,
+    date_paid DATE NOT NULL,
     receipt_number VARCHAR(20) UNIQUE NOT NULL,
-	payment_type ENUM('Violation', 'Registration', 'Renewal') NOT NULL,
-	FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
-    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
+	  payment_type ENUM('Violation', 'Registration', 'Renewal') NOT NULL,
+	  FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /*=======================================
@@ -87,22 +90,27 @@ CREATE TABLE Payment (
 =========================================
 */
 CREATE TABLE Registration (
-	registration_id INT,
-    vehicle_id INT,
-    owner_id INT, 
+	  registration_id INT,
+    vehicle_id INT NOT NULL
+    owner_id INT NOT NULL,
     payment_id INT,
-    branch_id INT,
-    officer_id INT,
-    first_date_registered DATE,
+    branch_id INT NOT NULL,
+    officer_id INT NOT NULL,
+    first_date_registered DATE NOT NULL
     current_date_registered DATE,
     expiry_date DATE,
-    status VARCHAR(20),
+    status ENUM('ACTIVE', 'INACTIVE', 'EXPIRED') DEFAULT 'INACTIVE',
     PRIMARY KEY (registration_id),
-    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
-    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
-	FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
+    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+	  FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+        ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
+       ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /*=======================================
@@ -111,20 +119,25 @@ CREATE TABLE Registration (
 */
 CREATE TABLE Violation (
 	violation_id INT AUTO_INCREMENT PRIMARY KEY,
-    owner_id INT,
-    vehicle_id INT,
-    officer_id INT,
-    branch_id INT,
-    violation_type VARCHAR(150),
-    fine_amount DECIMAL(10,2),
-    violation_date DATE,
+    owner_id INT NOT NULL,
+    vehicle_id INT NOT NULL,
+    officer_id INT NOT NULL, 
+    branch_id INT NOT NULL
+    violation_type VARCHAR(150) NOT NULL,
+    fine_amount DECIMAL(10,2) NOT NULL,
+    violation_date DATE NOT NULL,
     status VARCHAR(20) DEFAULT 'Unpaid',
     payment_id INT,
-    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
-    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
-    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
+    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+       ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 INSERT INTO Vehicle VALUES
