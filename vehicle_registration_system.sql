@@ -8,13 +8,13 @@ USE vehicle_registration_system;
 CREATE TABLE Vehicle (
     vehicle_id INT,
     plate_no VARCHAR(7) NOT NULL UNIQUE,
-	manufacture_date DATE,
+	manufacture_date DATE NOT NULL,
     mv_file_no BIGINT NOT NULL UNIQUE,
     chassis_no VARCHAR(17) NOT NULL UNIQUE,
     engine_no VARCHAR(12) NOT NULL UNIQUE,
-    make VARCHAR(15),
-    series VARCHAR(15),
-    color VARCHAR(15),
+    make VARCHAR(15) NOT NULL,
+    series VARCHAR(15) NOT NULL,
+    color VARCHAR(15) NOT NULL,
     PRIMARY KEY (vehicle_id),
 	CHECK (manufacture_date <= CURDATE())
 );
