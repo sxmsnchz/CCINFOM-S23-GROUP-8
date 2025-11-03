@@ -89,7 +89,7 @@ CREATE TABLE Receipt (
     receipt_id INT AUTO_INCREMENT PRIMARY KEY,
     payment_id INT NOT NULL UNIQUE,
     receipt_number VARCHAR(20) NOT NULL UNIQUE,
-    issued_date DATE NOT NULL,
+    issue_date DATE NOT NULL,
     printed_by VARCHAR(100) NOT NULL,
     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
 );
