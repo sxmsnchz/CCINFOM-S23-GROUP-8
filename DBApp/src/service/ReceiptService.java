@@ -49,7 +49,7 @@ public class ReceiptService {
             String paymentType = rs.getString("payment_type");
             double amount = rs.getDouble("amount_paid");
             Date datePaid = rs.getDate("date_paid");
-            String officerName = rs.getString("officer_ln") + ", " + rs.getString("officer_fn"); // formatted Last, First
+            String officerName = officerLast + ", " + officerFirst; // formatted Last, First
             String branchName = rs.getString("branch_name");
 
             // Determine prefix (V for Violation, R for Registration)
@@ -58,6 +58,10 @@ public class ReceiptService {
             // Get the last used receipt number with the same prefix
             String lastReceipt = getLastReceiptNumber(prefix);
             String nextReceipt = generateNextReceipt(lastReceipt, prefix);
+
+            String officerLast = rs.getString("officer_ln");
+            String officerFirst = rs.getString("officer_fn");
+            String officerName = officerLast + ", " + officerFirst;
 
             // Insert into Receipt table
             String insertReceipt = """
@@ -166,4 +170,5 @@ public class ReceiptService {
         }
     }
 }
+
 
