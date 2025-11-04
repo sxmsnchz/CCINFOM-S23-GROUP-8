@@ -146,7 +146,7 @@ CREATE TABLE Violation (
     violation_type VARCHAR(150) NOT NULL,
     fine_amount DECIMAL(10,2) NOT NULL,
     violation_date DATE NOT NULL,
-    status VARCHAR(20) DEFAULT 'Unpaid',
+    payment_status VARCHAR(20) DEFAULT 'Unpaid',
     payment_id INT,
     FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
     FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
