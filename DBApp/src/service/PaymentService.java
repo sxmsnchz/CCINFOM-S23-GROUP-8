@@ -26,9 +26,9 @@ public class PaymentService {
         conn = DatabaseConnection.getConnection();
     }
 
-    // ==============================================================
-    // 1. SETTLE PAYMENT (used by user to pay for unpaid violations or registrations)
-    // ==============================================================
+    // =======================================================================================
+    // 1. SETTLE PAYMENT (used by user to pay for unpaid violations or registrations/renewals)
+    // =======================================================================================
     public void settlePayment(Scanner scanner) {
         try {
             System.out.println("--------------------------------------------------");
@@ -44,31 +44,48 @@ public class PaymentService {
                 return;
             }
 
-            // show all unpaid transactions (violations + valid registrations/renewals)
+            // SQL query to properly check renewals using the renewal table
             String query = """
-                SELECT 'Violation' AS type, v.violation_id AS id, v.violation_type AS description, v.fine_amount AS amount
+                SELECT 
+                    'Violation' AS type,
+                    v.violation_id AS id,
+                    v.violation_type AS description,
+                    v.fine_amount AS amount
                 FROM violation v
                 WHERE v.owner_id = ? AND v.status = 'Unpaid'
-                UNION
-                SELECT 'Registration' AS type, r.registration_id AS id,
-                       CASE
-                           WHEN r.payment_id IS NULL AND r.expiry_date IS NULL THEN 'New Registration'
-                           WHEN r.payment_id IS NULL AND r.expiry_date < CURDATE() THEN 'Renewal'
-                           ELSE 'Registration Pending'
-                       END AS description,
-                       CASE
-                           WHEN r.payment_id IS NULL AND r.expiry_date IS NULL THEN 7410
-                           WHEN r.payment_id IS NULL AND r.expiry_date < CURDATE() THEN 1500
-                           ELSE 0
-                       END AS amount
-                FROM registration r
-                WHERE r.owner_id = ?
-                  AND (
-                        (r.payment_id IS NULL AND r.expiry_date IS NULL)  -- new registration
-                        OR (r.payment_id IS NULL AND r.expiry_date < CURDATE())  -- renewal due
-                      );
-                """;
 
+                UNION
+
+                SELECT
+                    'Registration' AS type,
+                    r.registration_id AS id,
+                    CASE
+                        WHEN r.payment_id IS NULL AND r.expiry_date IS NULL THEN 'New Registration'
+                        WHEN r.expiry_date < CURDATE()
+                            AND NOT EXISTS (
+                                SELECT 1 FROM renewal re
+                                WHERE re.registration_id = r.registration_id
+                                AND YEAR(re.last_renewal_date) = YEAR(CURDATE())
+                            )
+                            THEN 'Renewal'
+                        ELSE 'Up-to-date Registration'
+                    END AS description,
+                    CASE
+                        WHEN r.payment_id IS NULL AND r.expiry_date IS NULL THEN 7410
+                        WHEN r.expiry_date < CURDATE()
+                            AND NOT EXISTS (
+                                SELECT 1 FROM renewal re
+                                WHERE re.registration_id = r.registration_id
+                                AND YEAR(re.last_renewal_date) = YEAR(CURDATE())
+                            )
+                            THEN 1500
+                        ELSE 0
+                    END AS amount
+                FROM registration r
+                WHERE r.owner_id = ?;
+            """;
+
+            // create prepared statement
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, ownerId);
             ps.setInt(2, ownerId);
@@ -84,6 +101,7 @@ public class PaymentService {
                         " | " + rs.getString("description") +
                         " | Amount: Php " + rs.getDouble("amount"));
             }
+
             // If no unpaid transactions found, go back to menu
             if (!hasUnpaid) {
                 System.out.println("You have no unpaid violations or registrations.");
@@ -106,7 +124,7 @@ public class PaymentService {
             System.out.print("Enter ID to pay: "); // Ask for ID to pay
             String inputTid = scanner.nextLine().trim();
             if (!inputTid.matches("\\d+")) { // must be numeric
-                System.out.println("Invalid ID format."); 
+                System.out.println("Invalid ID format.");
                 redirectToMenu(scanner);
                 return;
             }
@@ -175,7 +193,7 @@ public class PaymentService {
                     transactionDesc = "New Registration";
                     paymentType = "Registration";
                     amount = 7410.00;
-                } else if (expiry != null && prevPay == 0 && expiry.before(new java.util.Date())) {
+                } else if (expiry != null && expiry.before(new java.util.Date())) {
                     transactionDesc = "Renewal";
                     paymentType = "Renewal";
                     amount = 1500.00;
@@ -235,24 +253,52 @@ public class PaymentService {
             ReceiptService receiptService = new ReceiptService();
             receiptService.generateReceipt(paymentId, change);
 
-            // update violation or registration record
             if (chosenType.equalsIgnoreCase("Violation")) {
+                // violation payment — mark cleared
                 PreparedStatement updateV = conn.prepareStatement(
-                        "UPDATE violation SET status = 'Cleared', payment_id = ? WHERE violation_id = ?");
+                    "UPDATE violation SET status = 'Cleared', payment_id = ? WHERE violation_id = ?;"
+                );
                 updateV.setInt(1, paymentId);
                 updateV.setInt(2, chosenId);
                 updateV.executeUpdate();
+
             } else {
-                PreparedStatement updateR = conn.prepareStatement("""
-                    UPDATE registration
-                    SET payment_id = ?, current_date_registered = CURDATE(),
-                        expiry_date = DATE_ADD(CURDATE(), INTERVAL 1 YEAR),
-                        status = 'ACTIVE'
-                    WHERE registration_id = ?;
-                """);
-                updateR.setInt(1, paymentId);
-                updateR.setInt(2, chosenId);
-                updateR.executeUpdate();
+                if (paymentType.equalsIgnoreCase("Registration")) {
+                    // new registration
+                    PreparedStatement updateR = conn.prepareStatement("""
+                        UPDATE registration
+                        SET payment_id = ?, current_date_registered = CURDATE(),
+                            expiry_date = DATE_ADD(CURDATE(), INTERVAL 1 YEAR),
+                            status = 'ACTIVE'
+                        WHERE registration_id = ?;
+                    """);
+                    updateR.setInt(1, paymentId);
+                    updateR.setInt(2, chosenId);
+                    updateR.executeUpdate();
+
+                } else if (paymentType.equalsIgnoreCase("Renewal")) {
+                    // renewal — insert record in renewal table instead of updating registration payment_id
+                    PreparedStatement insertRenewal = conn.prepareStatement("""
+                        INSERT INTO renewal (registration_id, payment_id, branch_id, officer_id, last_renewal_date)
+                        VALUES (?, ?, ?, ?, CURDATE());
+                    """);
+                    insertRenewal.setInt(1, chosenId);
+                    insertRenewal.setInt(2, paymentId);
+                    insertRenewal.setInt(3, branchId);
+                    insertRenewal.setInt(4, officerId);
+                    insertRenewal.executeUpdate();
+
+                    // also update registration’s status and new expiry
+                    PreparedStatement updateStatus = conn.prepareStatement("""
+                        UPDATE registration
+                        SET current_date_registered = CURDATE(),
+                            expiry_date = DATE_ADD(CURDATE(), INTERVAL 1 YEAR),
+                            status = 'ACTIVE'
+                        WHERE registration_id = ?;
+                    """);
+                    updateStatus.setInt(1, chosenId);
+                    updateStatus.executeUpdate();
+                }
             }
 
             System.out.println("Payment successfully recorded. Receipt will be generated separately.");
@@ -268,6 +314,4 @@ public class PaymentService {
         scanner.nextLine();
         new UserMenu().viewUserMenu();
     }
-
 }
-    
