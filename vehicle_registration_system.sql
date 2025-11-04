@@ -6,7 +6,7 @@ USE vehicle_registration_system;
 =========================================
 */
 CREATE TABLE Vehicle (
-    vehicle_id INT,
+    vehicle_id INT AUTO_INCREMENT,
     plate_no VARCHAR(7) NOT NULL UNIQUE,
 	manufacture_date DATE NOT NULL,
     mv_file_no BIGINT NOT NULL UNIQUE,
@@ -16,14 +16,14 @@ CREATE TABLE Vehicle (
     series VARCHAR(15) NOT NULL,
     color VARCHAR(15) NOT NULL,
     PRIMARY KEY (vehicle_id)
-);
+) AUTO_INCREMENT = 0001;
 
 /*=======================================
 				OWNER TABLE
 =========================================
 */
 CREATE TABLE Owner (
-	owner_id INT PRIMARY KEY,
+	owner_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     street VARCHAR(100) NOT NULL,
@@ -35,14 +35,14 @@ CREATE TABLE Owner (
     password VARCHAR(50) NOT NULL,
     license_number VARCHAR(13) UNIQUE NOT NULL,
 	CHECK (CHAR_LENGTH(password) >= 6)
-);
+) AUTO_INCREMENT = 123450;
     
 /*=======================================
 				BRANCH TABLE
 =========================================
 */
 CREATE TABLE Branch (
-    branch_id INT PRIMARY KEY,
+    branch_id INT AUTO_INCREMENT PRIMARY KEY,
     branch_name VARCHAR(100) NOT NULL UNIQUE,
     street VARCHAR(100) NOT NULL,
     barangay VARCHAR(100) NOT NULL,
@@ -52,21 +52,21 @@ CREATE TABLE Branch (
     region VARCHAR(50) NOT NULL,
 	contact_number VARCHAR(15) NOT NULL,
 	CHECK (contact_number REGEXP '^\\+63[0-9]{10}$')
-);
+) AUTO_INCREMENT = 1001;
 
 /*=======================================
 				OFFICER TABLE 
 =========================================
 */
 CREATE TABLE Officer (
-    officer_id INT PRIMARY KEY,
+    officer_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     branch_id INT,
     password VARCHAR(50) NOT NULL,
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id),
 	CHECK (CHAR_LENGTH(password) >= 6)
-);
+) AUTO_INCREMENT = 11100001;
 
 /* =======================================================
    PAYMENT TABLE
@@ -83,7 +83,7 @@ CREATE TABLE Payment (
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
 	CHECK (amount_paid > 0)
-);
+) AUTO_INCREMENT = 1;
 
 CREATE TABLE Receipt (
     receipt_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -92,7 +92,7 @@ CREATE TABLE Receipt (
     issue_date DATE NOT NULL,
     printed_by VARCHAR(100) NOT NULL,
     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-);
+) AUTO_INCREMENT = 1;
 
 /*=======================================
 				REGISTRATION TABLE
@@ -117,7 +117,21 @@ CREATE TABLE Registration (
 	ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
 	CHECK (expiry_date IS NULL OR expiry_date > current_date_registered)
-);
+) AUTO_INCREMENT = 10001;
+
+CREATE TABLE Renewal (
+    renewal_id INT AUTO_INCREMENT PRIMARY KEY,
+    registration_id INT NOT NULL,
+    payment_id INT,
+    branch_id INT NOT NULL,
+    officer_id INT NOT NULL,
+    last_renewal_date DATE NOT NULL,
+    /* duration?? */
+    FOREIGN KEY (registration_id) REFERENCES Registration(registration_id)
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+    FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
+) AUTO_INCREMENT = 20001;
 
 /*=======================================
 				VIOLATION TABLE
@@ -140,7 +154,7 @@ CREATE TABLE Violation (
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
 	CHECK (fine_amount > 0)
-);
+) AUTO_INCREMENT = 1;
 
 INSERT INTO Vehicle VALUES
 (0001, 'NAA1234', '2018-06-15', 230145678912345, 'MA3EKEB1S00567891', 'ENG123456789', 'Toyota', 'Vios', 'Silver'),
@@ -152,7 +166,7 @@ INSERT INTO Vehicle VALUES
 (0007, 'GAB3456', '2015-09-12', 230187965412398, 'PA3LKEB1T00345678', 'ENG789012345', 'Ford', 'EcoSport', 'Black'),
 (0008, 'HAI6789', '2016-05-30', 230134987512398, 'MA2QWEB1S00478912', 'ENG890123456', 'Chevrolet', 'Spark', 'Yellow'),
 (0009, 'JAX0123', '2023-02-11', 230176543219084, 'NB3UIEB1S00981234', 'ENG901234567', 'Kia', 'Soluto', 'White'),
-(0010, 'KAM4567', '2018-10-21', 230145987654321, 'PA2TREB1T00567891', 'ENG012345678', 'Toyota', 'Corolla Altis', 'Gray');
+(0010, 'KAM4567', '2018-10-21', 230145987654321, 'PA2TREB1T00567891', 'ENG012345678', 'Toyota', 'Corolla Altis', 'Gray'),
 (0011, 'LAM6789', '2020-06-10', 230198765432123, 'PA3KTEB1T00678912', 'ENG098765432', 'Mazda', '3', 'Red'),
 (0012, 'MAN1234', '2021-04-18', 230145678954321, 'NB2LWEB1S00789123', 'ENG109876543', 'Toyota', 'Wigo', 'Orange'),
 (0013, 'NAY5678', '2019-02-12', 230112345698765, 'MA2HYEB1S00345678', 'ENG210987654', 'Honda', 'Brio', 'Yellow'),
@@ -200,58 +214,114 @@ INSERT INTO Officer VALUES
 (11100009, 'Daniel', 'Ramos', 1009, 'InspectDR09!'),
 (11100010, 'Sophia', 'Castillo', 1010, 'CSophia*65');
 
-INSERT INTO Payment (owner_id, officer_id, branch_id, amount_paid, date_paid, payment_type) VALUES
-(123455, 11100006, 1006, 5000.00, '2025-07-08', 'Violation'),
-(123456, 11100009, 1009, 2000.00, '2025-07-20', 'Violation'),
-(123450, 11100003, 1003, 3000.00, '2025-08-03', 'Violation'),
-(123455, 11100006, 1006, 10000.00, '2025-08-04', 'Violation'),
-(123450, 11100003, 1003, 7410.00, '2024-02-01', 'Registration'),
-(123450, 11100003, 1003, 1500.00, '2025-08-03', 'Renewal'),
-(123451, 11100008, 1008, 7410.00, '2025-09-12', 'Registration'),
-(123453, 11100008, 1008, 7410.00, '2024-11-05', 'Registration'),
-(123455, 11100006, 1006, 7410.00, '2024-03-20', 'Registration'),
-(123455, 11100006, 1006, 1500.00, '2025-03-20', 'Renewal'),
-(123456, 11100009, 1009, 7410.00, '2023-09-12', 'Registration'),
-(123456, 11100009, 1009, 1500.00, '2024-09-12', 'Renewal'),
-(123458, 11100005, 1005, 1500.00, '2025-08-11', 'Renewal');
+INSERT INTO Payment VALUES
+(1, 123452, 11100002, 1002, 7410.00, '2023-02-12', 'Registration'),   
+(2, 123456, 11100009, 1009, 7410.00, '2023-09-12', 'Registration'),    
+(3, 123453, 11100008, 1008, 7410.00, '2023-09-21', 'Registration'),    
+(4, 123456, 11100009, 1009, 7410.00, '2023-11-11', 'Registration'),    
+(5, 123454, 11100007, 1007, 7410.00, '2024-01-05', 'Registration'),    
+(6, 123450, 11100003, 1003, 7410.00, '2024-02-01', 'Registration'),   
+(7, 123452, 11100002, 1002, 1500.00, '2024-02-12', 'Renewal'),     
+(8, 123459, 11100010, 1010, 7410.00, '2024-03-19', 'Registration'),     
+(9, 123455, 11100006, 1006, 7410.00, '2024-03-20', 'Registration'),  
+(10, 123456, 11100009, 1009, 2000.00, '2024-03-23', 'Violation'),       
+(11, 123451, 11100008, 1008, 7410.00, '2024-04-18', 'Registration'),    
+(12, 123454, 11100007, 1007, 7410.00, '2024-05-15', 'Registration'),    
+(13, 123459, 11100010, 1010, 7410.00, '2024-06-10', 'Registration'),    
+(14, 123458, 11100005, 1005, 7410.00, '2024-08-22', 'Registration'),    
+(15, 123456, 11100009, 1009, 1500.00, '2024-09-12', 'Renewal'),       
+(16, 123453, 11100008, 1008, 1500.00, '2024-09-21', 'Renewal'),     
+(17, 123453, 11100008, 1008, 7410.00, '2024-11-05', 'Registration'),    
+(18, 123456, 11100009, 1009, 1500.00, '2024-11-11', 'Renewal'),     
+(19, 123457, 11100004, 1004, 7410.00, '2024-12-20', 'Registration');    
+(20, 123454, 11100007, 1007, 1500.00, '2025-01-05', 'Renewal'),        
+(21, 123455, 11100006, 1006, 1500.00, '2025-03-20', 'Renewal'),         
+(22, 123451, 11100008, 1008, 1500.00, '2025-04-18', 'Renewal'),         
+(23, 123455, 11100007, 1007, 1500.00, '2025-05-15', 'Renewal'),        
+(24, 123450, 11100010, 1010, 1500.00, '2025-06-10', 'Renewal'),         
+(25, 123455, 11100006, 1006, 5000.00, '2025-07-14', 'Violation'),       
+(26, 123455, 11100006, 1006, 10000.00, '2025-07-29', 'Violation'),     
+(27, 123450, 11100003, 1003, 3000.00, '2025-08-03', 'Violation'),    
+(28, 123450, 11100003, 1003, 1500.00, '2025-08-03', 'Renewal'),  
+(29, 123458, 11100005, 1005, 7410.00, '2025-08-11', 'Registration'),    
+(30, 123458, 11100005, 1005, 1500.00, '2025-08-11', 'Renewal'),  
+(31, 123451, 11100008, 1008, 7410.00, '2025-09-12', 'Registration');
 
-INSERT INTO Receipt (payment_id, receipt_number, issue_date, printed_by) VALUES
-(1, 'V001', '2025-07-08', 'Torres, Elena'),
-(2, 'V002', '2025-07-20', 'Ramos, Daniel'),
-(3, 'V003', '2025-08-03', 'Cruz, Anna'),
-(4, 'V004', '2025-08-04', 'Torres, Elena'),
-(5, 'R001', '2024-02-01', 'Cruz, Anna'),
-(6, 'R002', '2025-08-03', 'Cruz, Anna'),
-(7, 'R003', '2025-09-12', 'Mendoza, Patricia'),
-(8, 'R004', '2024-11-05', 'Mendoza, Patricia'),
-(9, 'R005', '2024-03-20', 'Torres, Elena'),
-(10, 'R006', '2025-03-20', 'Torres, Elena'),
-(11, 'R007', '2023-09-12', 'Ramos, Daniel'),
-(12, 'R008', '2024-09-12', 'Ramos, Daniel'),
-(13, 'R009', '2025-08-11', 'Garcia, Ramon');
+INSERT INTO Receipt VALUES
+(1,  1,  'R001', '2023-02-12', 'Reyes, Jose'),
+(2,  2,  'R002', '2023-09-12', 'Ramos, Daniel'),
+(3,  3,  'R003', '2023-09-21', 'Mendoza, Patricia'),
+(4,  4,  'R004', '2023-11-11', 'Ramos, Daniel'),
+(5,  5,  'R005', '2024-01-05', 'Fernandez, Luis'),
+(6,  6,  'R006', '2024-02-01', 'Cruz, Anna'),
+(7,  7,  'R007', '2024-02-12', 'Reyes, Jose'),
+(8,  8,  'R008', '2024-03-19', 'Castillo, Sophia'),
+(9,  9,  'R009', '2024-03-20', 'Torres, Elena'),
+(10, 10, 'V001', '2024-03-23', 'Ramos, Daniel'),
+(11, 11, 'R010', '2024-04-18', 'Mendoza, Patricia'),
+(12, 12, 'R011', '2024-05-15', 'Fernandez, Luis'),
+(13, 13, 'R012', '2024-06-10', 'Castillo, Sophia'),
+(14, 14, 'R013', '2024-08-22', 'Garcia, Ramon'),
+(15, 15, 'R014', '2024-09-12', 'Ramos, Daniel'),
+(16, 16, 'R015', '2024-09-21', 'Mendoza, Patricia'),
+(17, 17, 'R016', '2024-11-05', 'Mendoza, Patricia'),
+(18, 18, 'R017', '2024-11-11', 'Ramos, Daniel'),
+(19, 19, 'R018', '2024-12-20', 'Lopez, Mark'),
+(20, 20, 'R019', '2025-01-05', 'Fernandez, Luis'),
+(21, 21, 'R020', '2025-03-20', 'Torres, Elena'),
+(22, 22, 'R021', '2025-04-18', 'Mendoza, Patricia'),
+(23, 23, 'R022', '2025-05-15', 'Fernandez, Luis'),
+(24, 24, 'R023', '2025-06-10', 'Castillo, Sophia'),
+(25, 25, 'V002', '2025-07-07', 'Torres, Elena'),
+(26, 26, 'V003', '2025-07-28', 'Torres, Elena'),
+(27, 27, 'V004', '2025-08-01', 'Cruz, Anna'),
+(28, 28, 'R024', '2025-08-03', 'Cruz, Anna'),
+(29, 29, 'R025', '2025-08-11', 'Garcia, Ramon'),
+(30, 30, 'R026', '2025-08-11', 'Garcia, Ramon'),
+(31, 31, 'R027', '2025-09-12', 'Mendoza, Patricia');
 
-INSERT INTO Registration 
-(registration_id, vehicle_id, owner_id, payment_id, branch_id, officer_id, 
- first_date_registered, current_date_registered, expiry_date, status) VALUES
-(10001, 0001, 123450, 6, 1003, 11100003, '2024-02-01', '2025-08-03', '2026-08-03', 'ACTIVE'),
-(10002, 0002, 123451, 7, 1008, 11100008, '2025-09-12', '2025-09-12', '2026-09-12', 'ACTIVE'),
+INSERT INTO Registration VALUES
+(10001, 0001, 123450, 6, 1003, 11100003, '2024-02-01', '2025-08-03', '2026-08-03', 'ACTIVE'), 
+(10002, 0002, 123451, 31, 1008, 11100008, '2025-09-12', '2025-09-12', '2026-09-12', 'ACTIVE'), 
 (10003, 0003, 123452, NULL, 1002, 11100002, '2025-10-30', NULL, NULL, 'INACTIVE'),
-(10004, 0004, 123453, 8, 1008, 11100008, '2024-11-05', '2024-11-05', '2025-11-05', 'EXPIRED'),
+(10004, 0004, 123453, 17, 1008, 11100008, '2024-11-05', '2024-11-05', '2025-11-05', 'EXPIRED'), 
 (10005, 0005, 123454, NULL, 1007, 11100007, '2025-11-07', NULL, NULL, 'INACTIVE'),
-(10006, 0006, 123455, 10, 1006, 11100006, '2024-03-20', '2025-03-20', '2026-03-20', 'ACTIVE'),
-(10007, 0007, 123456, 12, 1009, 11100009, '2023-09-12', '2024-09-12', '2025-09-12', 'EXPIRED'),
+(10006, 0006, 123455, 9, 1006, 11100006, '2024-03-20', '2025-03-20', '2026-03-20', 'ACTIVE'),
+(10007, 0007, 123456, 2, 1009, 11100009, '2023-09-12', '2024-09-12', '2025-09-12', 'EXPIRED'), 
 (10008, 0008, 123457, NULL, 1004, 11100004, '2025-11-18', NULL, NULL, 'INACTIVE'),
-(10009, 0009, 123458, 13, 1005, 11100005, '2025-08-11', '2025-08-11', '2026-08-11', 'ACTIVE'),
-(10010, 0010, 123459, NULL, 1010, 11100010, '2025-10-21', NULL, NULL, 'INACTIVE');
+(10009, 0009, 123458, 29, 1005, 11100005, '2025-08-11', '2025-08-11', '2026-08-11', 'ACTIVE'), 
+(10010, 0010, 123459, NULL, 1010, 11100010, '2025-10-21', NULL, NULL, 'INACTIVE'),
+(10011, 0011, 123459, 13, 1010, 11100010, '2024-06-10', '2025-06-10', '2026-06-10', 'ACTIVE'), 
+(10012, 0012, 123451, 11, 1008, 11100008, '2024-04-18', '2025-04-18', '2026-04-18', 'ACTIVE'), 
+(10013, 0013, 123452, 1, 1002, 11100002, '2023-02-12', '2024-02-12', '2025-02-12', 'EXPIRED'), 
+(10014, 0014, 123453, 3, 1008, 11100008, '2023-09-21', '2024-09-21', '2025-09-21', 'EXPIRED'),
+(10015, 0015, 123454, 5, 1007, 11100007, '2024-01-05', '2025-01-05', '2026-01-05', 'ACTIVE'), 
+(10016, 0016, 123454, 12, 1007, 11100007, '2024-05-15', '2025-05-15', '2026-05-15', 'ACTIVE'), 
+(10017, 0017, 123456, 4, 1009, 11100009, '2023-11-11', '2024-11-11', '2025-11-11', 'EXPIRED'), 
+(10018, 0018, 123457, 19, 1004, 11100004, '2024-12-20', '2024-12-20', '2025-12-20', 'ACTIVE'),
+(10019, 0019, 123458, 14, 1005, 11100005, '2024-08-22', '2024-08-22', '2025-08-22', 'EXPIRED'), 
+(10020, 0020, 123459, 8, 1010, 11100010, '2024-03-19', '2024-03-19', '2025-03-19', 'EXPIRED'); 
+	
+INSERT INTO Renewal VALUES /*INCOMPLETE FIELDS*/
+(20001, 10001, 28, 1003, 11100003, '2025-08-03'), /*renewal id, regis id, payment id, branch id, officer id, and renewal date*/
+(20004, 10006, 21, 1006, 11100006, '2025-03-20'),
+(20005, 10007, 15, 1009, 11100009, '2024-09-12'),
+(20006, 10009, 30, 1005, 11100005, '2025-08-11'),
+(20007, 10011, 24, 1010, 11100010, '2025-06-10'),
+(20008, 10012, 22, 1008, 11100008, '2025-04-18'),
+(20009, 10013, 7, 1002, 11100002, '2024-02-12'),
+(20010, 10014, 16, 1008, 11100008, '2024-09-21'),
+(20011, 10015, 20, 1007, 11100007, '2025-01-05'),
+(20012, 10016, 23, 1007, 11100007, '2025-05-15'),
+(20013, 10017, 18, 1009, 11100009, '2024-11-11'),
 
-INSERT INTO Violation 
-(owner_id, vehicle_id, officer_id, branch_id, violation_type, fine_amount, violation_date, status, payment_id) VALUES
-(123450, 0001, 11100003, 1003, 'Expired Registration', 3000.00, '2025-08-01', 'Cleared', 3),
+INSERT INTO Violation VALUES
+(123450, 0001, 11100003, 1003, 'Expired Registration', 3000.00, '2025-08-01', 'Cleared', 28),
 (123450, 0001, 11100003, 1003, 'Reckless Driving', 2000.00, '2025-11-17', 'Unpaid', NULL),
-(123455, 0006, 11100006, 1006, 'Unregistered Motor Vehicle', 10000.00, '2025-07-28', 'Cleared', 4),
-(123456, 0007, 11100009, 1009, 'Smoke Belching', 2000.00, '2024-03-21', 'Cleared', 2),
+(123455, 0006, 11100006, 1006, 'Unregistered Motor Vehicle', 10000.00, '2025-07-28', 'Cleared', 25),
+(123456, 0007, 11100009, 1009, 'Smoke Belching', 2000.00, '2024-03-21', 'Cleared', 9),
 (123458, 0009, 11100005, 1005, 'Unauthorized Modification', 5000.00, '2025-10-01', 'Unpaid', NULL),
-(123455, 0006, 11100006, 1006, 'Defective Parts', 5000.00, '2025-07-07', 'Cleared', 1),
+(123455, 0006, 11100006, 1006, 'Defective Parts', 5000.00, '2025-07-07', 'Cleared', 24),
 (123456, 0007, 11100004, 1004, 'Expired Registration', 2000.00, '2025-09-12', 'Unpaid', NULL),
 (123453, 0004, 11100008, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
 (123453, 0004, 11100008, 1008, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
