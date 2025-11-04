@@ -52,7 +52,7 @@ public class PaymentService {
                     v.violation_type AS description,
                     v.fine_amount AS amount
                 FROM violation v
-                WHERE v.owner_id = ? AND v.paymentStatus = 'Unpaid'
+                WHERE v.owner_id = ? AND v.payment_status = 'Unpaid'
 
                 UNION
 
@@ -256,7 +256,7 @@ public class PaymentService {
             if (chosenType.equalsIgnoreCase("Violation")) {
                 // violation payment — mark cleared
                 PreparedStatement updateV = conn.prepareStatement(
-                    "UPDATE violation SET paymentStatus = 'Cleared', payment_id = ? WHERE violation_id = ?;"
+                    "UPDATE violation SET payment_status = 'Cleared', payment_id = ? WHERE violation_id = ?;"
                 );
                 updateV.setInt(1, paymentId);
                 updateV.setInt(2, chosenId);
