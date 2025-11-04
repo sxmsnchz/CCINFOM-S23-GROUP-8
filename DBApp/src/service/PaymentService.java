@@ -68,7 +68,6 @@ public class PaymentService {
                                 AND YEAR(re.last_renewal_date) = YEAR(CURDATE())
                             )
                             THEN 'Renewal'
-                        ELSE 'Up-to-date Registration'
                     END AS description,
                     CASE
                         WHEN r.payment_id IS NULL AND r.expiry_date IS NULL THEN 7410
@@ -82,7 +81,17 @@ public class PaymentService {
                         ELSE 0
                     END AS amount
                 FROM registration r
-                WHERE r.owner_id = ?;
+                WHERE r.owner_id = ?
+                AND (
+                    (r.payment_id IS NULL AND r.expiry_date IS NULL)  -- new registration
+                    OR (r.expiry_date < CURDATE()  -- overdue renewal
+                        AND NOT EXISTS (
+                            SELECT 1 FROM renewal re
+                            WHERE re.registration_id = r.registration_id
+                            AND YEAR(re.last_renewal_date) = YEAR(CURDATE())
+                        )
+                    )
+                );
             """;
 
             // create prepared statement
