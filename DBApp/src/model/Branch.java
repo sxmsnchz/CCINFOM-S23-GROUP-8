@@ -9,11 +9,12 @@ public class Branch {
     private String province;
     private String postalCode;
     private String region;
+    private String contactNumber;
 
     public Branch() {}
 
     public Branch(int branchId, String branchName, String street, String barangay,
-                  String city, String province, String postalCode, String region) {
+                  String city, String province, String postalCode, String region, String contactNumber) {
         this.branchId = branchId;
         this.branchName = branchName;
         this.street = street;
@@ -22,6 +23,7 @@ public class Branch {
         this.province = province;
         this.postalCode = postalCode;
         this.region = region;
+        this.contactNumber = contactNumber;
     }
 
     // Getters and Setters
@@ -89,4 +91,12 @@ public class Branch {
         this.region = region;
     }
 
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+    
 }
