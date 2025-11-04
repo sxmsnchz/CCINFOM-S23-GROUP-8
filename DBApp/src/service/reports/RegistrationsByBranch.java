@@ -59,15 +59,15 @@ public class RegistrationsByBranch {
             // LEFT JOIN ensures we still see branches even if they have 0 registrations in that month/year
             // The month/year filters are in the JOIN condition so the COUNT() returns 0 (not NULL) for branches with no rows
             String query = """
-                SELECT 
+                SELECT
                     b.branch_id,
                     b.branch_name,
                     COUNT(r.registration_id) AS total_registrations
                 FROM branch b
-                LEFT JOIN registration r 
+                LEFT JOIN registration r
                     ON b.branch_id = r.branch_id
-                    AND MONTH(r.current_date_registered) = ?
-                    AND YEAR(r.current_date_registered) = ?
+                    AND MONTH(r.first_date_registered) = ?
+                    AND YEAR(r.first_date_registered) = ?
                 GROUP BY b.branch_id, b.branch_name
                 ORDER BY b.branch_id ASC;
                 """;
@@ -130,5 +130,3 @@ public class RegistrationsByBranch {
         };
     }
 }
-
-
