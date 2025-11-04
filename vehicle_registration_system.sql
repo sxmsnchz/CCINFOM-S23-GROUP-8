@@ -127,9 +127,9 @@ CREATE TABLE Renewal (
     officer_id INT NOT NULL,
     last_renewal_date DATE NOT NULL,
     /* duration?? */
-    FOREIGN KEY (registration_id) REFERENCES Registration(registration_id)
-    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
+    FOREIGN KEY (registration_id) REFERENCES Registration(registration_id),
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id)
 ) AUTO_INCREMENT = 20001;
 
@@ -233,7 +233,7 @@ INSERT INTO Payment VALUES
 (16, 123453, 11100008, 1008, 1500.00, '2024-09-21', 'Renewal'),     
 (17, 123453, 11100008, 1008, 7410.00, '2024-11-05', 'Registration'),    
 (18, 123456, 11100009, 1009, 1500.00, '2024-11-11', 'Renewal'),     
-(19, 123457, 11100004, 1004, 7410.00, '2024-12-20', 'Registration');    
+(19, 123457, 11100004, 1004, 7410.00, '2024-12-20', 'Registration'),
 (20, 123454, 11100007, 1007, 1500.00, '2025-01-05', 'Renewal'),        
 (21, 123455, 11100006, 1006, 1500.00, '2025-03-20', 'Renewal'),         
 (22, 123451, 11100008, 1008, 1500.00, '2025-04-18', 'Renewal'),         
@@ -316,13 +316,13 @@ INSERT INTO Renewal VALUES /*INCOMPLETE FIELDS*/
 (20013, 10017, 18, 1009, 11100009, '2024-11-11');
 
 INSERT INTO Violation VALUES
-(123450, 0001, 11100003, 1003, 'Expired Registration', 3000.00, '2025-08-01', 'Cleared', 27),
-(123450, 0001, 11100003, 1003, 'Reckless Driving', 2000.00, '2025-11-17', 'Unpaid', NULL),
-(123455, 0006, 11100006, 1006, 'Unregistered Motor Vehicle', 10000.00, '2025-07-28', 'Cleared', 26),
-(123456, 0007, 11100009, 1009, 'Smoke Belching', 2000.00, '2024-03-21', 'Cleared', 10),
-(123458, 0009, 11100005, 1005, 'Unauthorized Modification', 5000.00, '2025-10-01', 'Unpaid', NULL),
-(123455, 0006, 11100006, 1006, 'Defective Parts', 5000.00, '2025-07-07', 'Cleared', 25),
-(123456, 0007, 11100004, 1004, 'Expired Registration', 2000.00, '2025-09-12', 'Unpaid', NULL),
-(123453, 0004, 11100008, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
-(123453, 0004, 11100008, 1008, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
-(123453, 0004, 11100008, 1008, 'Expired Registration', 3000.00, '2025-11-05', 'Unpaid', NULL);
+(1, 123450, 0001, 11100003, 1003, 'Expired Registration', 3000.00, '2025-08-01', 'Cleared', 27),
+(2, 123450, 0001, 11100003, 1003, 'Reckless Driving', 2000.00, '2025-11-17', 'Unpaid', NULL),
+(3, 123455, 0006, 11100006, 1006, 'Unregistered Motor Vehicle', 10000.00, '2025-07-28', 'Cleared', 26),
+(4, 123456, 0007, 11100009, 1009, 'Smoke Belching', 2000.00, '2024-03-21', 'Cleared', 10),
+(5, 123458, 0009, 11100005, 1005, 'Unauthorized Modification', 5000.00, '2025-10-01', 'Unpaid', NULL),
+(6, 123455, 0006, 11100006, 1006, 'Defective Parts', 5000.00, '2025-07-07', 'Cleared', 25),
+(7, 123456, 0007, 11100004, 1004, 'Expired Registration', 2000.00, '2025-09-12', 'Unpaid', NULL),
+(8, 123453, 0004, 11100008, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
+(9, 123453, 0004, 11100008, 1008, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
+(10, 123453, 0004, 11100008, 1008, 'Expired Registration', 3000.00, '2025-11-05', 'Unpaid', NULL);
