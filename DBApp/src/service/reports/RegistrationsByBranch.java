@@ -68,7 +68,7 @@ public class RegistrationsByBranch {
                     ON b.branch_id = r.branch_id
                     AND MONTH(r.current_date_registered) = ?
                     AND YEAR(r.current_date_registered) = ?
-                GROUP BY b.branch_id, b.branch_name
+                GROUP BY b.branch_id, b.branch_name, b.contact_number
                 ORDER BY b.branch_id ASC;
                 """;
 
@@ -81,9 +81,9 @@ public class RegistrationsByBranch {
             boolean hasResults = false;
             int grandTotal = 0;
 
-            System.out.println("----------------------------------------------------------------------------------");
-            System.out.printf("%-10s %-45s %s%n", "Branch ID", "Branch Name", "Total Registrations");
-            System.out.println("----------------------------------------------------------------------------------");
+            System.out.println("--------------------------------------------------------------------------------------------");
+            System.out.printf("%-10s %-40s %-18s %s%n", "Branch ID", "Branch Name", "Contact Number", "Total Registrations");
+            System.out.println("--------------------------------------------------------------------------------------------");
 
             while (rs.next()) { // moves cursor to next row; returns false when no more rows
                 hasResults = true;
@@ -91,11 +91,11 @@ public class RegistrationsByBranch {
                 String branchName = rs.getString("branch_name");
                 int total = rs.getInt("total_registrations"); // alias from COUNT(...)
 
-                System.out.printf("%-10d %-45s %d%n", branchId, branchName, total);
+                System.out.printf("%-10d %-45s %d%n", branchId, branchName, contactNumber, total);
                 grandTotal += total;
             }
 
-            // even if no results, we show 0 for all
+            // if no results
             if (!hasResults) {
                 System.out.println("No branches found in the system.");
             }
@@ -130,5 +130,6 @@ public class RegistrationsByBranch {
         };
     }
 }
+
 
 
