@@ -12,13 +12,13 @@ public class Violation {
 	private String violationType;
 	private Date violationDate;
 	private double fineAmount;
-	private String status; // e.g., "unpaid" or "cleared"
+	private String paymentStatus; // e.g., "unpaid" or "cleared"
 
 	public Violation() {}
 
 	public Violation(int violationId, int vehicleId, int ownerId, int branchId,
 					 int officerId, String violationType, Date violationDate,
-					 double fineAmount, String status) {
+					 double fineAmount, String paymentStatus) {
 		this.violationId = violationId;
 		this.vehicleId = vehicleId;
 		this.ownerId = ownerId;
@@ -27,7 +27,7 @@ public class Violation {
 		this.violationType = violationType;
 		this.violationDate = violationDate;
 		this.fineAmount = fineAmount;
-		this.status = status;
+		this.paymentStatus = paymentStatus;
 	}
 
 	// setters
@@ -58,7 +58,7 @@ public class Violation {
 	public void setFineAmount(double fineAmount) { 
 		this.fineAmount = fineAmount; }
 
-	public void setStatus(String status) {
+	public void setPaymentStatus(String paymentStatus) {
 		this.status = status; }
 
 	// getters
@@ -89,6 +89,6 @@ public class Violation {
 	public double getFineAmount() { 
 		return fineAmount; }
 
-	public String getStatus() { 
-		return status; }
+	public String getPaymentStatus() { 
+		return paymentStatus; }
 }
