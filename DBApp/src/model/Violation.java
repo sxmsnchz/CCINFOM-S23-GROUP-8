@@ -59,7 +59,7 @@ public class Violation {
 		this.fineAmount = fineAmount; }
 
 	public void setPaymentStatus(String paymentStatus) {
-		this.status = status; }
+		this.paymentStatus = paymentStatus; }
 
 	// getters
 	public int getViolationId() { 
