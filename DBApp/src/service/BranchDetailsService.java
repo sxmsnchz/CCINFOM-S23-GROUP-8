@@ -48,7 +48,7 @@ public class BranchDetailsService {
                 String province = branchRS.getString("province");
                 String postalCode = branchRS.getString("postal_code");
                 String region = branchRS.getString("region");
-                String contactNumber = branchRS.getString("contact_number"); // ✅ added
+                String contactNumber = branchRS.getString("contact_number");
 
                 // display branch header info
                 System.out.println("--------------------------------------------------");
@@ -56,7 +56,7 @@ public class BranchDetailsService {
                 System.out.println("Branch Name : " + branchName);
                 System.out.println("Address     : " + street + ", " + barangay + ", " + city + ", " + province + " (" + postalCode + ")");
                 System.out.println("Region      : " + region);
-                System.out.println("Contact No. : " + (contactNumber != null ? contactNumber : "N/A")); // ✅ added
+                System.out.println("Contact No. : " + (contactNumber != null ? contactNumber : "N/A"));
 
                 // OFFICERS ASSIGNED TO THIS BRANCH
                 String officerQuery = """
@@ -74,24 +74,23 @@ public class BranchDetailsService {
 
                 while (officerRS.next()) {
                     hasOfficers = true;
-                    // format name
                     String formattedName = officerRS.getString("last_name") + ", " + officerRS.getString("first_name");
                     System.out.println(" - " + formattedName);
                 }
 
-                // if no officers are recorded in that branch
                 if (!hasOfficers) {
                     System.out.println(" - No officers recorded for this branch.");
                 }
 
-                // REGISTRATIONS PROCESSED IN THIS BRANCH
+                // REGISTRATIONS PROCESSED IN THIS BRANCH (exclude INACTIVE)
                 String regQuery = """
                     SELECT r.registration_id, v.plate_number, r.status
                     FROM registration r
                     JOIN vehicle v ON r.vehicle_id = v.vehicle_id
                     WHERE r.branch_id = ?
+                      AND r.status IN ('ACTIVE', 'EXPIRED')  -- ✅ only show completed/processed
                     ORDER BY r.registration_id ASC;
-                    """; // ✅ fixed column name here
+                    """;
                 PreparedStatement ps3 = conn.prepareStatement(regQuery);
                 ps3.setInt(1, branchId);
                 ResultSet regRS = ps3.executeQuery();
@@ -99,7 +98,6 @@ public class BranchDetailsService {
                 System.out.println("\nRegistrations Processed:");
                 boolean hasRegistrations = false;
 
-                // list each registration record found for this branch
                 while (regRS.next()) {
                     hasRegistrations = true;
                     int regId = regRS.getInt("registration_id");
@@ -112,13 +110,12 @@ public class BranchDetailsService {
                 }
 
                 if (!hasRegistrations) {
-                    System.out.println(" - No registrations processed yet for this branch.");
+                    System.out.println(" - No active or expired registrations recorded for this branch.");
                 }
 
                 System.out.println("--------------------------------------------------\n");
             }
 
-            // no branches found case
             if (!hasBranches) {
                 System.out.println("No branches found in the database.");
             }
@@ -127,7 +124,7 @@ public class BranchDetailsService {
             System.out.println("         End of Branch Directory.                 ");
             System.out.println("==================================================");
 
-        } catch (Exception e) { // error handling in case of SQL issues
+        } catch (Exception e) {
             System.out.println("Error displaying branch details: " + e.getMessage());
         }
     }
