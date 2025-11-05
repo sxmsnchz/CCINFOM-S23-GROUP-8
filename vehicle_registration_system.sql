@@ -7,7 +7,7 @@ USE vehicle_registration_system;
 */
 CREATE TABLE Vehicle (
     vehicle_id INT AUTO_INCREMENT,
-    plate_no VARCHAR(7) NOT NULL UNIQUE,
+    plate_number VARCHAR(7) NOT NULL UNIQUE,
 	manufacture_date DATE NOT NULL,
     mv_file_no BIGINT NOT NULL UNIQUE,
     chassis_no VARCHAR(17) NOT NULL UNIQUE,
