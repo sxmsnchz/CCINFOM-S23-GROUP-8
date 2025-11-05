@@ -46,45 +46,65 @@ public class PaymentService {
 
             // SQL query to properly check renewals using the renewal table
             String query = """
-                SELECT 
+                SELECT
                     'Violation' AS type,
                     v.violation_id AS id,
+                    ve.plate_number AS plate_number,
                     v.violation_type AS description,
                     v.fine_amount AS amount
                 FROM violation v
-                WHERE v.owner_id = ? AND v.payment_status = 'Unpaid'
+                JOIN vehicle ve ON v.vehicle_id = ve.vehicle_id
+                WHERE v.owner_id = ?
+                  AND (v.payment_status = 'Unpaid' OR v.payment_id IS NULL)  -- backup condition for missing payment_id
 
                 UNION
 
                 SELECT
                     'Registration' AS type,
                     r.registration_id AS id,
+                    v.plate_number AS plate_number,
                     CASE
-                        WHEN r.payment_id IS NULL AND r.expiry_date IS NULL THEN 'New Registration'
-                        WHEN r.expiry_date < CURDATE()
-                            AND NOT EXISTS (
-                                SELECT 1 FROM renewal re
-                                WHERE re.registration_id = r.registration_id
-                                AND YEAR(re.last_renewal_date) = YEAR(CURDATE())
-                            )
-                            THEN 'Renewal'
+                        -- Defensive triple check for new registration
+                        WHEN (r.first_date_registered IS NULL
+                           OR r.payment_id IS NULL
+                           OR r.expiry_date IS NULL)
+                        THEN 'New Registration'
+
+                        -- Renewal logic: expired but not renewed this year
+                        WHEN (r.first_date_registered IS NOT NULL
+                           AND r.expiry_date < CURDATE()
+                           AND NOT EXISTS (
+                               SELECT 1 FROM renewal re
+                               WHERE re.registration_id = r.registration_id
+                               AND YEAR(re.last_renewal_date) = YEAR(CURDATE())
+                           ))
+                        THEN 'Renewal'
                     END AS description,
+
                     CASE
-                        WHEN r.payment_id IS NULL AND r.expiry_date IS NULL THEN 7410
-                        WHEN r.expiry_date < CURDATE()
-                            AND NOT EXISTS (
-                                SELECT 1 FROM renewal re
-                                WHERE re.registration_id = r.registration_id
-                                AND YEAR(re.last_renewal_date) = YEAR(CURDATE())
-                            )
-                            THEN 1500
+                        WHEN (r.first_date_registered IS NULL
+                           OR r.payment_id IS NULL
+                           OR r.expiry_date IS NULL)
+                        THEN 7410
+                        WHEN (r.first_date_registered IS NOT NULL
+                           AND r.expiry_date < CURDATE()
+                           AND NOT EXISTS (
+                               SELECT 1 FROM renewal re
+                               WHERE re.registration_id = r.registration_id
+                               AND YEAR(re.last_renewal_date) = YEAR(CURDATE())
+                           ))
+                        THEN 1500
                         ELSE 0
                     END AS amount
                 FROM registration r
+                JOIN vehicle v ON r.vehicle_id = v.vehicle_id
                 WHERE r.owner_id = ?
                 AND (
-                    (r.payment_id IS NULL AND r.expiry_date IS NULL)  -- new registration
-                    OR (r.expiry_date < CURDATE()  -- overdue renewal
+                    (r.first_date_registered IS NULL
+                     OR r.payment_id IS NULL
+                     OR r.expiry_date IS NULL)  -- new registration
+                    OR (r.first_date_registered IS NOT NULL
+                        AND r.expiry_date < CURDATE()
                         AND NOT EXISTS (
                             SELECT 1 FROM renewal re
                             WHERE re.registration_id = r.registration_id
@@ -107,6 +127,7 @@ public class PaymentService {
             while (rs.next()) {
                 hasUnpaid = true;
                 System.out.println("[" + rs.getString("type") + "] ID: " + rs.getInt("id") +
+                        " | Plate No: " + rs.getString("plate_number") +
                         " | " + rs.getString("description") +
                         " | Amount: Php " + rs.getDouble("amount"));
             }
@@ -152,7 +173,7 @@ public class PaymentService {
             if (chosenType.equalsIgnoreCase("Violation")) {
                 // Query violation details for the given violation_id
                 PreparedStatement ps2 = conn.prepareStatement("""
-                    SELECT fine_amount, branch_id, officer_id, v.vehicle_id, ve.plate_no, v.violation_type
+                    SELECT fine_amount, branch_id, officer_id, v.vehicle_id, ve.plate_number, v.violation_type
                     FROM violation v
                     JOIN vehicle ve ON v.vehicle_id = ve.vehicle_id
                     WHERE violation_id = ?;
@@ -170,14 +191,15 @@ public class PaymentService {
                 amount = rs2.getDouble("fine_amount");
                 branchId = rs2.getInt("branch_id");
                 officerId = rs2.getInt("officer_id");
-                plateNo = rs2.getString("plate_no");
+                plateNo = rs2.getString("plate_number");
                 transactionDesc = rs2.getString("violation_type");
                 paymentType = "Violation";
 
             // handle registration or renewal
             } else {
                 PreparedStatement ps3 = conn.prepareStatement("""
-                    SELECT r.branch_id, r.officer_id, r.vehicle_id, r.payment_id, r.expiry_date, v.plate_no
+                    SELECT r.branch_id, r.officer_id, r.vehicle_id, r.payment_id,
+                           r.expiry_date, r.first_date_registered, v.plate_number
                     FROM registration r
                     JOIN vehicle v ON r.vehicle_id = v.vehicle_id
                     WHERE r.registration_id = ?;
@@ -193,12 +215,13 @@ public class PaymentService {
 
                 branchId = rs3.getInt("branch_id");
                 officerId = rs3.getInt("officer_id");
-                plateNo = rs3.getString("plate_no");
+                plateNo = rs3.getString("plate_number");
                 int prevPay = rs3.getInt("payment_id");
                 Date expiry = rs3.getDate("expiry_date");
+                Date firstReg = rs3.getDate("first_date_registered");
 
                 // Determine whether it’s a new registration or renewal
-                if (expiry == null && prevPay == 0) {
+                if ((firstReg == null || prevPay == 0 || expiry == null)) {
                     transactionDesc = "New Registration";
                     paymentType = "Registration";
                     amount = 7410.00;
@@ -273,10 +296,12 @@ public class PaymentService {
 
             } else {
                 if (paymentType.equalsIgnoreCase("Registration")) {
-                    // new registration
+                    // new registration — set both first and current date registered
                     PreparedStatement updateR = conn.prepareStatement("""
                         UPDATE registration
-                        SET payment_id = ?, current_date_registered = CURDATE(),
+                        SET payment_id = ?,
+                            first_date_registered = CURDATE(),
+                            current_date_registered = CURDATE(),
                             expiry_date = DATE_ADD(CURDATE(), INTERVAL 1 YEAR),
                             status = 'ACTIVE'
                         WHERE registration_id = ?;
