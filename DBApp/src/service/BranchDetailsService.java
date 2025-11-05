@@ -48,6 +48,7 @@ public class BranchDetailsService {
                 String province = branchRS.getString("province");
                 String postalCode = branchRS.getString("postal_code");
                 String region = branchRS.getString("region");
+                String contactNumber = branchRS.getString("contact_number"); // ✅ new line added
 
                 // display branch header info
                 System.out.println("--------------------------------------------------");
@@ -55,6 +56,7 @@ public class BranchDetailsService {
                 System.out.println("Branch Name : " + branchName);
                 System.out.println("Address     : " + street + ", " + barangay + ", " + city + ", " + province + " (" + postalCode + ")");
                 System.out.println("Region      : " + region);
+                System.out.println("Contact No. : " + (contactNumber != null ? contactNumber : "N/A")); // ✅ new line added
 
                 // OFFICERS ASSIGNED TO THIS BRANCH
                 String officerQuery = """
@@ -130,5 +132,3 @@ public class BranchDetailsService {
         }
     }
 }
-
-
