@@ -48,7 +48,7 @@ public class BranchDetailsService {
                 String province = branchRS.getString("province");
                 String postalCode = branchRS.getString("postal_code");
                 String region = branchRS.getString("region");
-                String contactNumber = branchRS.getString("contact_number"); // ✅ new line added
+                String contactNumber = branchRS.getString("contact_number"); // ✅ added
 
                 // display branch header info
                 System.out.println("--------------------------------------------------");
@@ -56,7 +56,7 @@ public class BranchDetailsService {
                 System.out.println("Branch Name : " + branchName);
                 System.out.println("Address     : " + street + ", " + barangay + ", " + city + ", " + province + " (" + postalCode + ")");
                 System.out.println("Region      : " + region);
-                System.out.println("Contact No. : " + (contactNumber != null ? contactNumber : "N/A")); // ✅ new line added
+                System.out.println("Contact No. : " + (contactNumber != null ? contactNumber : "N/A")); // ✅ added
 
                 // OFFICERS ASSIGNED TO THIS BRANCH
                 String officerQuery = """
@@ -86,12 +86,12 @@ public class BranchDetailsService {
 
                 // REGISTRATIONS PROCESSED IN THIS BRANCH
                 String regQuery = """
-                    SELECT r.registration_id, v.plate_no, r.status
+                    SELECT r.registration_id, v.plate_number, r.status
                     FROM registration r
                     JOIN vehicle v ON r.vehicle_id = v.vehicle_id
                     WHERE r.branch_id = ?
                     ORDER BY r.registration_id ASC;
-                    """;
+                    """; // ✅ fixed column name here
                 PreparedStatement ps3 = conn.prepareStatement(regQuery);
                 ps3.setInt(1, branchId);
                 ResultSet regRS = ps3.executeQuery();
@@ -103,7 +103,7 @@ public class BranchDetailsService {
                 while (regRS.next()) {
                     hasRegistrations = true;
                     int regId = regRS.getInt("registration_id");
-                    String plateNo = regRS.getString("plate_no");
+                    String plateNo = regRS.getString("plate_number");
                     String status = regRS.getString("status");
 
                     System.out.println(" - Reg. ID: " + regId +
