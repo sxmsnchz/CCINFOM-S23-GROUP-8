@@ -1,8 +1,13 @@
 package view;
 
 import java.util.Scanner;
+import java.util.Date;
+import java.util.List;
+
+import database.DatabaseConnection;
 import service.BranchDetailsService;
 import service.ReportService;
+import service.ViolationService;
 import model.Session;
 
 /**
@@ -38,11 +43,72 @@ public class OfficerMenu {
 
             switch (choice) {
                 case "1":
-                    System.out.println("\n[Feature: Record New Violation] (to be implemented)\n");
+                    System.out.println("Record New Violation");
+                    try {
+                        System.out.print("Enter Vehicle ID: ");
+                        int vehicleId = Integer.parseInt(scanner.nextLine());
+                        System.out.print("Enter Owner ID: ");
+                        int ownerId = Integer.parseInt(scanner.nextLine());
+                        System.out.print("Enter Branch ID: ");
+                        int branchId = Integer.parseInt(scanner.nextLine());
+                        System.out.print("Enter Officer ID: ");
+                        int officerId = Integer.parseInt(scanner.nextLine());
+                        System.out.print("Enter Violation Type: ");
+                        String violationType = scanner.nextLine();
+                        System.out.print("Enter Fine Amount: ");
+                        double fineAmount = Double.parseDouble(scanner.nextLine());
+                        java.sql.Date violationDate = new java.sql.Date(System.currentTimeMillis());
+                        System.out.print("Enter Payment Status: ");
+                        String paymentStatus = scanner.nextLine();
+
+                        model.Violation v = new model.Violation(0, vehicleId, ownerId, branchId, officerId, violationType, fineAmount, violationDate, paymentStatus);
+    
+                        ViolationService service = new ViolationService();
+                        model.Violation insert = service.addViolationByOfficer(v);
+
+                        if (insert != null) {
+                            System.out.println("Violation recorded successfully! Violation ID: " + insert.getViolationId());
+                        }
+                        else {
+                            System.out.println("Failed to record violation.");
+                        }
+                    }
+                    catch(Exception e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
                     break;
 
                 case "2":
-                    System.out.println("\n[Feature: View All Violations] (to be implemented)\n");
+                    System.out.println("All Violations");
+                    try {
+                        ViolationService vs = new ViolationService();
+                        List<model.Violation> violations = vs.getAllViolations();
+
+                        if (violations.isEmpty()) {
+                            System.out.println("No violations found.");
+                            break;
+                        }
+                        System.out.printf("%-4s %-8s %-9s %-8s %-10s %-22s %-9s %-12s%n",
+                                          "ID", "Vehicle", "Owner", "Branch", "Officer", "Type", "Fine", "Date", "Status");
+                        System.out.println("---------------------------------------------------------------------------------------------");
+
+                        for(model.Violation v : violations) {
+                            System.out.printf("%-4s %-8s %-9s %-8s %-10s %-22s %-9s %-12s%n",
+                                              v.getViolationId(),
+                                              v.getVehicleId(),
+                                              v.getOwnerId(),
+                                              v.getBranchId(),
+                                              v.getOfficerId(),
+                                              truncate(v.getViolationType(), 20),
+                                              v.getFineAmount(),
+                                              v.getViolationDate(),
+                                              v.getPaymentStatus());
+                        }
+                        System.out.println();
+                    } catch (Exception e) {
+                        System.out.println("Error loading violations: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                     break;
 
                 case "3":
@@ -89,5 +155,11 @@ public class OfficerMenu {
         }
 
         // note: do not close System.in-scanner here to avoid closing System.in for callers
+    }
+
+    private static String truncate(String s, int max) {
+        if (s == null) 
+            return "";
+        return s.length() <= max ? s : s.substring(0, max - 3) + "...";
     }
 }
