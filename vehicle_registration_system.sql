@@ -34,7 +34,7 @@ CREATE TABLE Owner (
     postal_code VARCHAR(10) NOT NULL,
     password VARCHAR(50) NOT NULL,
     license_number VARCHAR(13) UNIQUE NOT NULL,
-	CHECK (CHAR_LENGTH(password) >= 6)
+	CHECK (CHAR_LENGTH(password) >= 8)
 ) AUTO_INCREMENT = 123450;
     
 /*=======================================
@@ -65,7 +65,7 @@ CREATE TABLE Officer (
     branch_id INT,
     password VARCHAR(50) NOT NULL,
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id),
-	CHECK (CHAR_LENGTH(password) >= 6)
+	CHECK (CHAR_LENGTH(password) >= 8)
 ) AUTO_INCREMENT = 11100001;
 
 /* =======================================================
