@@ -72,7 +72,7 @@ public class ViolationService {
                 java.sql.Date violationDate = rs.getDate("violation_date");
                 String paymentStatus = rs.getString("payment_status");
 
-                Violation v = new Violation(id, vehicleId, ownerId, branchId, officerId, violationType, fineAmount, violationDate, paymentStatus);
+                Violation v = new Violation(id, vehicleId, ownerId, branchId, officerId, violationType, violationDate, fineAmount, paymentStatus);
                 list.add(v);
             }
         } catch (SQLException e) {
@@ -103,7 +103,7 @@ public class ViolationService {
                     java.sql.Date violationDate = rs.getDate("violation_date");
                     String paymentStatus = rs.getString("payment_status");
 
-                    Violation v = new Violation(id, vehicleId, ownerId, branchId, officerId, violationType, fineAmount, violationDate, paymentStatus);
+                    Violation v = new Violation(id, vehicleId, ownerId, branchId, officerId, violationType, violationDate, fineAmount, paymentStatus);
                     violations.add(v);
                 }
             }
