@@ -2,6 +2,7 @@ package service;
 
 import java.util.Scanner;
 import service.reports.RegistrationsByBranch;
+import service.reports.OutstandingViolations;;
 // import service.reports.RenewalOnTime;
 // import service.reports.ViolationsByOfficer;
 // import service.reports.OutstandingViolations;
@@ -71,9 +72,8 @@ public class ReportService {
 
                 case "4" -> {
                     System.out.println("\nGenerating 'Outstanding Violations' report...\n");
-                    System.out.println("(Feature to be implemented soon.)");
-                    // OutstandingViolations report4 = new OutstandingViolations();
-                    // report4.viewOutstandingViolations(scanner);
+                    OutstandingViolations report4 = new OutstandingViolations();
+                    report4.viewOutstandingViolations(scanner);
                 }
 
                 case "5" -> {
