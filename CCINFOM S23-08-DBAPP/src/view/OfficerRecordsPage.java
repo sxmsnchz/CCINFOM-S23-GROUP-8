@@ -142,7 +142,7 @@ public class OfficerRecordsPage {
         for (model.Violation v : violations) {
             String date = v.getViolationDate() == null ? "" : v.getViolationDate().toString();
             String type = v.getViolationType() == null ? "" : v.getViolationType();
-            String status = v.getStatus() == null ? "" : v.getStatus();
+            String status = v.getPaymentStatus() == null ? "" : v.getPaymentStatus();
             System.out.printf("%-12d %-12d %-10d %-20s %-12s %-10.2f %-10s%n",
                     v.getViolationId(), v.getVehicleId(), v.getOwnerId(), type, date, v.getFineAmount(), status);
         }
