@@ -61,7 +61,7 @@ public class OfficerMenu {
                         System.out.print("Enter Payment Status: ");
                         String paymentStatus = scanner.nextLine();
 
-                        model.Violation v = new model.Violation(0, vehicleId, ownerId, branchId, officerId, violationType, fineAmount, violationDate, paymentStatus);
+                        model.Violation v = new model.Violation(0, vehicleId, ownerId, branchId, officerId, violationType, violationDate, fineAmount, paymentStatus);
     
                         ViolationService service = new ViolationService();
                         model.Violation insert = service.addViolationByOfficer(v);
