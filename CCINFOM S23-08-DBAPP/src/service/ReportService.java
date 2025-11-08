@@ -1,8 +1,9 @@
 package service;
 
 import java.util.Scanner;
+import service.reports.OutstandingViolations;
 import service.reports.RegistrationsByBranch;
-import service.reports.OutstandingViolations;;
+import service.reports.RenewalOnTime;;
 // import service.reports.RenewalOnTime;
 // import service.reports.ViolationsByOfficer;
 // import service.reports.OutstandingViolations;
@@ -59,8 +60,8 @@ public class ReportService {
                 case "2" -> {
                     System.out.println("\nGenerating 'Renewal On Time' report...\n");
                     System.out.println("(Feature to be implemented soon.)");
-                    // RenewalOnTime report2 = new RenewalOnTime();
-                    // report2.viewRenewalOnTime(scanner);
+                    RenewalOnTime report2 = new RenewalOnTime();
+                    report2.createRenewalOnTimeReport(scanner);
                 }
 
                 case "3" -> {

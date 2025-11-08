@@ -1,9 +1,9 @@
 package service;
 
 import database.DatabaseConnection;
-import model.Session;
 import java.sql.*;
 import java.util.Scanner;
+import model.Session;
 import view.UserMenu;
 
 /**
@@ -311,16 +311,16 @@ public class PaymentService {
                     updateR.executeUpdate();
 
                 } else if (paymentType.equalsIgnoreCase("Renewal")) {
-                    // renewal — insert record in renewal table instead of updating registration payment_id
-                    PreparedStatement insertRenewal = conn.prepareStatement("""
-                        INSERT INTO renewal (registration_id, payment_id, branch_id, officer_id, last_renewal_date)
-                        VALUES (?, ?, ?, ?, CURDATE());
+                    // renewal — update record in renewal table
+                    PreparedStatement updateRenewal = conn.prepareStatement("""
+                        UPDATE renewal
+                        SET last_renewal_date = CURDATE(),
+                            payment_id = ?
+                        WHERE registration_id = ?;
                     """);
-                    insertRenewal.setInt(1, chosenId);
-                    insertRenewal.setInt(2, paymentId);
-                    insertRenewal.setInt(3, branchId);
-                    insertRenewal.setInt(4, officerId);
-                    insertRenewal.executeUpdate();
+                    updateRenewal.setInt(1, paymentId);
+                    updateRenewal.setInt(2, chosenId);
+                    updateRenewal.executeUpdate();
 
                     // also update registration’s status and new expiry
                     PreparedStatement updateStatus = conn.prepareStatement("""

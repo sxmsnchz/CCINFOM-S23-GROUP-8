@@ -2,10 +2,11 @@ package view;
 
 import java.util.List;
 import java.util.Scanner;
+import model.Session;
 import service.PaymentService;
 import service.ReceiptService;
+import service.RenewalService;
 import service.ViolationService;
-import model.Session;
 
 /**
  * UserMenu.java
@@ -41,7 +42,8 @@ public class UserMenu {
                     System.out.println("\n[Feature: Register Vehicle] (to be implemented)\n");
                     break;
                 case "2":
-                    System.out.println("\n[Feature: Renew Registration] (to be implemented)\n");
+                    RenewalService renewalService = new RenewalService();
+                    renewalService.renewRegistration(scanner);
                     break;
                 case "3":
                     System.out.println("\n[Feature: View Vehicles] (to be implemented)\n");

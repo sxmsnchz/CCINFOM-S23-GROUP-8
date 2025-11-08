@@ -105,7 +105,7 @@ CREATE TABLE Registration (
     payment_id INT,
     branch_id INT NOT NULL,
     officer_id INT NOT NULL,
-    first_date_registered DATE NOT NULL,
+    first_date_registered DATE, /* changed to allow null */
     current_date_registered DATE,
     expiry_date DATE,
     status ENUM('ACTIVE', 'INACTIVE', 'EXPIRED') DEFAULT 'INACTIVE',
@@ -125,7 +125,7 @@ CREATE TABLE Renewal (
     payment_id INT,
     branch_id INT NOT NULL,
     officer_id INT NOT NULL,
-    last_renewal_date DATE NOT NULL,
+    last_renewal_date DATE, /* changed to allow null */
     /* duration?? */
     FOREIGN KEY (registration_id) REFERENCES Registration(registration_id),
     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
