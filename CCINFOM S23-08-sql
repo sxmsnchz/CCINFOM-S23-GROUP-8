@@ -1,5 +1,5 @@
-CREATE DATABASE vehicle_registration_system;
-USE vehicle_registration_system;
+CREATE DATABASE CCINFOM S23-08-sql;
+USE CCINFOM S23-08-sql;
 
 /*=======================================
 				VEHICLE TABLE
