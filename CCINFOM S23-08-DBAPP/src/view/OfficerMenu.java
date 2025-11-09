@@ -6,6 +6,7 @@ import java.util.List;
 
 import database.DatabaseConnection;
 import service.BranchDetailsService;
+import service.OwnerService;
 import service.ReportService;
 import service.ViolationService;
 import model.Session;
@@ -58,10 +59,8 @@ public class OfficerMenu {
                         System.out.print("Enter Fine Amount: ");
                         double fineAmount = Double.parseDouble(scanner.nextLine());
                         java.sql.Date violationDate = new java.sql.Date(System.currentTimeMillis());
-                        System.out.print("Enter Payment Status: ");
-                        String paymentStatus = scanner.nextLine();
 
-                        model.Violation v = new model.Violation(0, vehicleId, ownerId, branchId, officerId, violationType, violationDate, fineAmount, paymentStatus);
+                        model.Violation v = new model.Violation(0, vehicleId, ownerId, branchId, officerId, violationType, violationDate, fineAmount, "Unpaid");
     
                         ViolationService service = new ViolationService();
                         model.Violation insert = service.addViolationByOfficer(v);
@@ -120,7 +119,24 @@ public class OfficerMenu {
                     break;
 
                 case "5":
-                    System.out.println("\n[Feature: View Owner List] (to be implemented)\n");
+                    System.out.println("View Owner Record and Related Information");
+                    try {
+                        OwnerService ownerService = new OwnerService();
+                        System.out.print("Enter Owner ID or press Enter to use License Number: ");
+                        String input = scanner.nextLine().trim();
+
+                        if (input.isEmpty()) {
+                            System.out.print("Enter License Number: ");
+                            String licenseNumber = scanner.nextLine().trim();
+                            ownerService.viewOwnerByLicenseDetails(licenseNumber);
+                        } else {
+                            int ownerId = Integer.parseInt(input);
+                            ownerService.viewOwnerDetails(ownerId);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error viewing owner details. " + e.getMessage());
+                        e.printStackTrace();
+                    }
                     break;
 
                 case "6":
