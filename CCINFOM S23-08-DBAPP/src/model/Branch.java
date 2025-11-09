@@ -26,7 +26,7 @@ public class Branch {
         this.contactNumber = contactNumber;
     }
     
-    public Branch(int branchId, String branchName) {
+    public Branch(int branchId, String branchName) { //newly added
         this.branchId = branchId;
         this.branchName = branchName;
 
