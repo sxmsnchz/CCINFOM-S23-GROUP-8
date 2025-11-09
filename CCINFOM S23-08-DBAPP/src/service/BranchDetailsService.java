@@ -1,7 +1,11 @@
 package service;
 
 import database.DatabaseConnection;
+import model.Officer;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * BranchDetailsService.java
@@ -128,4 +132,52 @@ public class BranchDetailsService {
             System.out.println("Error displaying branch details: " + e.getMessage());
         }
     }
+
+            /**
+     * Retrieve all branchesfrom the database.
+     * @return list of branch model objects (may be empty)
+     */
+    public List<model.Branch> getAllBranches() {
+        List<model.Branch> branches = new ArrayList<>();
+        if (conn == null) return branches;
+
+        String query = """
+            SELECT b.branch_name, b.branch_id
+            FROM branch b
+            ORDER BY b.branch_name
+            """;
+        try (Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                int id = rs.getInt("branch_id");
+                String branchName= rs.getString("branch_name");
+
+                model.Branch branch = new model.Branch(id, branchName);
+                branches.add(branch);
+            }
+        } catch(SQLException e) {
+            System.err.println("Failed to load branches" + e.getMessage());
+            e.printStackTrace();
+        }
+        return branches;
+    }
+
+        public void viewAllBranches() {
+        List<model.Branch> branches = getAllBranches();
+
+        if (branches.isEmpty()) {
+            System.out.println("No branches found.");
+        } else {
+            System.out.println("--------------------------------------------------");
+                System.out.printf("%-9s %-30s%n", "Branch ID", "Branch Name");
+            System.out.println("--------------------------------------------------");
+            for (model.Branch b : branches) {
+                    // Handle null name defensively
+                    String name = b.getBranchName() != null ? b.getBranchName() : "N/A";
+                    System.out.printf("%-9d %-30s%n", b.getBranchId(), name.trim());
+            }
+            System.out.println("--------------------------------------------------");
+        }
+    }
+
 }

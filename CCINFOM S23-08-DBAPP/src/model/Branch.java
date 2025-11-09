@@ -25,7 +25,12 @@ public class Branch {
         this.region = region;
         this.contactNumber = contactNumber;
     }
+    
+    public Branch(int branchId, String branchName) {
+        this.branchId = branchId;
+        this.branchName = branchName;
 
+    }
     // Getters and Setters
     public int getBranchId() {
         return branchId;

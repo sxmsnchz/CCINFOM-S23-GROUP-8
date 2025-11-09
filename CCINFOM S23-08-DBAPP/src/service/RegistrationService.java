@@ -1,11 +1,15 @@
 package service;
 
 import database.DatabaseConnection;
+import model.Session;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.Scanner;
 
@@ -27,6 +31,8 @@ public class RegistrationService {
 
     // Interactive registration form (confirm loop similar to RenewalService)
     public void registerVehicle(Scanner scanner) {
+        BranchDetailsService branchDetails = new BranchDetailsService();
+
         boolean confirmDetails = false;
         String choice;
 
@@ -35,16 +41,14 @@ public class RegistrationService {
             System.out.println("            VEHICLE REGISTRATION FORM             ");
             System.out.println("==================================================");
 
-            int ownerId = 0, officerId = 0, branchId = 0;
+            int ownerId = Session.loggedInOwnerId;
+            Integer officerId = null; // will be auto-assigned from branch if possible
+            int branchId = 0;
             String plate = null, make = null, series = null, chassis = null, engine = null, color = null;
             int year = LocalDate.now().getYear();
             long mvFileNo = 0L;
 
             while (!confirmDetails) {
-                System.out.print("Owner ID: ");
-                ownerId = scanner.nextInt();
-                scanner.nextLine();
-
                 System.out.print("Plate Number: ");
                 plate = scanner.nextLine().trim().toUpperCase();
 
@@ -70,21 +74,13 @@ public class RegistrationService {
 
                 System.out.print("Color: ");
                 color = scanner.nextLine().trim();
+                
+                System.out.println("List of branches");
+                branchDetails.viewAllBranches();
 
                 System.out.print("Branch ID where processed: ");
                 branchId = scanner.nextInt();
                 scanner.nextLine();
-
-                // Attempt to find an officer assigned to this branch
-                officerId = findOfficerByBranch(branchId);
-                if (officerId > 0) {
-                    System.out.println("Assigned Officer ID for branch " + branchId + ": " + officerId);
-                } else {
-                    // fallback: ask user to enter officer ID manually
-                    System.out.print("No officer found for branch. Enter Officer ID who processed this registration: ");
-                    officerId = scanner.nextInt();
-                    scanner.nextLine();
-                }
 
                 System.out.println("--------------------------------------------------");
                 System.out.println("Please confirm the details below:");
@@ -95,8 +91,6 @@ public class RegistrationService {
                 System.out.println("Chassis  : " + chassis);
                 System.out.println("Engine   : " + engine);
                 System.out.println("Color    : " + color);
-                System.out.println("Officer  : " + officerId);
-                System.out.println("Branch   : " + branchId);
 
                 do {
                     System.out.print("Enter (Y/N): ");
@@ -113,6 +107,14 @@ public class RegistrationService {
                                 break; // re-enter outer form
                             }
 
+                            // automatically pick an officer assigned to the chosen branch (may be null)
+                            officerId = getOfficerIdForBranch(branchId);
+                            if (officerId == null) {
+                                System.out.println("Warning: no officer found for branch " + branchId + ". Registration will have NULL officer_id.");
+                            } else {
+                                System.out.println("Assigned officer_id: " + officerId);
+                            }
+
                             // add registration
                             int registrationId = addRegistration(vehicleId, ownerId, branchId, officerId);
                             if (registrationId == 0) {
@@ -124,26 +126,6 @@ public class RegistrationService {
                             confirmDetails = true;
                             System.out.println("Registration created (ID: " + registrationId + ").");
 
-                            // ask to process payment now
-                            System.out.print("Process payment now? (Y/N): ");
-                            String payNow = scanner.nextLine().trim();
-                            if (payNow.equalsIgnoreCase("Y")) {
-                                double amount = 7410.00; //not sure for amount on vehicle registration
-                                // delegate payment creation to PaymentService
-                                PaymentService paymentService = new PaymentService();
-                                int paymentId = paymentService.createPayment(officerId, branchId, ownerId, "Registration", amount);
-
-                                // update registration with payment and set dates
-                                updateRegistrationAfterPayment(registrationId, paymentId);
-
-                                // generate receipt
-                                ReceiptService receiptService = new ReceiptService();
-                                receiptService.generateReceipt(paymentId, 0);
-
-                                System.out.println("Registration completed and payment recorded.");
-                            } else {
-                                System.out.println("Registration saved without payment. Owner can settle payment later.");
-                            }
                         }
                         case "N" -> System.out.println("Details not confirmed. Please re-enter the information.");
                         default -> System.out.println("Invalid input. Please enter Y or N.");
@@ -188,28 +170,35 @@ public class RegistrationService {
         return 0;
     }
 
-    // Find an officer assigned to a given branch. Returns officer_id or 0 if none found.
-    private int findOfficerByBranch(int branchId) {
+    // helper: return any officer_id for the branch (first found) or null if none
+    private Integer getOfficerIdForBranch(int branchId) {
         try {
             PreparedStatement ps = conn.prepareStatement("SELECT officer_id FROM officer WHERE branch_id = ? LIMIT 1");
             ps.setInt(1, branchId);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt("officer_id");
-        } catch (Exception e) {
+            if (rs.next()) {
+                int id = rs.getInt("officer_id");
+                if (!rs.wasNull()) return id;
+            }
+        } catch (SQLException e) {
             System.out.println("Error finding officer for branch: " + e.getMessage());
         }
-        return 0;
+        return null;
     }
 
-    // Inserts a registration row and returns generated registration_id
-    public int addRegistration(int vehicleId, int ownerId, int branchId, int officerId) {
+    // Inserts a registration row. officerId can be null to insert a NULL officer_id.
+    public int addRegistration(int vehicleId, int ownerId, int branchId, Integer officerId) {
         try {
             String sql = "INSERT INTO registration (vehicle_id, owner_id, branch_id, officer_id, status) VALUES (?, ?, ?, ?, ?);";
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, vehicleId);
             ps.setInt(2, ownerId);
             ps.setInt(3, branchId);
-            ps.setInt(4, officerId);
+            if (officerId != null) {
+                ps.setInt(4, officerId);
+            } else {
+                ps.setNull(4, Types.INTEGER);
+            }
             ps.setString(5, "INACTIVE");
             ps.executeUpdate();
 
@@ -229,23 +218,4 @@ public class RegistrationService {
         return 0;
     }
 
-    
-
-    // update registration after payment
-    private void updateRegistrationAfterPayment(int registrationId, int paymentId) {
-        try {
-            String updateReg = "UPDATE registration SET payment_id = ?, first_date_registered = ?, current_date_registered = ?, expiry_date = ?, status = ? WHERE registration_id = ?;";
-            PreparedStatement upr = conn.prepareStatement(updateReg);
-            upr.setInt(1, paymentId);
-            Date now = Date.valueOf(LocalDate.now());
-            upr.setDate(2, now);
-            upr.setDate(3, now);
-            upr.setDate(4, Date.valueOf(LocalDate.now().plusYears(1)));
-            upr.setString(5, "ACTIVE");
-            upr.setInt(6, registrationId);
-            upr.executeUpdate();
-        } catch (Exception e) {
-            System.out.println("Error updating registration after payment: " + e.getMessage());
-        }
-    }
 }
