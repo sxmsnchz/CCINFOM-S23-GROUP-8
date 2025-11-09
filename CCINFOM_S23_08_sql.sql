@@ -109,7 +109,6 @@ CREATE TABLE Registration (
     current_date_registered DATE,
     expiry_date DATE,
     status ENUM('ACTIVE', 'INACTIVE', 'EXPIRED') DEFAULT 'INACTIVE',
-    PRIMARY KEY (registration_id),
     FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
     FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
 	FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
