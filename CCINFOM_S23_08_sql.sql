@@ -279,7 +279,7 @@ INSERT INTO Receipt VALUES
 (22, 22, 'R021', '2025-04-18', 'Mendoza, Patricia'),
 (23, 23, 'R022', '2025-05-15', 'Fernandez, Luis'),
 (24, 24, 'R023', '2025-06-10', 'Castillo, Sophia'),
-(25, 25, 'V002', '2025-07-07', 'Torres, Elena'),
+(25, 25, 'V002', '2025-07-14', 'Torres, Elena'),
 (26, 26, 'V003', '2022-04-20', 'Torres, Elena'),
 (27, 27, 'V004', '2025-08-01', 'Cruz, Anna'),
 (28, 28, 'R024', '2025-08-03', 'Cruz, Anna'),
