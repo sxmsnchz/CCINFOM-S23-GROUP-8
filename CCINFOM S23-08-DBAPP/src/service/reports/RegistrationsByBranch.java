@@ -3,6 +3,8 @@ package service.reports;
 import database.DatabaseConnection;
 import java.sql.*;
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 /**
  * RegistrationsByBranch.java
@@ -56,8 +58,6 @@ public class RegistrationsByBranch {
             System.out.println("\nGenerating report for " + getMonthName(month) + " " + year + "...\n");
 
             // query: total registrations per branch for selected month/year
-            // LEFT JOIN ensures we still see branches even if they have 0 registrations in that month/year
-            // The month/year filters are in the JOIN condition so the COUNT() returns 0 (not NULL) for branches with no rows
             String query = """
                 SELECT
                     b.branch_id,
@@ -72,10 +72,9 @@ public class RegistrationsByBranch {
                 ORDER BY b.branch_id ASC;
                 """;
 
-            // create a PreparedStatement from the query string
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, month); // bind month to the 1st ?
-            ps.setInt(2, year); // bind year  to the 2nd ?
+            ps.setInt(1, month);
+            ps.setInt(2, year);
             ResultSet rs = ps.executeQuery();
 
             boolean hasResults = false;
@@ -85,26 +84,36 @@ public class RegistrationsByBranch {
             System.out.printf("%-10s %-45s %s%n", "Branch ID", "Branch Name", "Total Registrations");
             System.out.println("----------------------------------------------------------------------------------");
 
-            while (rs.next()) { // moves cursor to next row; returns false when no more rows
-                hasResults = true;
-                int branchId = rs.getInt("branch_id");
-                String branchName = rs.getString("branch_name");
-                int total = rs.getInt("total_registrations"); // alias from COUNT(...)
+            // create CSV file
+            String fileName = String.format("registrations-by-branch-%02d-%d.csv", month, year);
+            try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
+                writer.println("Branch ID,Branch Name,Total Registrations"); // header row
 
-                System.out.printf("%-10d %-45s %d%n", branchId, branchName, total);
-                grandTotal += total;
+                while (rs.next()) {
+                    hasResults = true;
+                    int branchId = rs.getInt("branch_id");
+                    String branchName = rs.getString("branch_name");
+                    int total = rs.getInt("total_registrations");
+
+                    System.out.printf("%-10d %-45s %d%n", branchId, branchName, total);
+                    writer.printf("%d,%s,%d%n", branchId, branchName, total);
+
+                    grandTotal += total;
+                }
+
+                if (!hasResults) {
+                    System.out.println("No branches found in the system.");
+                }
+
+                System.out.println("----------------------------------------------------------------------------------");
+                System.out.println("GRAND TOTAL: " + grandTotal + " registration(s)");
+                System.out.println("==================================================================================");
+                System.out.println("End of Report for " + getMonthName(month) + " " + year);
+                System.out.println("==================================================================================");
+
+                writer.printf("%nGrand Total,,%d%n", grandTotal);
+                System.out.println("\nReport successfully saved as CSV file: " + fileName);
             }
-
-            // even if no results, we show 0 for all
-            if (!hasResults) {
-                System.out.println("No branches found in the system.");
-            }
-
-            System.out.println("----------------------------------------------------------------------------------");
-            System.out.println("GRAND TOTAL: " + grandTotal + " registration(s)");
-            System.out.println("==================================================================================");
-            System.out.println("End of Report for " + getMonthName(month) + " " + year);
-            System.out.println("==================================================================================");
 
         } catch (Exception e) {
             System.out.println("Error generating report: " + e.getMessage());
