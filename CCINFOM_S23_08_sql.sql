@@ -23,7 +23,9 @@ CREATE TABLE Vehicle (
 =========================================
 */
 CREATE TABLE Owner (
-	owner_id INT AUTO_INCREMENT PRIMARY KEY,
+	
+CREATE TABLE Owner (
+    owner_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     street VARCHAR(100) NOT NULL,
@@ -34,8 +36,10 @@ CREATE TABLE Owner (
     postal_code VARCHAR(10) NOT NULL,
     password VARCHAR(50) NOT NULL,
     license_number VARCHAR(13) UNIQUE NOT NULL,
-	CHECK (CHAR_LENGTH(password) >= 8)
+    CHECK (CHAR_LENGTH(password) >= 8),
+    CHECK (license_number REGEXP '^[0-9]{3}-[0-9]{2}-[0-9]{6}$')
 ) AUTO_INCREMENT = 123450;
+
     
 /*=======================================
 				BRANCH TABLE
