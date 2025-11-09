@@ -5,6 +5,7 @@ import java.util.Scanner;
 import model.Session;
 import service.PaymentService;
 import service.ReceiptService;
+import service.RegistrationDetailsService;
 import service.RegistrationService;
 import service.RenewalService;
 import service.ViolationService;
@@ -48,7 +49,8 @@ public class UserMenu {
                     renewalService.renewRegistration(scanner);
                     break;
                 case "3":
-                    System.out.println("\n[Feature: View Vehicles] (to be implemented)\n");
+                    RegistrationDetailsService registrationDetailsService = new RegistrationDetailsService();
+                    registrationDetailsService.viewVehicles(scanner);
                     break;
                 case "4":
                     System.out.println("All Violations");
