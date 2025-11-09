@@ -23,30 +23,57 @@ public class ViolationService {
         if (con == null)
             return null;
             
-        String sql_query = "INSERT INTO Violation " + "(vehicle_id, owner_id, branch_id, officer_id, violation_type, fine_amount, violation_date) " 
-                         + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = con.prepareStatement(sql_query, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, v.getVehicleId());
-            ps.setInt(2, v.getOwnerId());
-            ps.setInt(3, v.getBranchId());
-            ps.setInt(4, v.getOfficerId());
-            ps.setString(5, v.getViolationType());
-            ps.setDouble(6, v.getFineAmount());
-            ps.setDate(7, v.getViolationDate());
+        String checkOwner = "SELECT 1 FROM Registration " + "WHERE vehicle_id = ? AND owner_id = ? LIMIT 1";
+        String checkOfficerBranch = "SELECT 1 FROM Officer " + "WHERE officer_id = ? AND branch_id = ? LIMIT 1";
+        String SQLInsert = "INSERT INTO Violation " + "(owner_id, vehicle_id, officer_id, branch_id, violation_type, fine_amount, violation_date) " +
+                           "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        try {
 
-            int i = ps.executeUpdate();
-            if (i == 0)
-                throw new SQLException("Insert failed.");
+            try (PreparedStatement ps = con.prepareStatement(checkOwner)) {
+                ps.setInt(1, v.getVehicleId());
+                ps.setInt(2, v.getOwnerId());
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        System.out.println("\nThe vehicle does not belong to this owner.");
+                        return null;
+                    }
+                }
+            }
+            try (PreparedStatement ps = con.prepareStatement(checkOfficerBranch)) {
+                ps.setInt(1, v.getOfficerId());
+                ps.setInt(2, v.getBranchId());
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        System.out.println("\nOfficer is not assigned to this branch.");
+                        return null;
+                    }
+                }
+            }
+            try (PreparedStatement ps = con.prepareStatement(SQLInsert, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, v.getOwnerId());
+                ps.setInt(2, v.getVehicleId());
+                ps.setInt(3, v.getOfficerId());
+                ps.setInt(4, v.getBranchId());
+                ps.setString(5, v.getViolationType());
+                ps.setDouble(6, v.getFineAmount());
+                ps.setDate(7, v.getViolationDate());
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next())
-                    v.setViolationId(rs.getInt(1));
+                int r = ps.executeUpdate();
+                if (r == 0) {
+                    throw new SQLException("Insert failed.");
+                }
+
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        v.setViolationId(rs.getInt(1));
+                    }   
+                }
             }
             return v;
         } catch (SQLException e) {
-            System.err.println("Failed to insert violation for officer " + v.getOfficerId() + ": " + e.getMessage());
-            e.printStackTrace();
-            return null;
+        System.err.println("Failed to add violation: " + e.getMessage());
+        return null;
         }
     }
 
