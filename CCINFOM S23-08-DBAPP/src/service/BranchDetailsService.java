@@ -162,7 +162,7 @@ public class BranchDetailsService {
         return branches;
     }
 
-        public void viewAllBranches() {
+    public void viewAllBranches() {
         List<model.Branch> branches = getAllBranches();
 
         if (branches.isEmpty()) {
