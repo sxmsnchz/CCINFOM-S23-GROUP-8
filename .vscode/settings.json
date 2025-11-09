@@ -1,6 +1,6 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "DBApp/lib/mysql-connector-j-9.5.0.jar"
+        "CCINFOM S23-08-DBAPP/lib/mysql-connector-j-9.5.0.jar"
     ]
 }
