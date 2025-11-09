@@ -34,7 +34,13 @@ CREATE TABLE Vehicle (
     password VARCHAR(50) NOT NULL,
     license_number VARCHAR(13) UNIQUE NOT NULL,
 	CHECK (CHAR_LENGTH(password) >= 8),
-	CHECK (license_number REGEXP '^[A-Z][0-9]{2}-[0-9]{2}-[0-9]{6}$')
+	CHECK (license_number REGEXP '^[A-Z][0-9]{2}-[0-9]{2}-[0-9]{6}$'),
+	CHECK (postal_code REGEXP '^[0-9]{4}$'),
+    CHECK (first_name REGEXP '^[A-Za-z ]+$'),
+    CHECK (last_name REGEXP '^[A-Za-z ]+$'),
+    CHECK (city REGEXP '^[A-Za-z ]+$'),
+    CHECK (province REGEXP '^[A-Za-z ]+$'),
+    CHECK (region REGEXP '^[A-Za-z0-9 ]+$')
 ) AUTO_INCREMENT = 123450;
 
 /*=======================================
@@ -51,7 +57,11 @@ CREATE TABLE Branch (
     postal_code VARCHAR(10) NOT NULL,
     region VARCHAR(50) NOT NULL,
 	contact_number VARCHAR(15) NOT NULL,
-	CHECK (contact_number REGEXP '^\\+63[0-9]{10}$')
+	CHECK (contact_number REGEXP '^\\+63[0-9]{10}$'),
+	CHECK (postal_code REGEXP '^[0-9]{4}$'),
+	CHECK (city REGEXP '^[A-Za-z ]+$'),
+    CHECK (province REGEXP '^[A-Za-z ]+$'),
+    CHECK (region REGEXP '^[A-Za-z0-9 ]+$')
 ) AUTO_INCREMENT = 1001;
 
 /*=======================================
@@ -324,3 +334,5 @@ INSERT INTO Violation VALUES
 (8, 123453, 104, 11100008, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
 (9, 123453, 104, 11100008, 1008, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
 (10, 123453, 104, 11100008, 1008, 'Expired Registration', 3000.00, '2025-11-05', 'Unpaid', NULL);
+
+SELECT * FROM Owner;
