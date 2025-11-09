@@ -298,7 +298,7 @@ public class PaymentService {
                         SET payment_id = ?,
                             first_date_registered = CURDATE(),
                             current_date_registered = CURDATE(),
-                            expiry_date = DATE_ADD(CURDATE(), INTERVAL 1 YEAR),
+                            expiry_date = DATE_ADD(CURDATE(), INTERVAL 3 YEAR),
                             status = 'ACTIVE'
                         WHERE registration_id = ?;
                     """);
