@@ -4,7 +4,7 @@ import java.sql.Date;
 public class Vehicle {
 	private int vehicleId; // primary key
 	private String plateNumber;
-	private int mvFileNo;
+	private long mvFileNo;
 	private String chassisNo;
 	private String engineNo;
 	private String make;
@@ -15,7 +15,7 @@ public class Vehicle {
 	public Vehicle() {}
 
 	public Vehicle(int vehicleId, String plateNumber, Date manufactureDate,
-				   int mvFileNo, String chassisNo, String engineNo, String color) {
+				   long mvFileNo, String chassisNo, String engineNo, String color) {
 		this.vehicleId = vehicleId;
 		this.plateNumber = plateNumber;
 		this.manufactureDate = manufactureDate;
@@ -26,7 +26,7 @@ public class Vehicle {
 	}
 
 	public Vehicle(String plateNumber, Date manufactureDate,
-				   int mvFileNo, String chassisNo, String engineNo, String make, String series, String color) {
+				   long mvFileNo, String chassisNo, String engineNo, String make, String series, String color) {
 		this.plateNumber = plateNumber;
 		this.manufactureDate = manufactureDate;
 		this.mvFileNo = mvFileNo;
@@ -44,7 +44,7 @@ public class Vehicle {
 
 	public void setManufactureDate(Date manufactureDate) { this.manufactureDate = manufactureDate; }
 
-	public void setMvFileNo(int mvFileNo) { this.mvFileNo = mvFileNo; }
+	public void setMvFileNo(long mvFileNo) { this.mvFileNo = mvFileNo; }
 
 	public void setChassisNo(String chassisNo) { this.chassisNo = chassisNo; }
 
@@ -63,7 +63,7 @@ public class Vehicle {
 
 	public Date getManufactureDate() { return manufactureDate; }
 
-	public int getMvFileNo() { return mvFileNo; }
+	public long getMvFileNo() { return mvFileNo; }
 
 	public String getChassisNo() { return chassisNo; }
 
