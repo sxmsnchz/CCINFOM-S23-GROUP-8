@@ -125,8 +125,7 @@ CREATE TABLE Renewal (
     payment_id INT,
     branch_id INT NOT NULL,
     officer_id INT NOT NULL,
-    last_renewal_date DATE, /* changed to allow null */
-    /* duration?? */
+    last_renewal_date DATE,
     FOREIGN KEY (registration_id) REFERENCES Registration(registration_id),
     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
     FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
@@ -302,8 +301,8 @@ INSERT INTO Registration VALUES
 (10019, 119, 123458, 14, 1005, 11100005, '2024-08-22', '2024-08-22', '2025-08-22', 'EXPIRED'), 
 (10020, 120, 123459, 8, 1010, 11100010, '2024-03-19', '2024-03-19', '2025-03-19', 'EXPIRED'); 
 	
-INSERT INTO Renewal VALUES /*INCOMPLETE FIELDS*/
-(20001, 10001, 28, 1003, 11100003, '2025-08-03'), /*renewal id, regis id, payment id, branch id, officer id, and renewal date*/
+INSERT INTO Renewal VALUES 
+(20001, 10001, 28, 1003, 11100003, '2025-08-03'), 
 (20004, 10006, 21, 1006, 11100006, '2025-03-20'),
 (20005, 10007, 15, 1009, 11100009, '2024-09-12'),
 (20006, 10009, 30, 1005, 11100005, '2025-08-11'),
