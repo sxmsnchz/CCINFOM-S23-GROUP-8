@@ -335,4 +335,3 @@ INSERT INTO Violation VALUES
 (9, 123453, 104, 11100008, 1008, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
 (10, 123453, 104, 11100008, 1008, 'Expired Registration', 3000.00, '2025-11-05', 'Unpaid', NULL);
 
-SELECT * FROM Owner;
