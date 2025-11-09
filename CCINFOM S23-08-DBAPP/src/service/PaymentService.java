@@ -348,4 +348,31 @@ public class PaymentService {
         scanner.nextLine();
         new UserMenu().viewUserMenu();
     }
+
+    /**
+     * Create a payment programmatically. Returns generated payment_id or 0 on failure.
+     * This allows other services (e.g. RegistrationService) to record payments without
+     * duplicating SQL logic.
+     */
+    public int createPayment(int officerId, int branchId, int ownerId, String paymentType, double amount) {
+        try {
+            PreparedStatement ps = conn.prepareStatement("""
+                INSERT INTO payment (officer_id, branch_id, owner_id, payment_type, amount_paid, date_paid)
+                VALUES (?, ?, ?, ?, ?, ?);
+            """, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, officerId);
+            ps.setInt(2, branchId);
+            ps.setInt(3, ownerId);
+            ps.setString(4, paymentType);
+            ps.setDouble(5, amount);
+            ps.setDate(6, java.sql.Date.valueOf(java.time.LocalDate.now()));
+            ps.executeUpdate();
+
+            ResultSet keys = ps.getGeneratedKeys();
+            if (keys.next()) return keys.getInt(1);
+        } catch (Exception e) {
+            System.out.println("Error creating payment: " + e.getMessage());
+        }
+        return 0;
+    }
 }

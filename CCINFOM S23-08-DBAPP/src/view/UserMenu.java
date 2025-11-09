@@ -5,6 +5,7 @@ import java.util.Scanner;
 import model.Session;
 import service.PaymentService;
 import service.ReceiptService;
+import service.RegistrationService;
 import service.RenewalService;
 import service.ViolationService;
 
@@ -39,7 +40,8 @@ public class UserMenu {
 
             switch (input) {
                 case "1":
-                    System.out.println("\n[Feature: Register Vehicle] (to be implemented)\n");
+                    RegistrationService registrationService = new RegistrationService();
+                    registrationService.registerVehicle(scanner);
                     break;
                 case "2":
                     RenewalService renewalService = new RenewalService();
