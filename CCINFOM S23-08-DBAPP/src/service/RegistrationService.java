@@ -71,13 +71,20 @@ public class RegistrationService {
                 System.out.print("Color: ");
                 color = scanner.nextLine().trim();
 
-                System.out.print("Officer ID who processed this registration: ");
-                officerId = scanner.nextInt();
-                scanner.nextLine();
-
                 System.out.print("Branch ID where processed: ");
                 branchId = scanner.nextInt();
                 scanner.nextLine();
+
+                // Attempt to find an officer assigned to this branch
+                officerId = findOfficerByBranch(branchId);
+                if (officerId > 0) {
+                    System.out.println("Assigned Officer ID for branch " + branchId + ": " + officerId);
+                } else {
+                    // fallback: ask user to enter officer ID manually
+                    System.out.print("No officer found for branch. Enter Officer ID who processed this registration: ");
+                    officerId = scanner.nextInt();
+                    scanner.nextLine();
+                }
 
                 System.out.println("--------------------------------------------------");
                 System.out.println("Please confirm the details below:");
@@ -97,12 +104,24 @@ public class RegistrationService {
 
                     switch (choice) {
                         case "Y" -> {
-                            confirmDetails = true;
+                            // Attempt to add vehicle and registration. Only set confirmDetails=true on success.
 
-                            // add vehicle and registration
+                            // add vehicle
                             int vehicleId = addVehicle(plate, Date.valueOf(LocalDate.of(year,1,1)), mvFileNo, chassis, engine, make, series, color);
-                            int registrationId = addRegistration(vehicleId, ownerId, branchId, officerId);
+                            if (vehicleId == 0) {
+                                System.out.println("Vehicle insertion failed (possible duplicate). Please re-enter the information.");
+                                break; // re-enter outer form
+                            }
 
+                            // add registration
+                            int registrationId = addRegistration(vehicleId, ownerId, branchId, officerId);
+                            if (registrationId == 0) {
+                                System.out.println("Registration insertion failed. Please re-enter the information.");
+                                break; // re-enter outer form
+                            }
+
+                            // success
+                            confirmDetails = true;
                             System.out.println("Registration created (ID: " + registrationId + ").");
 
                             // ask to process payment now
@@ -165,6 +184,19 @@ public class RegistrationService {
 
         } catch (Exception e) {
             System.out.println("Error inserting vehicle: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    // Find an officer assigned to a given branch. Returns officer_id or 0 if none found.
+    private int findOfficerByBranch(int branchId) {
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT officer_id FROM officer WHERE branch_id = ? LIMIT 1");
+            ps.setInt(1, branchId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt("officer_id");
+        } catch (Exception e) {
+            System.out.println("Error finding officer for branch: " + e.getMessage());
         }
         return 0;
     }

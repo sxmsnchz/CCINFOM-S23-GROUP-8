@@ -99,7 +99,7 @@ CREATE TABLE Receipt (
 =========================================
 */
 CREATE TABLE Registration (
-	registration_id INT,
+	registration_id INT AUTO_INCREMENT PRIMARY KEY,
     vehicle_id INT NOT NULL,
     owner_id INT NOT NULL,
     payment_id INT,

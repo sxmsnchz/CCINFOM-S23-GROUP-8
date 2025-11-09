@@ -165,8 +165,7 @@ public class PaymentService {
             double amount = 0;
             int branchId = 0;
             int officerId = 0;
-            String plateNo = null;
-            String transactionDesc = "";
+            // plate number and transaction description are retrieved per-transaction when needed
             String paymentType = "";
 
             // retrieve specific details based on transaction type
@@ -191,8 +190,6 @@ public class PaymentService {
                 amount = rs2.getDouble("fine_amount");
                 branchId = rs2.getInt("branch_id");
                 officerId = rs2.getInt("officer_id");
-                plateNo = rs2.getString("plate_number");
-                transactionDesc = rs2.getString("violation_type");
                 paymentType = "Violation";
 
             // handle registration or renewal
@@ -215,18 +212,17 @@ public class PaymentService {
 
                 branchId = rs3.getInt("branch_id");
                 officerId = rs3.getInt("officer_id");
-                plateNo = rs3.getString("plate_number");
                 int prevPay = rs3.getInt("payment_id");
                 Date expiry = rs3.getDate("expiry_date");
                 Date firstReg = rs3.getDate("first_date_registered");
 
                 // Determine whether it’s a new registration or renewal
                 if ((firstReg == null || prevPay == 0 || expiry == null)) {
-                    transactionDesc = "New Registration";
+                    
                     paymentType = "Registration";
                     amount = 7410.00;
                 } else if (expiry != null && expiry.before(new java.util.Date())) {
-                    transactionDesc = "Renewal";
+                    
                     paymentType = "Renewal";
                     amount = 1500.00;
                 } else {
