@@ -34,7 +34,7 @@ CREATE TABLE Vehicle (
     password VARCHAR(50) NOT NULL,
     license_number VARCHAR(13) UNIQUE NOT NULL,
 	CHECK (CHAR_LENGTH(password) >= 8),
-    CHECK (license_number REGEXP '^[0-9]{3}-[0-9]{2}-[0-9]{6}$')
+	CHECK (license_number REGEXP '^[A-Z][0-9]{2}-[0-9]{2}-[0-9]{6}$')
 ) AUTO_INCREMENT = 123450;
 
 /*=======================================
