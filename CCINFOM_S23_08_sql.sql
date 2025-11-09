@@ -31,7 +31,7 @@ CREATE TABLE Vehicle (
     province VARCHAR(50) NOT NULL,
     region VARCHAR(50) NOT NULL,
     postal_code VARCHAR(10) NOT NULL,
-    password VARCHAR(50) NOT NULL,
+    password VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     license_number VARCHAR(13) UNIQUE NOT NULL,
 	CHECK (CHAR_LENGTH(password) >= 8),
 	CHECK (license_number REGEXP '^[A-Z][0-9]{2}-[0-9]{2}-[0-9]{6}$'),
@@ -73,7 +73,7 @@ CREATE TABLE Officer (
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     branch_id INT,
-    password VARCHAR(50) NOT NULL,
+    password VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id),
 	CHECK (CHAR_LENGTH(password) >= 8)
 ) AUTO_INCREMENT = 11100001;
