@@ -10,13 +10,13 @@ public class Owner {
     private String city;
     private String province;
     private String region;
-    private int licenseNumber;
+    private String licenseNumber;
     private String password; 
 
     public Owner() {} 
 
     public Owner(int ownerId, String firstName, String lastName, int postal_code, String street,
-                 String barangay, String city, String province, String region, int licenseNumber, String password) {
+                 String barangay, String city, String province, String region, String licenseNumber, String password) {
         this.ownerId = ownerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -43,7 +43,7 @@ public class Owner {
 
     public void setProvince(String province) { this.province = province; }
 
-    public void setLicenseNumber(int licenseNumber) { this.licenseNumber = licenseNumber; }
+    public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
 
     public void setPostalCode(int postal_code) { this.postal_code = postal_code; }
 
@@ -65,7 +65,7 @@ public class Owner {
 
     public String getProvince() { return province; }
 
-    public int getLicenseNumber() { return licenseNumber; }
+    public String getLicenseNumber() { return licenseNumber; }
 
     public int getPostalCode() { return postal_code; }
 
