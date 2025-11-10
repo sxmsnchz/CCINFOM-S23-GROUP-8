@@ -9,19 +9,17 @@ import view.UserMenu;
 /**
  * PaymentService.java
  *
- * This class handles all payment-related functions for the Vehicle Registration System.
- * It allows users to:
- *   1. Settle unpaid transactions (either violations or registration/renewal).
- *   2. View their complete payment history.
+ * Handles all payment-related functions for the Vehicle Registration System.
+ * Allows users to:
+ *   1. Settle unpaid transactions (violations, registration, or renewal)
+ *   2. View complete payment history (optional future feature)
  *
- * It connects directly to the database, performs validation,
- * and updates the records accordingly.
+ * Now supports renewal detection up to 60 days before expiry.
  */
 public class PaymentService {
 
-    private Connection conn; // connection for MySQL database
+    private Connection conn;
 
-    // connects to our database
     public PaymentService() {
         conn = DatabaseConnection.getConnection();
     }
@@ -35,16 +33,15 @@ public class PaymentService {
             System.out.println("                 SETTLE PAYMENT                   ");
             System.out.println("--------------------------------------------------");
 
-            int ownerId = Session.loggedInOwnerId; // current logged-in user
+            int ownerId = Session.loggedInOwnerId;
 
-            // check if no user logged in
             if (ownerId == 0) {
                 System.out.println("Error: No user logged in. Redirecting...");
                 redirectToMenu(scanner);
                 return;
             }
 
-            // SQL query to properly check renewals using the renewal table
+            // Updated SQL query: includes renewals 60 days before expiry
             String query = """
                 SELECT
                     'Violation' AS type,
@@ -74,7 +71,11 @@ public class PaymentService {
                            OR r.payment_id IS NULL
                            OR r.expiry_date IS NULL)
                         THEN 'New Registration'
-                        ELSE 'Renewal'
+                        ELSE 
+                            CASE 
+                                WHEN r.expiry_date < CURDATE() THEN 'Renewal (Expired)'
+                                ELSE 'Renewal (Expiring Soon)'
+                            END
                     END AS description,
                     CASE
                         WHEN (r.first_date_registered IS NULL
@@ -91,7 +92,7 @@ public class PaymentService {
                      OR r.payment_id IS NULL
                      OR r.expiry_date IS NULL)
                     OR (r.first_date_registered IS NOT NULL
-                        AND r.expiry_date < CURDATE()
+                        AND r.expiry_date <= DATE_ADD(CURDATE(), INTERVAL 60 DAY)
                         AND NOT EXISTS (
                             SELECT 1 FROM renewal re
                             WHERE re.registration_id = r.registration_id
@@ -101,7 +102,6 @@ public class PaymentService {
                 );
             """;
 
-            // create prepared statement
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, ownerId);
             ps.setInt(2, ownerId);
@@ -113,7 +113,10 @@ public class PaymentService {
 
             while (rs.next()) {
                 hasUnpaid = true;
-                System.out.println("[" + rs.getString("type") + "] ID: " + rs.getInt("id") +
+                String type = rs.getString("type");
+                int id = rs.getInt("id");
+                System.out.println("[" + type + "] " +
+                        (type.equalsIgnoreCase("Renewal") ? "Renewal ID: " : "Registration ID: ") + id +
                         " | Plate No: " + rs.getString("plate_number") +
                         " | " + rs.getString("description") +
                         " | Amount: Php " + rs.getDouble("amount"));
@@ -125,7 +128,6 @@ public class PaymentService {
                 return;
             }
 
-            // ask user which type and ID to pay
             System.out.println("--------------------------------------------------");
             System.out.print("Enter transaction type (Violation / Registration / Renewal): ");
             String chosenType = scanner.nextLine().trim();
@@ -153,7 +155,6 @@ public class PaymentService {
             int officerId = 0;
             String paymentType = chosenType;
 
-            // retrieve details based on type
             if (chosenType.equalsIgnoreCase("Violation")) {
                 PreparedStatement ps2 = conn.prepareStatement("""
                     SELECT fine_amount, branch_id, officer_id
@@ -194,10 +195,13 @@ public class PaymentService {
                 Date expiry = rs3.getDate("expiry_date");
                 Date firstReg = rs3.getDate("first_date_registered");
 
+                // Detect if new registration or renewal (including within 60 days)
                 if ((firstReg == null || prevPay == 0 || expiry == null)) {
                     paymentType = "Registration";
                     amount = 7410.00;
-                } else if (expiry != null && expiry.before(new java.util.Date())) {
+                } else if (expiry != null &&
+                          (expiry.before(new java.util.Date()) ||
+                           expiry.before(java.sql.Date.valueOf(java.time.LocalDate.now().plusDays(60))))) {
                     paymentType = "Renewal";
                     amount = 1500.00;
                 } else {
@@ -248,7 +252,6 @@ public class PaymentService {
                 paymentId = genKeys.getInt(1);
             }
 
-            // Generate receipt
             ReceiptService receiptService = new ReceiptService();
             receiptService.generateReceipt(paymentId, change);
 
