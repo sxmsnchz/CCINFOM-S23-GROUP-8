@@ -32,7 +32,7 @@ public class RenewalService {
      */
     public boolean verifyRenewal(int regID){
 
-        boolean contRenewalFlag = true;
+        boolean contRenewalFlag = false;
         String status;
 
         try {
@@ -56,8 +56,11 @@ public class RenewalService {
 
                 status = renewalRS.getString("status");
                 contRenewalFlag = "VALID FOR RENEWAL".equals(status);
-            } else 
-                System.out.println("No registration found with this ID.");
+
+                if (!contRenewalFlag) 
+                    System.out.println("This registration ID is not yet up for renewal. Please re-enter ID.");
+            }else 
+                System.out.println("No registration found with this ID. Please re-enter ID."); 
 
                 
         } catch (Exception e) {
@@ -248,9 +251,7 @@ public class RenewalService {
                                     System.out.println("--Form Complete--");
                                     System.out.println("The total renewal fee is ₱1500.00");
                                     System.out.println("Please Proceed to [Settle Payments] to fully renew registration.");
-                                } else
-                                    System.out.println("This registration ID is not yet up for renewal. Please re-enter ID.");
-
+                                }
                             }
                             case "N" -> System.out.println("Details not confirmed. Please re-enter the information.");
                             default -> System.out.println("Invalid User Input. Please try again");
