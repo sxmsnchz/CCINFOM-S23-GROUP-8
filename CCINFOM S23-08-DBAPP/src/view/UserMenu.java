@@ -9,6 +9,7 @@ import service.RegistrationDetailsService;
 import service.RegistrationService;
 import service.RenewalService;
 import service.ViolationService;
+import service.BranchDetailsService;
 
 /**
  * UserMenu.java
@@ -33,7 +34,8 @@ public class UserMenu {
             System.out.println("[4] View Violations");
             System.out.println("[5] Settle Payment");
             System.out.println("[6] View Receipts");
-            System.out.println("[7] Logout");
+            System.out.println("[7] View Branches");
+            System.out.println("[8] Logout");
             System.out.println("--------------------------------------------------");
             System.out.print("Enter your choice: ");
 
@@ -44,14 +46,17 @@ public class UserMenu {
                     RegistrationService registrationService = new RegistrationService();
                     registrationService.registerVehicle(scanner);
                     break;
+
                 case "2":
                     RenewalService renewalService = new RenewalService();
                     renewalService.renewRegistration(scanner);
                     break;
+
                 case "3":
                     RegistrationDetailsService registrationDetailsService = new RegistrationDetailsService();
                     registrationDetailsService.viewVehicles(scanner);
                     break;
+
                 case "4":
                     System.out.println("All Violations");
                     try {
@@ -63,21 +68,22 @@ public class UserMenu {
                             System.out.println("No violations found.");
                             break;
                         }
+
                         System.out.printf("%-4s %-8s %-9s %-8s %-10s %-22s %-9s %-12s%n",
-                                          "ID", "Vehicle", "Owner", "Branch", "Officer", "Type", "Fine", "Date", "Status");
+                                "ID", "Vehicle", "Owner", "Branch", "Officer", "Type", "Fine", "Date", "Status");
                         System.out.println("---------------------------------------------------------------------------------------------");
 
-                        for(model.Violation v : violations) {
+                        for (model.Violation v : violations) {
                             System.out.printf("%-4s %-8s %-9s %-8s %-10s %-22s %-9s %-12s%n",
-                                              v.getViolationId(),
-                                              v.getVehicleId(),
-                                              v.getOwnerId(),
-                                              v.getBranchId(),
-                                              v.getOfficerId(),
-                                              truncate(v.getViolationType(), 20),
-                                              v.getFineAmount(),
-                                              v.getViolationDate(),
-                                              v.getPaymentStatus());
+                                    v.getViolationId(),
+                                    v.getVehicleId(),
+                                    v.getOwnerId(),
+                                    v.getBranchId(),
+                                    v.getOfficerId(),
+                                    truncate(v.getViolationType(), 20),
+                                    v.getFineAmount(),
+                                    v.getViolationDate(),
+                                    v.getPaymentStatus());
                         }
                         System.out.println();
                     } catch (Exception e) {
@@ -85,21 +91,30 @@ public class UserMenu {
                         e.printStackTrace();
                     }
                     break;
+
                 case "5":
                     PaymentService paymentService = new PaymentService();
                     paymentService.settlePayment(scanner);
                     break;
+
                 case "6":
                     ReceiptService receiptService = new ReceiptService();
                     receiptService.viewReceipts();
                     break;
+
                 case "7":
+                    BranchDetailsService branchDetailsService = new BranchDetailsService();
+                    branchDetailsService.viewAllBranchesForUsers();
+                    break;
+
+                case "8":
                     System.out.println("Logging out...");
                     Session.clear();
                     running = false;
                     break;
+
                 default:
-                    System.out.println("Invalid choice. Please enter a number from 1 to 7.");
+                    System.out.println("Invalid choice. Please enter a number from 1 to 8.");
             }
 
             if (running) {
@@ -109,13 +124,11 @@ public class UserMenu {
             }
         }
 
-
-
         // note: do not close System.in-scanner here to avoid closing System.in for callers
     }
 
-     private static String truncate(String s, int max) {
-        if (s == null) 
+    private static String truncate(String s, int max) {
+        if (s == null)
             return "";
         return s.length() <= max ? s : s.substring(0, max - 3) + "...";
     }
