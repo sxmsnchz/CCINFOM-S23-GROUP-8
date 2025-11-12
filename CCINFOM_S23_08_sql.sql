@@ -115,15 +115,14 @@ CREATE TABLE Registration (
     payment_id INT,
     branch_id INT NOT NULL,
     officer_id INT NOT NULL,
-    first_date_registered DATE, /* changed to allow null */
+    first_date_registered DATE, 
     current_date_registered DATE,
     expiry_date DATE,
     status ENUM('ACTIVE', 'INACTIVE', 'EXPIRED') DEFAULT 'INACTIVE',
     FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id),
     FOREIGN KEY (owner_id) REFERENCES Owner(owner_id),
 	FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
-    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id)
-	ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
     FOREIGN KEY (officer_id) REFERENCES Officer(officer_id),
 	CHECK (expiry_date IS NULL OR expiry_date > current_date_registered)
 ) AUTO_INCREMENT = 10001;
@@ -331,4 +330,3 @@ INSERT INTO Violation VALUES
 (8, 123453, 104, 11100008, 1008, 'No Seatbelt', 1000.00, '2025-01-29', 'Unpaid', NULL),
 (9, 123453, 104, 11100008, 1008, 'Unregistered Motor Vehicle', 10000.00, '2025-07-31', 'Unpaid', NULL),
 (10, 123453, 104, 11100008, 1008, 'Expired Registration', 3000.00, '2025-11-05', 'Unpaid', NULL);
-
