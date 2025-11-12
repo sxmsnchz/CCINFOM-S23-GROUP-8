@@ -284,7 +284,7 @@ INSERT INTO Receipt VALUES
 (27, 27, 'V004', '2025-08-01', 'Cruz, Anna'),
 (28, 28, 'R024', '2025-08-03', 'Cruz, Anna'),
 (29, 29, 'R025', '2025-08-11', 'Garcia, Ramon'),
-(30, 31, 'R027', '2025-09-12', 'Mendoza, Patricia');
+(30, 30, 'R027', '2025-09-12', 'Mendoza, Patricia');
 
 INSERT INTO Registration VALUES
 (10001, 101, 123450, 6, 1003, 11100003, '2022-02-01', '2025-08-03', '2026-08-03', 'ACTIVE'), 
