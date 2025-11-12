@@ -9,10 +9,10 @@ import java.io.PrintWriter;
 /**
  * RegistrationsByBranch.java
  *
- * This report displays the total number of vehicles registered
+ * This report displays the total number of vehicles newly registered
  * per LTO branch for a selected month and year.
  *
- * It counts all registration records (both new and renewal),
+ * It counts only *first-time* registration records (not renewals),
  * showing 0 if no registrations were made in that branch for that period.
  *
  * Used in Officer Dashboard → Generate Reports → "Registrations by Branch".
@@ -37,7 +37,7 @@ public class RegistrationsByBranch {
             System.out.print("Enter month (1-12): ");
             String monthInput = scanner.nextLine().trim();
 
-            if (!monthInput.matches("^(0?[1-9]|1[0-2])$")) { // check if valid
+            if (!monthInput.matches("^(0?[1-9]|1[0-2])$")) {
                 System.out.println("Invalid month. Please enter a number between 1 and 12.");
                 return;
             }
@@ -48,7 +48,7 @@ public class RegistrationsByBranch {
             System.out.print("Enter year (e.g., 2025): ");
             String yearInput = scanner.nextLine().trim();
 
-            if (!yearInput.matches("^\\d{4}$")) { // check if valid
+            if (!yearInput.matches("^\\d{4}$")) {
                 System.out.println("Invalid year format. Please enter a 4-digit year.");
                 return;
             }
@@ -57,7 +57,7 @@ public class RegistrationsByBranch {
 
             System.out.println("\nGenerating report for " + getMonthName(month) + " " + year + "...\n");
 
-            // query: total registrations per branch for selected month/year
+            // summary query: total valid first-time registrations per branch
             String query = """
                 SELECT
                     b.branch_id,
@@ -66,11 +66,12 @@ public class RegistrationsByBranch {
                 FROM branch b
                 LEFT JOIN registration r
                     ON b.branch_id = r.branch_id
+                    AND r.first_date_registered IS NOT NULL
                     AND MONTH(r.first_date_registered) = ?
                     AND YEAR(r.first_date_registered) = ?
                 GROUP BY b.branch_id, b.branch_name
                 ORDER BY b.branch_id ASC;
-                """;
+            """;
 
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, month);
@@ -87,7 +88,7 @@ public class RegistrationsByBranch {
             // create CSV file
             String fileName = String.format("registrations-by-branch-%02d-%d.csv", month, year);
             try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
-                writer.println("Branch ID,Branch Name,Total Registrations"); // header row
+                writer.println("Branch ID,Branch Name,Total Registrations");
 
                 while (rs.next()) {
                     hasResults = true;
@@ -113,6 +114,69 @@ public class RegistrationsByBranch {
 
                 writer.printf("%nGrand Total,,%d%n", grandTotal);
                 System.out.println("\nReport successfully saved as CSV file: " + fileName);
+            }
+
+            // ask if user wants detailed records
+            System.out.print("\nWould you like to see detailed records per branch? (Y/N): ");
+            String choice = scanner.nextLine().trim();
+
+            if (choice.equalsIgnoreCase("Y")) {
+                System.out.println("\n==================================================");
+                System.out.println("          DETAILED REGISTRATION LIST              ");
+                System.out.println("==================================================");
+
+                String detailedQuery = """
+                    SELECT 
+                        b.branch_name,
+                        v.plate_number,
+                        CONCAT(o.first_name, ' ', o.last_name) AS owner_name,
+                        r.first_date_registered,
+                        r.status
+                    FROM registration r
+                    JOIN branch b ON r.branch_id = b.branch_id
+                    JOIN vehicle v ON r.vehicle_id = v.vehicle_id
+                    JOIN owner o ON r.owner_id = o.owner_id
+                    WHERE r.first_date_registered IS NOT NULL
+                      AND MONTH(r.first_date_registered) = ?
+                      AND YEAR(r.first_date_registered) = ?
+                    ORDER BY b.branch_name, r.first_date_registered;
+                """;
+
+                PreparedStatement ps2 = conn.prepareStatement(detailedQuery);
+                ps2.setInt(1, month);
+                ps2.setInt(2, year);
+                ResultSet rs2 = ps2.executeQuery();
+
+                String currentBranch = "";
+                boolean hasDetails = false;
+
+                while (rs2.next()) {
+                    hasDetails = true;
+                    String branchName = rs2.getString("branch_name");
+
+                    if (!branchName.equals(currentBranch)) {
+                        currentBranch = branchName;
+                        System.out.println("\n--------------------------------------------------");
+                        System.out.println("Branch: " + branchName);
+                        System.out.println("--------------------------------------------------");
+                        System.out.printf("%-10s %-25s %-15s %-10s%n", 
+                            "Plate No", "Owner", "Date Registered", "Status");
+                    }
+
+                    System.out.printf("%-10s %-25s %-15s %-10s%n",
+                            rs2.getString("plate_number"),
+                            rs2.getString("owner_name"),
+                            rs2.getDate("first_date_registered"),
+                            rs2.getString("status"));
+                }
+
+                if (!hasDetails) {
+                    System.out.println("No detailed registrations found for this period.");
+                }
+
+                System.out.println("==================================================");
+                System.out.println("End of Detailed Records for " + getMonthName(month) + " " + year);
+                System.out.println("==================================================");
             }
 
         } catch (Exception e) {
