@@ -1,9 +1,14 @@
 package view;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class VehicleRegistrationHomeGUI extends JFrame {
+
+    private JButton userLoginBtn;
+    private JButton officerLoginBtn;
+    private JButton signUpBtn;
+    private JButton exitBtn;
+
 
     public VehicleRegistrationHomeGUI() {
         setTitle("LTO Vehicle Registration Portal");
@@ -76,31 +81,28 @@ public class VehicleRegistrationHomeGUI extends JFrame {
         subtitle.setForeground(new Color(60, 60, 60));
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton userLoginBtn = createButton("User Login");
-        JButton officerLoginBtn = createButton("Officer Login");
-        JButton signUpBtn = createButton("Create Account");
-        JButton exitBtn = createDangerButton("Exit");
+    // expose buttons as fields to allow controller wiring
+    userLoginBtn = createButton("User Login");
+    officerLoginBtn = createButton("Officer Login");
+    signUpBtn = createButton("Create Account");
+    exitBtn = createDangerButton("Exit");
 
-        // TEMP actions
+            // TEMP actions - wire buttons
+            userLoginBtn.addActionListener(e -> {
+                dispose();
+                new UserLoginGUI();
+            });
 
-        /*comment out
-        userLoginBtn.addActionListener(e -> {
-            dispose();
-            new UserLoginGUI();
-        });  */
+            officerLoginBtn.addActionListener(e -> {
+                dispose();
+                new OfficerLoginGUI();
+            });
 
-        officerLoginBtn.addActionListener(e -> {
-            dispose();
-            new OfficerLoginGUI(); 
-        });
-        
-        /* comment out 
-        signUpBtn.addActionListener(e -> {
-            dispose();
-         new UserSignUpGUI();
-        }); */
+            exitBtn.addActionListener(e -> {
+                dispose();
+                System.exit(0);
+            });
 
-        exitBtn.addActionListener(e -> System.exit(0));
 
         // Add components to the card
         card.add(title);
