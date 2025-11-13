@@ -8,11 +8,7 @@ public class MainFrame extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainPanel;
 
-    // Panels
     private HomePanel homePanel;
-    private OfficerLoginPanel officerLoginPanel;
-    private UserLoginPanel userLoginPanel;
-    private UserSignUpPanel signUpPanel;
 
     public MainFrame() {
 
@@ -25,40 +21,33 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // Create panels + pass this MainFrame
+        // Only HomePanel for now
         homePanel = new HomePanel(this);
-        officerLoginPanel = new OfficerLoginPanel(this);
-        userLoginPanel = new UserLoginPanel(this);
-        signUpPanel = new UserSignUpPanel(this);
-
-        // Add them
         mainPanel.add(homePanel, "home");
-        mainPanel.add(officerLoginPanel, "officerLogin");
-        mainPanel.add(userLoginPanel, "userLogin");
-        mainPanel.add(signUpPanel, "signUp");
 
         add(mainPanel);
         setVisible(true);
     }
 
-    // Panel switching methods
+    // Stub methods (will work once panels are added)
     public void showHome() {
         cardLayout.show(mainPanel, "home");
     }
 
-    public void showOfficerLogin() {
-        cardLayout.show(mainPanel, "officerLogin");
+    public void showUserLogin() {
+        JOptionPane.showMessageDialog(this, "UserLoginPanel not created yet.");
     }
 
-    public void showUserLogin() {
-        cardLayout.show(mainPanel, "userLogin");
+    public void showOfficerLogin() {
+        JOptionPane.showMessageDialog(this, "OfficerLoginPanel not created yet.");
     }
 
     public void showSignUp() {
-        cardLayout.show(mainPanel, "signUp");
+        JOptionPane.showMessageDialog(this, "SignUpPanel not created yet.");
     }
 
     public static void main(String[] args) {
         new MainFrame();
     }
 }
+
