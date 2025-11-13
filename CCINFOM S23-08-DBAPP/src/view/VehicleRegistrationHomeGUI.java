@@ -2,7 +2,6 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 
 public class VehicleRegistrationHomeGUI extends JFrame {
 
@@ -14,23 +13,20 @@ public class VehicleRegistrationHomeGUI extends JFrame {
         setLayout(new BorderLayout());
 
         // ==============================================================
-        // BACKGROUND PANEL (Loads assets/background.jpg)
+        // FULLSCREEN BACKGROUND PANEL WITH FADE OVERLAY
         // ==============================================================
         JPanel backgroundPanel = new JPanel() {
             Image bgImage;
 
             {
                 try {
-                    // ★ CORRECT RELATIVE PATH ★
-                    String path = "assets/background.jpg";
-                    File file = new File(path);
+                    // Load background from classpath
+                    bgImage = new ImageIcon(
+                            getClass().getClassLoader().getResource("assets/background.jpg")
+                    ).getImage();
 
-                    System.out.println("Background exists? " + file.exists());
-                    System.out.println("Loaded from: " + file.getAbsolutePath());
-
-                    bgImage = new ImageIcon(path).getImage();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println("Failed to load background image.");
                     bgImage = null;
                 }
             }
@@ -39,12 +35,24 @@ public class VehicleRegistrationHomeGUI extends JFrame {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
 
+                int w = getWidth();
+                int h = getHeight();
+
                 if (bgImage != null) {
-                    g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
+                    // Draw background FULLY stretched to window
+                    g.drawImage(bgImage, 0, 0, w, h, this);
                 } else {
-                    g.setColor(Color.GRAY);
-                    g.fillRect(0, 0, getWidth(), getHeight());
+                    g.setColor(Color.WHITE);
+                    g.fillRect(0, 0, w, h);
                 }
+
+                // Fade overlay (white gradient top → bottom)
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setPaint(new GradientPaint(
+                        0, 0, new Color(255, 255, 255, 80),
+                        0, h, new Color(255, 255, 255, 200)
+                ));
+                g2.fillRect(0, 0, w, h);
             }
         };
 
@@ -52,37 +60,34 @@ public class VehicleRegistrationHomeGUI extends JFrame {
         add(backgroundPanel, BorderLayout.CENTER);
 
         // ==============================================================
-        // WHITE ROUNDED CARD
+        // CENTERED ROUNDED CARD PANEL
         // ==============================================================
-        JPanel card = new RoundedPanel(30, new Color(255, 255, 255, 235));
+        JPanel card = new RoundedPanel(25, new Color(255, 255, 255, 235));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBorder(BorderFactory.createEmptyBorder(25, 40, 40, 40));
+        card.setBorder(BorderFactory.createEmptyBorder(30, 40, 40, 40));
 
-        // TITLE
         JLabel title = new JLabel("Land Transportation Office");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        title.setForeground(new Color(10, 60, 130));
+        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        title.setForeground(new Color(20, 50, 100));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel subtitle = new JLabel("Vehicle Registration Portal");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         subtitle.setForeground(new Color(60, 60, 60));
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // BUTTONS
         JButton userLoginBtn = createButton("User Login");
         JButton officerLoginBtn = createButton("Officer Login");
         JButton signUpBtn = createButton("Create Account");
         JButton exitBtn = createDangerButton("Exit");
 
-        // TEMP ACTIONS (placeholder)
+        // TEMP actions
         userLoginBtn.addActionListener(e -> JOptionPane.showMessageDialog(null, "User Login Placeholder"));
         officerLoginBtn.addActionListener(e -> JOptionPane.showMessageDialog(null, "Officer Login Placeholder"));
-        signUpBtn.addActionListener(e -> JOptionPane.showMessageDialog(null, "Create Account Placeholder"));
+        signUpBtn.addActionListener(e -> JOptionPane.showMessageDialog(null, "Sign Up Placeholder"));
         exitBtn.addActionListener(e -> System.exit(0));
 
-        // ADD TO CARD
-        card.add(Box.createVerticalStrut(10));
+        // Add components to the card
         card.add(title);
         card.add(subtitle);
         card.add(Box.createVerticalStrut(20));
@@ -99,30 +104,24 @@ public class VehicleRegistrationHomeGUI extends JFrame {
         setVisible(true);
     }
 
-    // ==============================================================
-    // BUTTON STYLES
-    // ==============================================================
     private JButton createButton(String text) {
         JButton btn = new JButton(text);
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btn.setPreferredSize(new Dimension(250, 45));
-        btn.setMaximumSize(new Dimension(250, 45));
+        btn.setPreferredSize(new Dimension(260, 45));
+        btn.setMaximumSize(new Dimension(260, 45));
 
         btn.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        btn.setBackground(new Color(0, 90, 200));
+        btn.setBackground(new Color(0, 85, 180));
         btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setFocusPainted(false);
 
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(0, 80, 170));
+                btn.setBackground(new Color(0, 70, 150));
             }
-
-            @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(0, 90, 200));
+                btn.setBackground(new Color(0, 85, 180));
             }
         });
 
@@ -131,26 +130,20 @@ public class VehicleRegistrationHomeGUI extends JFrame {
 
     private JButton createDangerButton(String text) {
         JButton btn = createButton(text);
-        btn.setBackground(new Color(170, 35, 35));
+        btn.setBackground(new Color(180, 40, 40));
 
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn.setBackground(new Color(150, 25, 25));
             }
-
-            @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(170, 35, 35));
+                btn.setBackground(new Color(180, 40, 40));
             }
         });
 
         return btn;
     }
 
-    // ==============================================================
-    // ROUNDED PANEL CLASS
-    // ==============================================================
     class RoundedPanel extends JPanel {
         private final int radius;
         private final Color bgColor;
@@ -171,7 +164,6 @@ public class VehicleRegistrationHomeGUI extends JFrame {
         }
     }
 
-    // ==============================================================
     public static void main(String[] args) {
         new VehicleRegistrationHomeGUI();
     }
