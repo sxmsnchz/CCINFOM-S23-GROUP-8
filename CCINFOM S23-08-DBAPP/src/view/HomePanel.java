@@ -12,10 +12,9 @@ public class HomePanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // ============= Background Panel =============
+        // === Background Panel ===
         JPanel bgPanel = new JPanel() {
             Image bgImage;
-
             {
                 try {
                     bgImage = new ImageIcon(
@@ -39,7 +38,6 @@ public class HomePanel extends JPanel {
                     g.fillRect(0, 0, w, h);
                 }
 
-                // Fade Overlay
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setPaint(new GradientPaint(
                         0, 0, new Color(255, 255, 255, 80),
@@ -52,7 +50,7 @@ public class HomePanel extends JPanel {
         bgPanel.setLayout(new GridBagLayout());
         add(bgPanel, BorderLayout.CENTER);
 
-        // ============= Card Panel =============
+        // === Card Panel ===
         JPanel card = new RoundedPanel(25, new Color(255, 255, 255, 235));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(BorderFactory.createEmptyBorder(30, 40, 40, 40));
@@ -72,10 +70,10 @@ public class HomePanel extends JPanel {
         JButton signUpBtn = createButton("Create Account");
         JButton exitBtn = createDangerButton("Exit");
 
-        // Button actions
-        userLoginBtn.addActionListener(e -> mainFrame.showUserLogin());
-        officerLoginBtn.addActionListener(e -> mainFrame.showOfficerLogin());
-        signUpBtn.addActionListener(e -> mainFrame.showSignUp());
+        // For now, buttons just open empty message dialogs
+        userLoginBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "User Login: Panel not created yet."));
+        officerLoginBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Officer Login: Panel not created yet."));
+        signUpBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Sign Up Panel: not created yet."));
         exitBtn.addActionListener(e -> System.exit(0));
 
         card.add(title);
@@ -110,7 +108,6 @@ public class HomePanel extends JPanel {
         return btn;
     }
 
-    // ==== Rounded Panel helper ====
     class RoundedPanel extends JPanel {
         private final int radius;
         private final Color bgColor;
