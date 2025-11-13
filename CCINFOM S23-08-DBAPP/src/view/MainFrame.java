@@ -10,7 +10,7 @@ public class MainFrame extends JFrame {
 
     private HomePanel homePanel;
     private OfficerLoginPanel officerLoginPanel;
-    // add for user log in etc
+    private UserLoginPanel userLoginPanel;
 
     public MainFrame() {
 
@@ -26,11 +26,12 @@ public class MainFrame extends JFrame {
         // Panels
         homePanel = new HomePanel(this);
         officerLoginPanel = new OfficerLoginPanel(this);
+        userLoginPanel = new UserLoginPanel(this);
 
         // Add panels
         mainPanel.add(homePanel, "home");
         mainPanel.add(officerLoginPanel, "officerLogin");
-
+        mainPanel.add(userLoginPanel, "userLogin");
         add(mainPanel);
         setVisible(true);
     }
@@ -42,7 +43,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showUserLogin() {
-        JOptionPane.showMessageDialog(this, "UserLoginPanel not created yet.");
+        cardLayout.show(mainPanel, "userLogin");
     }
 
     public void showOfficerLogin() {
