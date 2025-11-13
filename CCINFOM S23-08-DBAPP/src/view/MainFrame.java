@@ -9,6 +9,8 @@ public class MainFrame extends JFrame {
     private JPanel mainPanel;
 
     private HomePanel homePanel;
+    private OfficerLoginPanel officerLoginPanel;
+    // add for user log in etc
 
     public MainFrame() {
 
@@ -17,19 +19,24 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // CardLayout container
+        // CardLayout
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // Only HomePanel for now
+        // Panels
         homePanel = new HomePanel(this);
+        officerLoginPanel = new OfficerLoginPanel(this);
+
+        // Add panels
         mainPanel.add(homePanel, "home");
+        mainPanel.add(officerLoginPanel, "officerLogin");
 
         add(mainPanel);
         setVisible(true);
     }
 
-    // Stub methods (will work once panels are added)
+
+    // ===== Panel Switching =====
     public void showHome() {
         cardLayout.show(mainPanel, "home");
     }
@@ -39,15 +46,15 @@ public class MainFrame extends JFrame {
     }
 
     public void showOfficerLogin() {
-        JOptionPane.showMessageDialog(this, "OfficerLoginPanel not created yet.");
+        cardLayout.show(mainPanel, "officerLogin");
     }
 
     public void showSignUp() {
         JOptionPane.showMessageDialog(this, "SignUpPanel not created yet.");
     }
 
+
     public static void main(String[] args) {
         new MainFrame();
     }
 }
-
