@@ -1,5 +1,3 @@
-
-
 package view;
 
 import database.DatabaseConnection;
@@ -174,3 +172,4 @@ public class OfficerLoginPanel extends JPanel {
         }
     }
 }
+
