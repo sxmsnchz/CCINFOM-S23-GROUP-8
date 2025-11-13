@@ -82,9 +82,24 @@ public class VehicleRegistrationHomeGUI extends JFrame {
         JButton exitBtn = createDangerButton("Exit");
 
         // TEMP actions
-        userLoginBtn.addActionListener(e -> JOptionPane.showMessageDialog(null, "User Login Placeholder"));
-        officerLoginBtn.addActionListener(e -> JOptionPane.showMessageDialog(null, "Officer Login Placeholder"));
-        signUpBtn.addActionListener(e -> JOptionPane.showMessageDialog(null, "Sign Up Placeholder"));
+
+        /*comment out
+        userLoginBtn.addActionListener(e -> {
+            dispose();
+            new UserLoginGUI();
+        });  */
+
+        officerLoginBtn.addActionListener(e -> {
+            dispose();
+            new OfficerLoginGUI(); 
+        });
+        
+        /* comment out 
+        signUpBtn.addActionListener(e -> {
+            dispose();
+         new UserSignUpGUI();
+        }); */
+
         exitBtn.addActionListener(e -> System.exit(0));
 
         // Add components to the card
