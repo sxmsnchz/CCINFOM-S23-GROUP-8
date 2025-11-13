@@ -72,7 +72,7 @@ public class HomePanel extends JPanel {
 
         // For now, buttons just open empty message dialogs
         userLoginBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "User Login: Panel not created yet."));
-        officerLoginBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Officer Login: Panel not created yet."));
+        officerLoginBtn.addActionListener(e -> mainFrame.showOfficerLogin());
         signUpBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Sign Up Panel: not created yet."));
         exitBtn.addActionListener(e -> System.exit(0));
 
