@@ -14,6 +14,7 @@ public class MainFrame extends JFrame {
     private OfficerRecordsPanel officerRecordsPanel;
     private UserLoginPanel userLoginPanel;
     private UserSignUpPanel userSignUpPanel;
+    private BranchListPanel branchListPanel;
 
     public MainFrame() {
 
@@ -40,6 +41,7 @@ public class MainFrame extends JFrame {
         officerRecordsPanel = new OfficerRecordsPanel(this);
         userLoginPanel = new UserLoginPanel(this);
         userSignUpPanel = new UserSignUpPanel(this);
+        branchListPanel = new BranchListPanel(this);
 
         // Add panels
         mainPanel.add(homePanel, "home");
@@ -48,6 +50,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(officerRecordsPanel, "officerRecords");
         mainPanel.add(userLoginPanel, "userLogin");
         mainPanel.add(userSignUpPanel, "userSignUp");
+        mainPanel.add(branchListPanel, "branchList");
         add(mainPanel);
         setVisible(true);
     }
@@ -76,6 +79,10 @@ public class MainFrame extends JFrame {
 
     public void showSignUp() {
         cardLayout.show(mainPanel, "userSignUp");
+    }
+
+    public void showBranchList() {
+        cardLayout.show(mainPanel, "branchList");
     }
 
 
