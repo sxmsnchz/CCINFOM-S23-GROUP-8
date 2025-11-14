@@ -3,7 +3,8 @@ package service;
 import java.util.Scanner;
 import service.reports.OutstandingViolations;
 import service.reports.RegistrationsByBranch;
-import service.reports.RenewalOnTime;;
+import service.reports.RenewalOnTime;
+import service.reports.ViolationsIssuedByOfficerByDate;;
 // import service.reports.RenewalOnTime;
 // import service.reports.ViolationsByOfficer;
 // import service.reports.OutstandingViolations;
@@ -42,7 +43,7 @@ public class ReportService {
             System.out.println("==================================================");
             System.out.println("[1] Registrations by Branch");
             System.out.println("[2] Renewal On Time");
-            System.out.println("[3] Violations by Officer");
+            System.out.println("[3] Violations Issued by Officer");
             System.out.println("[4] Outstanding Violations");
             System.out.println("[5] Back to Officer Menu");
             System.out.println("==================================================");
@@ -59,7 +60,6 @@ public class ReportService {
 
                 case "2" -> {
                     System.out.println("\nGenerating 'Renewal On Time' report...\n");
-                    System.out.println("(Feature to be implemented soon.)");
                     RenewalOnTime report2 = new RenewalOnTime();
                     report2.createRenewalOnTimeReport(scanner);
                 }
@@ -67,8 +67,8 @@ public class ReportService {
                 case "3" -> {
                     System.out.println("\nGenerating 'Violations by Officer' report...\n");
                     System.out.println("(Feature to be implemented soon.)");
-                    // ViolationsByOfficer report3 = new ViolationsByOfficer();
-                    // report3.viewViolationsByOfficer(scanner);
+                    ViolationsIssuedByOfficerByDate report3 = new ViolationsIssuedByOfficerByDate();
+                    report3.viewViolationsByOfficerByMonth(scanner);
                 }
 
                 case "4" -> {
