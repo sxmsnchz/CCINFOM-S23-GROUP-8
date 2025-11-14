@@ -31,7 +31,7 @@ public class UserSignUpPanel extends JPanel {
 
         // ===== Background of the whole page =====
         setLayout(new GridBagLayout());
-        setBackground(new Color(243, 246, 251)); // light neutral background
+        setBackground(new Color(243, 246, 251));
         setOpaque(true);
 
         GridBagConstraints rootGbc = new GridBagConstraints();
@@ -45,9 +45,9 @@ public class UserSignUpPanel extends JPanel {
         JPanel card = new RoundedPanel(25, new Color(255, 255, 255));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
-        card.setMaximumSize(new Dimension(620, Integer.MAX_VALUE)); // limit width, free height
+        card.setMaximumSize(new Dimension(620, Integer.MAX_VALUE));
 
-        // ===== Title & subtitle =====
+        // ===== Title =====
         JLabel title = new JLabel("User Sign Up");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(new Color(17, 54, 102));
@@ -71,19 +71,16 @@ public class UserSignUpPanel extends JPanel {
         confirmPassField = new JPasswordField(20);
         licenseField     = new JTextField(20);
 
-        // Uniform field size
         Dimension fieldSize = new Dimension(260, 28);
         JTextField[] textFields = {
                 firstNameField, lastNameField, streetField, barangayField,
                 cityField, provinceField, regionField, postalField, licenseField
         };
-        for (JTextField tf : textFields) {
-            tf.setPreferredSize(fieldSize);
-        }
+        for (JTextField tf : textFields) tf.setPreferredSize(fieldSize);
         passwordField.setPreferredSize(fieldSize);
         confirmPassField.setPreferredSize(fieldSize);
 
-        // ===== Form: 2-column layout (label + field) =====
+        // ===== Form (GridBag) =====
         JPanel form = new JPanel(new GridBagLayout());
         form.setOpaque(false);
         GridBagConstraints fg = new GridBagConstraints();
@@ -101,16 +98,14 @@ public class UserSignUpPanel extends JPanel {
         row = addFieldRow(form, fg, row, "Region:", regionField);
         row = addFieldRow(form, fg, row, "Postal Code:", postalField);
 
-        // Section label to make it look structured
         JLabel sectionLabel = new JLabel("Account & License Details");
         sectionLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
         sectionLabel.setForeground(new Color(80, 80, 95));
-        fg.gridx = 0;
-        fg.gridy = row++;
-        fg.gridwidth = 2;
-        fg.weightx = 1.0;
+
+        fg.gridx = 0; fg.gridy = row++; fg.gridwidth = 2;
         fg.insets = new Insets(12, 0, 4, 0);
         form.add(sectionLabel, fg);
+
         fg.insets = new Insets(4, 0, 4, 0);
         fg.gridwidth = 1;
 
@@ -118,13 +113,11 @@ public class UserSignUpPanel extends JPanel {
         row = addFieldRow(form, fg, row, "Confirm Password:", confirmPassField);
         row = addFieldRow(form, fg, row, "License Number:", licenseField);
 
-        // ===== Status label =====
         statusLabel = new JLabel(" ");
         statusLabel.setForeground(new Color(180, 0, 0));
         statusLabel.setFont(new Font("Segoe UI", Font.ITALIC, 11));
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // ===== Buttons =====
         JButton signUpButton = createPrimaryButton("Sign Up");
         JButton backButton   = createSecondaryButton("Back");
 
@@ -150,23 +143,24 @@ public class UserSignUpPanel extends JPanel {
         add(card, rootGbc);
     }
 
-    /** Adds one row to the form: label on the left, field on the right. */
+    // helper for form layout
     private int addFieldRow(JPanel panel, GridBagConstraints fg, int row,
                             String labelText, JComponent field) {
-        fg.gridx = 0;
-        fg.gridy = row;
-        fg.weightx = 0.0;
+
+        fg.gridx = 0; fg.gridy = row; fg.weightx = 0.0;
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         panel.add(label, fg);
 
-        fg.gridx = 1;
-        fg.weightx = 1.0;
+        fg.gridx = 1; fg.weightx = 1.0;
         panel.add(field, fg);
 
         return row + 1;
     }
 
+    // ========================================================
+    // SIGN UP LOGIC (with formatting rules added)
+    // ========================================================
     private void doSignUp() {
         String fNameString = firstNameField.getText().trim();
         String lNameString = lastNameField.getText().trim();
@@ -180,7 +174,28 @@ public class UserSignUpPanel extends JPanel {
         String password2 = new String(confirmPassField.getPassword()).trim();
         String licenseString = licenseField.getText().trim();
 
-        // ===== Basic validations =====
+        // ================================================
+        // AUTO FORMATTING RULES (Your Request)
+        // ================================================
+
+        // Capitalize City
+        cityString = capitalizeWords(cityString);
+
+        // Capitalize Province
+        provinceString = capitalizeWords(provinceString);
+
+        // NCR → Metro Manila
+        if (provinceString.equalsIgnoreCase("NCR")) {
+            provinceString = "Metro Manila";
+        }
+
+        // Capitalize Barangay
+        brgyString = capitalizeWords(brgyString);
+
+        // ================================================
+        // VALIDATIONS (unchanged all good)
+        // ================================================
+
         if (fNameString.isEmpty() || lNameString.isEmpty() || streetString.isEmpty() ||
                 brgyString.isEmpty() || cityString.isEmpty() || provinceString.isEmpty() ||
                 regionString.isEmpty() || postalString.isEmpty() || password1.isEmpty() ||
@@ -191,65 +206,49 @@ public class UserSignUpPanel extends JPanel {
         }
 
         if (!fNameString.matches("^[A-Za-z ]+$")) {
-            statusLabel.setForeground(new Color(180, 0, 0));
             statusLabel.setText("Invalid. First name must contain letters only.");
             return;
         }
-
         if (!lNameString.matches("^[A-Za-z ]+$")) {
-            statusLabel.setForeground(new Color(180, 0, 0));
             statusLabel.setText("Invalid. Last name must contain letters only.");
             return;
         }
-
         if (!brgyString.matches("^[A-Za-z0-9 ]+$")) {
-            statusLabel.setForeground(new Color(180, 0, 0));
             statusLabel.setText("Invalid. Barangay must contain letters and numbers only.");
             return;
         }
-
         if (!cityString.matches("^[A-Za-z ]+$")) {
-            statusLabel.setForeground(new Color(180, 0, 0));
             statusLabel.setText("Invalid. City must contain letters only.");
             return;
         }
-
         if (!provinceString.matches("^[A-Za-z ]+$")) {
-            statusLabel.setForeground(new Color(180, 0, 0));
             statusLabel.setText("Invalid. Province must contain letters only.");
             return;
         }
-
         if (!regionString.matches("^[A-Za-z0-9 ]+$")) {
-            statusLabel.setForeground(new Color(180, 0, 0));
-            statusLabel.setText("Invalid. Region must contain letters and numbers only.");
+            statusLabel.setText("Invalid. Region must contain letters/numbers only.");
             return;
         }
-
         if (!postalString.matches("^\\d{4}$")) {
-            statusLabel.setForeground(new Color(180, 0, 0));
-            statusLabel.setText("Invalid. Postal code must be 4 digits only.");
+            statusLabel.setText("Invalid. Postal code must be 4 digits.");
             return;
         }
-
         if (password1.length() < 8) {
-            statusLabel.setForeground(new Color(180, 0, 0));
             statusLabel.setText("Invalid. Password must be at least 8 characters.");
             return;
         }
-
         if (!password1.equals(password2)) {
-            statusLabel.setForeground(new Color(180, 0, 0));
             statusLabel.setText("Invalid. Passwords do not match.");
             return;
         }
-
         if (!licenseString.matches("[A-Z][0-9]{2}-[0-9]{2}-[0-9]{6}$")) {
-            statusLabel.setForeground(new Color(180, 0, 0));
-            statusLabel.setText("Invalid. License must follow format A00-00-000000.");
+            statusLabel.setText("Invalid. License must follow A00-00-000000.");
             return;
         }
 
+        // ================================================
+        // INSERT INTO DB
+        // ================================================
         String query = """
                 INSERT INTO Owner
                 (first_name, last_name, street, barangay, city, province, region, postal_code, password, license_number)
@@ -273,24 +272,35 @@ public class UserSignUpPanel extends JPanel {
             int rows = ps.executeUpdate();
 
             if (rows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        int ownerId = rs.getInt(1);
-                    }
-                }
                 statusLabel.setForeground(new Color(0, 128, 0));
-                statusLabel.setText("Account created successfully.");
+                statusLabel.setText("Account created successfully!");
                 mainFrame.showHome();
             } else {
-                statusLabel.setForeground(new Color(180, 0, 0));
-                statusLabel.setText("Sign up failed. Please try again.");
+                statusLabel.setText("Sign up failed. Try again.");
             }
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            statusLabel.setForeground(new Color(180, 0, 0));
             statusLabel.setText("Database error. Please contact support.");
         }
+    }
+
+    // ========================================================
+    // CAPITALIZATION HELPER
+    // ========================================================
+    private String capitalizeWords(String input) {
+        if (input == null || input.isEmpty()) return input;
+        String[] parts = input.toLowerCase().split(" ");
+        StringBuilder sb = new StringBuilder();
+
+        for (String p : parts) {
+            if (!p.isEmpty()) {
+                sb.append(Character.toUpperCase(p.charAt(0)))
+                  .append(p.substring(1));
+            }
+            sb.append(" ");
+        }
+        return sb.toString().trim();
     }
 
     private JButton createPrimaryButton(String text) {
@@ -313,7 +323,7 @@ public class UserSignUpPanel extends JPanel {
         return b;
     }
 
-    /** Rounded card with a soft shadow for a more polished look. */
+    /** Rounded card with soft shadow */
     class RoundedPanel extends JPanel {
         private final int radius;
         private final Color bgColor;
@@ -333,11 +343,9 @@ public class UserSignUpPanel extends JPanel {
             int w = getWidth();
             int h = getHeight();
 
-            // soft shadow
             g2.setColor(new Color(0, 0, 0, 25));
             g2.fillRoundRect(4, 6, w - 8, h - 8, radius + 4, radius + 4);
 
-            // card background
             g2.setColor(bgColor);
             g2.fillRoundRect(0, 0, w - 8, h - 10, radius, radius);
 
@@ -346,5 +354,3 @@ public class UserSignUpPanel extends JPanel {
         }
     }
 }
-
-
