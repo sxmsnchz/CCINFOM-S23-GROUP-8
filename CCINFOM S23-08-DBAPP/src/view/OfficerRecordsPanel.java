@@ -25,12 +25,13 @@ public class OfficerRecordsPanel extends JPanel {
 
     public OfficerRecordsPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
         setOpaque(false);
 
         JPanel card = new RoundedPanel(18, new Color(255,255,255,235));
-        card.setLayout(new BorderLayout());
-        card.setBorder(BorderFactory.createEmptyBorder(18,18,18,18));
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBorder(BorderFactory.createEmptyBorder(22, 26, 22, 26));
+        card.setPreferredSize(new Dimension(760, 520));
 
         // Header
         JPanel header = new JPanel();
@@ -42,13 +43,14 @@ public class OfficerRecordsPanel extends JPanel {
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
         header.add(title);
         header.add(Box.createVerticalStrut(6));
-        JLabel subtitle = new JLabel("Browse officers, registrations and violations issued");
+        JLabel subtitle = new JLabel("Browse officers, registrations processed and violations issued");
         subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         subtitle.setForeground(Color.DARK_GRAY);
         subtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         header.add(subtitle);
 
-        card.add(header, BorderLayout.NORTH);
+        card.add(header);
+        card.add(Box.createVerticalStrut(12));
 
         // Tabbed content
         JTabbedPane tabs = new JTabbedPane();
@@ -60,8 +62,9 @@ public class OfficerRecordsPanel extends JPanel {
         JTable officersTable = new JTable(officersModel);
         JScrollPane officersScroll = new JScrollPane(officersTable);
         JPanel officersPanel = new JPanel(new BorderLayout());
+        officersPanel.setOpaque(false);
         officersPanel.add(officersScroll, BorderLayout.CENTER);
-        JButton refreshOfficers = new JButton("Refresh");
+        JButton refreshOfficers = createPrimaryButton("Refresh");
         refreshOfficers.addActionListener(e -> loadOfficers());
         JPanel ofBtn = new JPanel(); ofBtn.setOpaque(false); ofBtn.add(refreshOfficers);
         officersPanel.add(ofBtn, BorderLayout.SOUTH);
@@ -74,11 +77,12 @@ public class OfficerRecordsPanel extends JPanel {
         JTable regsTable = new JTable(registrationsModel);
         JScrollPane regsScroll = new JScrollPane(regsTable);
         JPanel regsPanel = new JPanel(new BorderLayout());
+        regsPanel.setOpaque(false);
         JPanel regsTop = new JPanel(); regsTop.setOpaque(false);
         officerComboModel = new DefaultComboBoxModel<>();
         regsOfficerSelector = new JComboBox<>(officerComboModel);
         regsOfficerSelector.setPrototypeDisplayValue("000 - Lastname, Firstname");
-        JButton loadRegs = new JButton("Load Registrations Processed");
+        JButton loadRegs = createPrimaryButton("Load Registrations Processed");
         loadRegs.addActionListener(e -> loadRegistrationsForSelectedOfficer());
         regsTop.add(new JLabel("Officer:")); regsTop.add(regsOfficerSelector); regsTop.add(loadRegs);
         regsPanel.add(regsTop, BorderLayout.NORTH);
@@ -92,27 +96,31 @@ public class OfficerRecordsPanel extends JPanel {
         JTable violTable = new JTable(violationsModel);
         JScrollPane violScroll = new JScrollPane(violTable);
         JPanel violPanel = new JPanel(new BorderLayout());
+        violPanel.setOpaque(false);
         JPanel violTop = new JPanel(); violTop.setOpaque(false);
         // separate JComboBox backed by same model so both tabs show identical items
         violOfficerSelector = new JComboBox<>(officerComboModel);
         violOfficerSelector.setPrototypeDisplayValue("000 - Lastname, Firstname");
-        JButton loadViol = new JButton("Load Violations Issued by Officer");
+        JButton loadViol = createPrimaryButton("Load Violations Issued by Officer");
         loadViol.addActionListener(e -> loadViolationsForSelectedOfficer());
         violTop.add(new JLabel("Officer:")); violTop.add(violOfficerSelector); violTop.add(loadViol);
         violPanel.add(violTop, BorderLayout.NORTH);
         violPanel.add(violScroll, BorderLayout.CENTER);
         tabs.addTab("Violations Issued", violPanel);
 
-        card.add(tabs, BorderLayout.CENTER);
+        card.add(tabs);
 
         // Back button
+        card.add(Box.createVerticalStrut(12));
         JPanel bottom = new JPanel(); bottom.setOpaque(false);
-        JButton back = new JButton("Back to Dashboard");
+        JButton back = createSecondaryButton("Back to Dashboard");
         back.addActionListener(e -> mainFrame.showOfficerMenu());
         bottom.add(back);
-        card.add(bottom, BorderLayout.SOUTH);
+        card.add(bottom);
 
-        add(card, BorderLayout.CENTER);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.CENTER;
+        add(card, gbc);
 
         // initial load
         loadOfficers();
@@ -214,6 +222,34 @@ public class OfficerRecordsPanel extends JPanel {
             g2.setColor(bgColor);
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
         }
+    }
+
+    // UI helpers to match the app theme
+    private JButton createPrimaryButton(String text) {
+        JButton b = new JButton(text);
+        b.setBackground(new Color(0, 90, 200));
+        b.setForeground(Color.white);
+        b.setFocusPainted(false);
+        b.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        return b;
+    }
+
+    private JButton createSecondaryButton(String text) {
+        JButton b = new JButton(text);
+        b.setBackground(new Color(230, 230, 230));
+        b.setForeground(Color.darkGray);
+        b.setFocusPainted(false);
+        b.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        return b;
+    }
+
+    private JButton createDangerButton(String text) {
+        JButton b = new JButton(text);
+        b.setBackground(new Color(180, 40, 40));
+        b.setForeground(Color.white);
+        b.setFocusPainted(false);
+        b.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        return b;
     }
 }
 
