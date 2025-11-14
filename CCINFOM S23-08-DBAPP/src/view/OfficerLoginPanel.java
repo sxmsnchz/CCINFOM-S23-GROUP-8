@@ -18,7 +18,10 @@ public class OfficerLoginPanel extends JPanel {
     private JPasswordField passwordField;
     private JLabel statusLabel;
 
+
     public OfficerLoginPanel(MainFrame parentFrame) {
+
+
         this.mainFrame = parentFrame;
 
         setLayout(new GridBagLayout());
@@ -122,8 +125,8 @@ public class OfficerLoginPanel extends JPanel {
                         JOptionPane.INFORMATION_MESSAGE
                 );
 
-                // TEMPORARY UNTIL OFFICER MENU EXISTS
-                mainFrame.showHome();
+                // Open the officer dashboard panel
+                mainFrame.showOfficerMenu();
 
             } else {
                 statusLabel.setText("Invalid officer ID or password.");

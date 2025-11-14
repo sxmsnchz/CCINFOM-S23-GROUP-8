@@ -10,11 +10,19 @@ public class MainFrame extends JFrame {
 
     private HomePanel homePanel;
     private OfficerLoginPanel officerLoginPanel;
+    private OfficerMenuPanel officerMenuPanel;
     private UserLoginPanel userLoginPanel;
     private UserSignUpPanel userSignUpPanel;
 
     public MainFrame() {
 
+        //Setting Icon
+        ImageIcon icon = new ImageIcon(getClass().getResource("/assets/Logo.svg_.png"));
+        // Get the Image object from the ImageIcon
+        Image image = icon.getImage();
+        // Set the icon for the JFrame
+        setIconImage(image);
+        
         setTitle("LTO Vehicle Registration Portal");
         setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,12 +35,14 @@ public class MainFrame extends JFrame {
         // Panels
         homePanel = new HomePanel(this);
         officerLoginPanel = new OfficerLoginPanel(this);
+        officerMenuPanel = new OfficerMenuPanel(this);
         userLoginPanel = new UserLoginPanel(this);
         userSignUpPanel = new UserSignUpPanel(this);
 
         // Add panels
         mainPanel.add(homePanel, "home");
         mainPanel.add(officerLoginPanel, "officerLogin");
+        mainPanel.add(officerMenuPanel, "officerMenu");
         mainPanel.add(userLoginPanel, "userLogin");
         mainPanel.add(userSignUpPanel, "userSignUp");
         add(mainPanel);
@@ -47,6 +57,10 @@ public class MainFrame extends JFrame {
 
     public void showUserLogin() {
         cardLayout.show(mainPanel, "userLogin");
+    }
+
+    public void showOfficerMenu() {
+        cardLayout.show(mainPanel, "officerMenu");
     }
 
     public void showOfficerLogin() {
