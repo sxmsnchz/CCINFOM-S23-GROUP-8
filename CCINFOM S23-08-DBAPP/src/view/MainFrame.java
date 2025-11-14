@@ -11,6 +11,7 @@ public class MainFrame extends JFrame {
     private HomePanel homePanel;
     private OfficerLoginPanel officerLoginPanel;
     private UserLoginPanel userLoginPanel;
+    private UserSignUpPanel userSignUpPanel;
 
     public MainFrame() {
 
@@ -27,11 +28,13 @@ public class MainFrame extends JFrame {
         homePanel = new HomePanel(this);
         officerLoginPanel = new OfficerLoginPanel(this);
         userLoginPanel = new UserLoginPanel(this);
+        userSignUpPanel = new UserSignUpPanel(this);
 
         // Add panels
         mainPanel.add(homePanel, "home");
         mainPanel.add(officerLoginPanel, "officerLogin");
         mainPanel.add(userLoginPanel, "userLogin");
+        mainPanel.add(userSignUpPanel, "userSignUp");
         add(mainPanel);
         setVisible(true);
     }
@@ -51,7 +54,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showSignUp() {
-        JOptionPane.showMessageDialog(this, "SignUpPanel not created yet.");
+        cardLayout.show(mainPanel, "userSignUp");
     }
 
 
