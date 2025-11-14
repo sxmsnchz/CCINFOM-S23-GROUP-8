@@ -35,7 +35,7 @@ public class OfficerMenuPanel extends JPanel {
         card.add(subtitle);
         card.add(Box.createVerticalStrut(16));
 
-        // Buttons matching OfficerMenu options
+        // Buttons matching OfficerMenu options !
         card.add(createMenuButton("Record New Violation", e -> showNotImplemented("Record New Violation")));
         card.add(Box.createVerticalStrut(8));
         card.add(createMenuButton("View All Violations", e -> showNotImplemented("View All Violations")));
