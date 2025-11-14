@@ -27,8 +27,8 @@ public class OfficerService {
         List<model.Violation> violations = new ArrayList<>();
         if (con == null) return violations;
 
-        String sql = "SELECT violation_id, vehicle_id, owner_id, branch_id, officer_id, payment_id, violation_type, violation_date, fine_amount, status "
-                   + "FROM violation WHERE officer_id = ? ORDER BY violation_date DESC";
+        String sql = "SELECT violation_id, vehicle_id, owner_id, branch_id, officer_id, payment_id, violation_type, violation_date, fine_amount, payment_status "
+               + "FROM violation WHERE officer_id = ? ORDER BY violation_date DESC";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, officerId);
@@ -43,7 +43,7 @@ public class OfficerService {
                     String type = rs.getString("violation_type");
                     java.sql.Date date = rs.getDate("violation_date");
                     double fine = rs.getDouble("fine_amount");
-                    String status = rs.getString("status");
+                    String status = rs.getString("payment_status");
 
                     model.Violation v = new model.Violation(id, vehicleId, ownerId, branchId, offId, type, date, fine, status);
                     v.setPaymentId(paymentId);

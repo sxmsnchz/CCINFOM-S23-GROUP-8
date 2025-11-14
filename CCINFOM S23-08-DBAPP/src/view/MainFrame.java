@@ -11,6 +11,7 @@ public class MainFrame extends JFrame {
     private HomePanel homePanel;
     private OfficerLoginPanel officerLoginPanel;
     private OfficerMenuPanel officerMenuPanel;
+    private OfficerRecordsPanel officerRecordsPanel;
     private UserLoginPanel userLoginPanel;
     private UserSignUpPanel userSignUpPanel;
 
@@ -36,6 +37,7 @@ public class MainFrame extends JFrame {
         homePanel = new HomePanel(this);
         officerLoginPanel = new OfficerLoginPanel(this);
         officerMenuPanel = new OfficerMenuPanel(this);
+        officerRecordsPanel = new OfficerRecordsPanel(this);
         userLoginPanel = new UserLoginPanel(this);
         userSignUpPanel = new UserSignUpPanel(this);
 
@@ -43,6 +45,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(homePanel, "home");
         mainPanel.add(officerLoginPanel, "officerLogin");
         mainPanel.add(officerMenuPanel, "officerMenu");
+        mainPanel.add(officerRecordsPanel, "officerRecords");
         mainPanel.add(userLoginPanel, "userLogin");
         mainPanel.add(userSignUpPanel, "userSignUp");
         add(mainPanel);
@@ -61,6 +64,10 @@ public class MainFrame extends JFrame {
 
     public void showOfficerMenu() {
         cardLayout.show(mainPanel, "officerMenu");
+    }
+
+    public void showOfficerRecords() {
+        cardLayout.show(mainPanel, "officerRecords");
     }
 
     public void showOfficerLogin() {
