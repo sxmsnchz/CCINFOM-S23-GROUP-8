@@ -1,13 +1,12 @@
 package view;
 
 import database.DatabaseConnection;
-import model.Session;
-
-import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.swing.*;
+import model.Session;
 
 public class UserLoginPanel extends JPanel {
 
@@ -141,8 +140,7 @@ public class UserLoginPanel extends JPanel {
                         JOptionPane.INFORMATION_MESSAGE
                 );
 
-                // TODO: Later → replace with showUserMenuPanel()
-                JOptionPane.showMessageDialog(this, "User Menu Panel NOT YET CREATED!");
+                mainFrame.showUserMenu();
 
             } else {
                 statusLabel.setText("Invalid ID/license or password.");

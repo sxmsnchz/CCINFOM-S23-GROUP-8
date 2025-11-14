@@ -1,7 +1,9 @@
 package view;
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
+import model.Session;
+
 
 public class MainFrame extends JFrame {
 
@@ -15,6 +17,7 @@ public class MainFrame extends JFrame {
     private UserLoginPanel userLoginPanel;
     private UserSignUpPanel userSignUpPanel;
     private BranchListPanel branchListPanel;
+    private UserMenuPanel userMenuPanel;
 
     public MainFrame() {
 
@@ -42,6 +45,7 @@ public class MainFrame extends JFrame {
         userLoginPanel = new UserLoginPanel(this);
         userSignUpPanel = new UserSignUpPanel(this);
         branchListPanel = new BranchListPanel(this);
+        userMenuPanel = new UserMenuPanel(this);
 
         // Add panels
         mainPanel.add(homePanel, "home");
@@ -51,6 +55,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(userLoginPanel, "userLogin");
         mainPanel.add(userSignUpPanel, "userSignUp");
         mainPanel.add(branchListPanel, "branchList");
+        mainPanel.add(userMenuPanel, "userMenu");
         add(mainPanel);
         setVisible(true);
     }
@@ -85,6 +90,10 @@ public class MainFrame extends JFrame {
         cardLayout.show(mainPanel, "branchList");
     }
 
+    public void showUserMenu(){
+        userMenuPanel.setOwnerName(Session.loggedInOwnerId);
+        cardLayout.show(mainPanel, "userMenu");
+    }
 
     public static void main(String[] args) {
         new MainFrame();
