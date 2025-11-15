@@ -50,7 +50,7 @@ public class OfficerMenuPanel extends JPanel {
         card.add(Box.createVerticalStrut(8));
         card.add(createMenuButton("View Branch List", e -> mainFrame.showBranchList()));
         card.add(Box.createVerticalStrut(8));
-        card.add(createMenuButton("Generate Reports", e -> showNotImplemented("Generate Reports")));
+        card.add(createMenuButton("Generate Reports", e -> mainFrame.showReportsMenu()));
         card.add(Box.createVerticalStrut(14));
 
         JButton logout = createDangerButton("Logout");

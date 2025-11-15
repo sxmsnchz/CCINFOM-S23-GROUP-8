@@ -3,6 +3,7 @@ package view;
 import database.DatabaseConnection;
 import model.Session;
 
+import javax.print.attribute.standard.JobState;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
@@ -122,7 +123,10 @@ public class UserSignUpPanel extends JPanel {
         JButton backButton   = createSecondaryButton("Back");
 
         signUpButton.addActionListener(e -> doSignUp());
-        backButton.addActionListener(e -> mainFrame.showHome());
+        backButton.addActionListener(e -> {
+            clearForm();
+            mainFrame.showHome();
+        });
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
@@ -272,17 +276,45 @@ public class UserSignUpPanel extends JPanel {
             int rows = ps.executeUpdate();
 
             if (rows > 0) {
-                statusLabel.setForeground(new Color(0, 128, 0));
-                statusLabel.setText("Account created successfully!");
-                mainFrame.showHome();
-            } else {
-                statusLabel.setText("Sign up failed. Try again.");
-            }
+                int newUserId = -1;
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        newUserId = rs.getInt(1);
+                    }
+                }
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            statusLabel.setText("Database error. Please contact support.");
-        }
+                String successMsg = "Account created successully. Your User ID is: " + newUserId;
+
+                clearForm();
+                statusLabel.setForeground(new Color(0,128,0));
+                statusLabel.setText(successMsg);
+
+                JOptionPane.showMessageDialog(this, successMsg, "Sign Up Successful", JOptionPane.INFORMATION_MESSAGE);
+                mainFrame.showHome();
+            }
+            else {
+                statusLabel.setText("Sign Up Failed. Try again.");
+            }
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        statusLabel.setText("Database error.");
+    }
+    }
+    
+    public void clearForm() {
+        firstNameField.setText("");
+        lastNameField.setText("");
+        streetField.setText("");
+        barangayField.setText("");
+        cityField.setText("");
+        provinceField.setText("");
+        regionField.setText("");
+        postalField.setText("");
+        passwordField.setText("");
+        confirmPassField.setText("");
+        licenseField.setText("");
+        statusLabel.setText(" ");
+        statusLabel.setForeground(new Color(180, 0, 0));
     }
 
     // ========================================================
