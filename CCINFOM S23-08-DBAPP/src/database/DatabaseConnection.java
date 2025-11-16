@@ -7,21 +7,26 @@ public class DatabaseConnection {
 
     private static final String URL = "jdbc:mysql://localhost:3306/CCINFOM_S23_08_sql";
     private static final String USER = "root";  // MySQL username
-    private static final String PASSWORD = ""; // change to ur MySQL password
+    private static final String PASSWORD = "0000"; // change to ur MySQL password
 
-    private static Connection connection = null;
+    // Print welcome only once per JVM
+    private static boolean welcomePrinted = false;
 
     // to connect to DB
+    // Note: this returns a new Connection each call. Do NOT close a shared/global Connection
+    // via try-with-resources when other parts of the app also rely on a shared instance.
     public static Connection getConnection() {
         try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            if (!welcomePrinted) {
                 System.out.println("Welcome!");
+                welcomePrinted = true;
             }
+            return conn;
         } catch (SQLException e) {
             System.out.println("Database connection failed: " + e.getMessage());
+            return null;
         }
-        return connection;
     }
 
     // test main method

@@ -1,6 +1,7 @@
 package service;
 
 import database.DatabaseConnection;
+import model.Registration;
 import model.Session;
 
 import java.sql.Connection;
@@ -171,7 +172,7 @@ public class RegistrationService {
     }
 
     // helper: return any officer_id for the branch (first found) or null if none
-    private Integer getOfficerIdForBranch(int branchId) {
+    public Integer getOfficerIdForBranch(int branchId) {
         try {
             PreparedStatement ps = conn.prepareStatement("SELECT officer_id FROM officer WHERE branch_id = ? LIMIT 1");
             ps.setInt(1, branchId);
@@ -217,5 +218,6 @@ public class RegistrationService {
         }
         return 0;
     }
-
 }
+
+

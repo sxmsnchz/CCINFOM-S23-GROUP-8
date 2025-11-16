@@ -93,12 +93,17 @@ public class UserMenuPanel extends JPanel {
                     Session.loggedInOwnerId = 0;
                     mainFrame.showHome();
                 } else {
-                JOptionPane.showMessageDialog(
-                    UserMenuPanel.this,
-                    options[index] + " panel is not yet implemented",
-                    "To Be Added",
-                    JOptionPane.INFORMATION_MESSAGE
-                );
+                    // Connect Register a Vehicle to the registration panel
+                    if (options[index].equals("Register a Vehicle")) {
+                        mainFrame.showRegistrationPanel();
+                        return;
+                    }
+                    JOptionPane.showMessageDialog(
+                            UserMenuPanel.this,
+                            options[index] + " panel is not yet implemented",
+                            "To Be Added",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
         }
                 //TODO: connect other buttons to panels -------- HEREEEE
             });
