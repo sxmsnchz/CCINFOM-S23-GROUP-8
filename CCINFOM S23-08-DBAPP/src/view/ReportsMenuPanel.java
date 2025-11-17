@@ -47,7 +47,7 @@ public class ReportsMenuPanel extends JPanel {
         // === Buttons ===
         card.add(createMenuButton(
                 "[1] Registrations by Branch",
-                e -> showNotImplemented("Registrations by Branch")
+                e -> mainFrame.showRegistrationsByBranchReport()
         ));
         card.add(Box.createVerticalStrut(10));
 
