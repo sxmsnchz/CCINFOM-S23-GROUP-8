@@ -516,6 +516,52 @@ public class UserPaymentPanel extends JPanel {
             int paymentId = 0;
             if (gen.next()) paymentId = gen.getInt(1);
 
+            // ======================================
+            // STEP 3 — CREATE RECEIPT ROW
+            // ======================================
+
+            String prefix = paymentType.equalsIgnoreCase("Violation") ? "V" : "R";
+
+            // Get latest receipt number with same prefix
+            PreparedStatement psLast = conn.prepareStatement(
+        "SELECT receipt_number FROM receipt WHERE receipt_number LIKE ? ORDER BY receipt_id DESC LIMIT 1"
+            );
+
+            psLast.setString(1, prefix + "%");
+            ResultSet rsLast = psLast.executeQuery();
+
+            String nextReceipt;
+            if (rsLast.next()) {
+                String last = rsLast.getString("receipt_number"); // e.g., R024
+                int num = Integer.parseInt(last.substring(1)) + 1;
+                nextReceipt = prefix + String.format("%03d", num);
+            } else {
+                nextReceipt = prefix + "001";
+            }
+
+        // Insert new receipt
+        PreparedStatement psReceipt = conn.prepareStatement(
+        "INSERT INTO receipt (payment_id, receipt_number, issue_date, printed_by) VALUES (?, ?, CURDATE(), ?)"
+        );
+
+        psReceipt.setInt(1, paymentId);
+        psReceipt.setString(2, nextReceipt);
+
+        // officer name for printed_by
+        PreparedStatement getOfficer = conn.prepareStatement(
+        "SELECT last_name, first_name FROM officer WHERE officer_id = ?"
+        );
+        getOfficer.setInt(1, officerId);
+        ResultSet rsOff = getOfficer.executeQuery();
+
+        String printedBy = "Unknown";
+        if (rsOff.next()) {
+            printedBy = rsOff.getString("last_name") + ", " + rsOff.getString("first_name");
+        }   
+
+        psReceipt.setString(3, printedBy);
+        psReceipt.executeUpdate();
+
             // UPDATE TABLES
             if (item.type.equalsIgnoreCase("Violation")) {
                 PreparedStatement upd = conn.prepareStatement(
