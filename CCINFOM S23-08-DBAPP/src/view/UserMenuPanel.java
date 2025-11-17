@@ -113,6 +113,11 @@ public class UserMenuPanel extends JPanel {
                     return;
                 }
 
+                if (options[index].equals("Transaction History")) {
+                    mainFrame.showReceiptHistory();
+                    return;
+                }
+
                 // other buttons not implemented yet
                 JOptionPane.showMessageDialog(
                         UserMenuPanel.this,
