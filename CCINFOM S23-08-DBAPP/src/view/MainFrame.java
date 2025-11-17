@@ -21,6 +21,9 @@ public class MainFrame extends JFrame {
     private UserBranchDirectoryPanel userBranchDirectoryPanel;
     private UserPaymentPanel userPaymentPanel;
     private OutstandingViolationsReportPanel outstandingViolationsReportPanel;
+    private ReceiptPanel receiptPanel;
+    private int lastPaymentId;
+    private ReceiptHistoryPanel receiptHistoryPanel;
 
     public MainFrame() {
 
@@ -51,7 +54,9 @@ public class MainFrame extends JFrame {
         reportsMenuPanel = new ReportsMenuPanel(this);
         userBranchDirectoryPanel = new UserBranchDirectoryPanel(this);
         outstandingViolationsReportPanel = new OutstandingViolationsReportPanel(this);
-        //  DO NOT create userPaymentPanel here plz
+        receiptPanel = new ReceiptPanel(this);
+        receiptHistoryPanel = new ReceiptHistoryPanel(this);
+        // DO NOT create userPaymentPanel here plz
 
         // Add panels
         mainPanel.add(homePanel, "home");
@@ -66,12 +71,13 @@ public class MainFrame extends JFrame {
         mainPanel.add(reportsMenuPanel, "reportsMenu");
         mainPanel.add(userBranchDirectoryPanel, "userBranchDirectory");
         mainPanel.add(outstandingViolationsReportPanel, "outstandingViolationsReport");
-        //  DO NOT create userPaymentPanel here plz
+        mainPanel.add(receiptPanel, "receipt");
+        mainPanel.add(receiptHistoryPanel, "receiptHistory");
+        // DO NOT create userPaymentPanel here
 
         add(mainPanel);
         setVisible(true);
     }
-
 
     // ===== Panel Switching =====
     public void showHome() {
@@ -123,14 +129,12 @@ public class MainFrame extends JFrame {
         System.out.println("[MainFrame] showUserPayment() called.");
         System.out.println("[MainFrame] Session.loggedInOwnerId = " + Session.loggedInOwnerId);
 
-        // create and add the panel 
         if (userPaymentPanel == null) {
             System.out.println("[MainFrame] Creating UserPaymentPanel for the first time.");
             userPaymentPanel = new UserPaymentPanel(this);
             mainPanel.add(userPaymentPanel, "userPayment");
         }
 
-        // Always refresh data when we open it
         userPaymentPanel.refreshData();
         cardLayout.show(mainPanel, "userPayment");
     }
@@ -139,9 +143,21 @@ public class MainFrame extends JFrame {
         cardLayout.show(mainPanel, "outstandingViolationsReport");
     }
 
+    public void showReceipt(int paymentId) {
+        System.out.println("[MainFrame] showReceipt(" + paymentId + ")");
+
+        this.lastPaymentId = paymentId;
+        receiptPanel.loadReceipt(paymentId);
+
+        cardLayout.show(mainPanel, "receipt");
+    }
+    
+    public void showReceiptHistory() {
+        receiptHistoryPanel.loadReceipts();
+        cardLayout.show(mainPanel, "receiptHistory");
+    }
 
     public static void main(String[] args) {
         new MainFrame();
     }
 }
-
