@@ -290,7 +290,7 @@ public class UserPaymentPanel extends JPanel {
         formGrid.add(labeledField("Cardholder Name", cardNameField));
         formGrid.add(labeledField("Card Number", cardNumberField));
 
-        formGrid.add(labeledField("Expiry (MM/YYYY)", expiryField));
+        formGrid.add(labeledField("Expiry (MM/YY)", expiryField));
         formGrid.add(labeledField("ZIP Code", zipField));
 
         formGrid.add(labeledField("CVV", cvvField));
@@ -406,9 +406,9 @@ public class UserPaymentPanel extends JPanel {
         }
 
         // expiry MM/YY
-        if (!expiry.matches("^(0[1-9]|1[0-2])/\\d{4}$")) {
+        if (!expiry.matches("^(0[1-9]|1[0-2])/\\d{2}$")) {
             JOptionPane.showMessageDialog(this,
-                    "Expiry must be in MM/YYYY format.",
+                    "Expiry must be in MM/YY format.",
                     "Invalid Expiry", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -571,6 +571,8 @@ public class UserPaymentPanel extends JPanel {
                     "Success",
                     JOptionPane.INFORMATION_MESSAGE
             );
+
+            mainFrame.showReceipt(paymentId);
 
         } catch (Exception ex) {
             ex.printStackTrace();
