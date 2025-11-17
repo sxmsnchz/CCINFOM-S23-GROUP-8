@@ -35,10 +35,9 @@ public class OfficerMenuPanel extends JPanel {
         card.add(subtitle);
         card.add(Box.createVerticalStrut(16));
 
-        // Buttons matching OfficerMenu options !
-        card.add(createMenuButton("Record New Violation", e -> showNotImplemented("Record New Violation")));
+        card.add(createMenuButton("Record New Violation", e -> mainFrame.showRecordViolation()));
         card.add(Box.createVerticalStrut(8));
-        card.add(createMenuButton("View All Violations", e -> showNotImplemented("View All Violations")));
+        card.add(createMenuButton("View All Violations", e -> mainFrame.showAllViolations()));
         card.add(Box.createVerticalStrut(8));
         card.add(createMenuButton("View All Registrations", e -> showNotImplemented("View All Registrations")));
         card.add(Box.createVerticalStrut(8));
@@ -118,3 +117,4 @@ public class OfficerMenuPanel extends JPanel {
         }
     }
 }
+
