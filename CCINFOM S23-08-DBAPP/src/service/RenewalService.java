@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
 /*
  * RenewalService.java
@@ -22,6 +21,56 @@ public class RenewalService {
     // connects to our database
     public RenewalService() {
         conn = DatabaseConnection.getConnection();
+    }
+
+    /*
+     * Retrieves all branches from db
+     * @return list of branches (e.g. idx 0 = ID, idx 1 = name)
+     */
+    public ArrayList<String[]> getBranches() {
+    ArrayList<String[]> branches = new ArrayList<>();
+    try {
+        String query = "SELECT branch_id, branch_name FROM Branch ORDER BY branch_id;";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            // store branch_id and branch_name as String[]
+            branches.add(new String[]{String.valueOf(rs.getInt("branch_id")), rs.getString("branch_name")});
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return branches;
+
+    }
+
+    /*
+     * Returns a random officer ID for a given branch
+     * @param branchID = the ID record of the branch
+     * @return random officer from given branch or -1 if no officers exist in that branch
+     */
+    public int getRandomOfficer(int branchID) {
+        try {
+            String query = "SELECT officer_id FROM Officer WHERE branch_id = ?;";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, branchID);
+            ResultSet rs = ps.executeQuery();
+
+            ArrayList<Integer> officers = new ArrayList<>();
+            while (rs.next()) {
+                officers.add(rs.getInt("officer_id"));
+            }
+
+            if (officers.isEmpty()) return -1;
+
+            Random r = new Random();
+            return officers.get(r.nextInt(officers.size()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     /*
@@ -76,7 +125,7 @@ public class RenewalService {
      * @param scanner = collects user input
      * @return officer id and branch id
      * @throws Exception if error occurs while trying to retrieve branch/officer info from database
-     */
+    
     public int[] selectBranch(Scanner scanner){
 
         int branchInput = -1, officerID = -1;
@@ -167,7 +216,8 @@ public class RenewalService {
         return new int[]{branchInput, officerID};
 
     }
-
+     */
+    
     /*
      * Inserts renewal data into renewal table in database.
      * - payment id and renewal date are set as null
@@ -201,7 +251,7 @@ public class RenewalService {
      * - user can re-enter details if incorrect
      * @param scanner = collects user input
      * @throws Exception if error occurs while trying to process renewal 
-     */
+     *
     public void renewRegistration(Scanner scanner) {
 
         boolean confirmDetails = false, upForRenewal; //confirm details checker
@@ -267,4 +317,5 @@ public class RenewalService {
         }
         
     }
+     */
 }

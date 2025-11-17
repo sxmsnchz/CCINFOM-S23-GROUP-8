@@ -3,13 +3,13 @@ package view;
 import java.util.List;
 import java.util.Scanner;
 import model.Session;
+import service.BranchDetailsService;
 import service.PaymentService;
 import service.ReceiptService;
 import service.RegistrationDetailsService;
 import service.RegistrationService;
 import service.RenewalService;
 import service.ViolationService;
-import service.BranchDetailsService;
 
 /**
  * UserMenu.java
@@ -49,7 +49,7 @@ public class UserMenu {
 
                 case "2":
                     RenewalService renewalService = new RenewalService();
-                    renewalService.renewRegistration(scanner);
+                    //renewalService.renewRegistration(scanner); ----updated to remove renewService error
                     break;
 
                 case "3":

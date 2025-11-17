@@ -103,6 +103,16 @@ public class UserMenuPanel extends JPanel {
                     return;
                 }
 
+                if (options[index].equals("Renew your Registration")) {
+                    mainFrame.showRenewRegistration();
+                    return;
+                }
+
+                if (options[index].equals("Vehicle Registrations")) {
+                    mainFrame.createAndShowViewRegistrationPanel();
+                    return;
+                }
+
                 if (options[index].equals("LTO Branches")) {
                     mainFrame.showUserBranchDirectory();
                     return;

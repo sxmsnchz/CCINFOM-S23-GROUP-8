@@ -25,6 +25,9 @@ public class MainFrame extends JFrame {
     private int lastPaymentId;
     private ReceiptHistoryPanel receiptHistoryPanel;
     private RegistrationsByBranchReportPanel registrationsByBranchReportPanel;
+    private ViewRegistrationPanel viewRegistrationPanel;
+    private RenewRegistrationPanel renewRegistrationPanel;
+
 
     public MainFrame() {
 
@@ -58,7 +61,9 @@ public class MainFrame extends JFrame {
         receiptPanel = new ReceiptPanel(this);
         receiptHistoryPanel = new ReceiptHistoryPanel(this);
         registrationsByBranchReportPanel = new RegistrationsByBranchReportPanel(this);
-        // DO NOT create userPaymentPanel here plz
+        renewRegistrationPanel = new RenewRegistrationPanel(this);
+        //  DO NOT create userPaymentPanel here plz
+
 
         // Add panels
         mainPanel.add(homePanel, "home");
@@ -76,7 +81,8 @@ public class MainFrame extends JFrame {
         mainPanel.add(receiptPanel, "receipt");
         mainPanel.add(receiptHistoryPanel, "receiptHistory");
         mainPanel.add(registrationsByBranchReportPanel, "registrationsByBranchReport");
-        // DO NOT create userPaymentPanel here
+        mainPanel.add(renewRegistrationPanel, "renewRegistration");
+        //  DO NOT create userPaymentPanel here plz
 
         add(mainPanel);
         setVisible(true);
@@ -163,6 +169,27 @@ public class MainFrame extends JFrame {
     public void showRegistrationsByBranchReport() {
         cardLayout.show(mainPanel, "registrationsByBranchReport");
     }
+
+    public void createAndShowViewRegistrationPanel() {
+        if (viewRegistrationPanel == null) {
+            viewRegistrationPanel = new ViewRegistrationPanel(this);
+            mainPanel.add(viewRegistrationPanel, "viewRegistration");
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        }
+
+        viewRegistrationPanel.loadVehicleList();
+        showViewRegistrationsPanel();
+    }
+
+        public void showViewRegistrationsPanel(){
+        cardLayout.show(mainPanel, "viewRegistration");
+    }
+
+    public void showRenewRegistration(){
+        cardLayout.show(mainPanel, "renewRegistration");
+    }
+
 
     public static void main(String[] args) {
         new MainFrame();
