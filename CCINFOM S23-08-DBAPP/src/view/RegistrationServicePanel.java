@@ -136,8 +136,22 @@ public class RegistrationServicePanel extends JPanel {
                 String info = "Registration created (ID: " + registrationId + ")";
                 if (officerId != null) info += "\nAssigned Officer ID: " + officerId;
 
-                JOptionPane.showMessageDialog(this, info, "Success", JOptionPane.INFORMATION_MESSAGE);
-                clearForm();
+                int opt = JOptionPane.showConfirmDialog(
+                        this,
+                        info + "\n\nProceed to Payment Hub now?",
+                        "Registration Successful",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+                if (opt == JOptionPane.YES_OPTION) {
+                    // Go back to user menu where Payment Hub is accessible
+                    mainFrame.showUserMenu();
+                    JOptionPane.showMessageDialog(this, "Open 'Payment Hub' from your User Menu to continue to payment.", "Next Step", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    // Just clear the form and stay
+                    clearForm();
+                }
 
             } catch (NumberFormatException nfe) {
                 JOptionPane.showMessageDialog(this, "Please enter valid numeric values for year and MV file number.", "Validation", JOptionPane.WARNING_MESSAGE);
