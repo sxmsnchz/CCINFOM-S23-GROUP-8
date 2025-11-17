@@ -24,6 +24,7 @@ public class MainFrame extends JFrame {
     private ReceiptPanel receiptPanel;
     private int lastPaymentId;
     private ReceiptHistoryPanel receiptHistoryPanel;
+    private RegistrationsByBranchReportPanel registrationsByBranchReportPanel;
 
     public MainFrame() {
 
@@ -56,6 +57,7 @@ public class MainFrame extends JFrame {
         outstandingViolationsReportPanel = new OutstandingViolationsReportPanel(this);
         receiptPanel = new ReceiptPanel(this);
         receiptHistoryPanel = new ReceiptHistoryPanel(this);
+        registrationsByBranchReportPanel = new RegistrationsByBranchReportPanel(this);
         // DO NOT create userPaymentPanel here plz
 
         // Add panels
@@ -73,6 +75,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(outstandingViolationsReportPanel, "outstandingViolationsReport");
         mainPanel.add(receiptPanel, "receipt");
         mainPanel.add(receiptHistoryPanel, "receiptHistory");
+        mainPanel.add(registrationsByBranchReportPanel, "registrationsByBranchReport");
         // DO NOT create userPaymentPanel here
 
         add(mainPanel);
@@ -151,10 +154,14 @@ public class MainFrame extends JFrame {
 
         cardLayout.show(mainPanel, "receipt");
     }
-    
+
     public void showReceiptHistory() {
         receiptHistoryPanel.loadReceipts();
         cardLayout.show(mainPanel, "receiptHistory");
+    }
+
+    public void showRegistrationsByBranchReport() {
+        cardLayout.show(mainPanel, "registrationsByBranchReport");
     }
 
     public static void main(String[] args) {
