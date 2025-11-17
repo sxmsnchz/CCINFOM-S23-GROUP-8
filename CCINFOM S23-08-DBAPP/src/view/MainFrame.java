@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
     private ReportsMenuPanel reportsMenuPanel;
     private RegistrationServicePanel registrationServicePanel;
     private UserBranchDirectoryPanel userBranchDirectoryPanel;
-    //private UserPaymentPanel userPaymentPanel;
+    private UserPaymentPanel userPaymentPanel;
     private OutstandingViolationsReportPanel outstandingViolationsReportPanel;
 
 
@@ -141,7 +141,7 @@ public class MainFrame extends JFrame {
     }
 
 
-    /*public void showUserPayment() { // DO NOT CHANGE !!
+    public void showUserPayment() { // DO NOT CHANGE !!
         System.out.println("[MainFrame] showUserPayment() called.");
         System.out.println("[MainFrame] Session.loggedInOwnerId = " + Session.loggedInOwnerId);
 
@@ -155,7 +155,7 @@ public class MainFrame extends JFrame {
         // Always refresh data when we open it
         userPaymentPanel.refreshData();
         cardLayout.show(mainPanel, "userPayment");
-    }*/
+    }
 
     public void showOutstandingViolationsReport() {
         cardLayout.show(mainPanel, "outstandingViolationsReport");
@@ -166,4 +166,5 @@ public class MainFrame extends JFrame {
         new MainFrame();
     }
 }
+
 
