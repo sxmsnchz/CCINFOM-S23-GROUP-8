@@ -1,17 +1,12 @@
 package view;
-
-
 import java.awt.*;
 import javax.swing.*;
 import model.Session;
 
-
 public class MainFrame extends JFrame {
-
 
     private CardLayout cardLayout;
     private JPanel mainPanel;
-
 
     private HomePanel homePanel;
     private OfficerLoginPanel officerLoginPanel;
@@ -27,26 +22,21 @@ public class MainFrame extends JFrame {
     private UserPaymentPanel userPaymentPanel;
     private OutstandingViolationsReportPanel outstandingViolationsReportPanel;
 
-
     public MainFrame() {
-
 
         //Setting Icon
         ImageIcon icon = new ImageIcon(getClass().getResource("/assets/Logo.svg_.png"));
         Image image = icon.getImage();
         setIconImage(image);
 
-
         setTitle("LTO Vehicle Registration Portal");
         setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-
         // CardLayout
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
-
 
         // Panels
         homePanel = new HomePanel(this);
@@ -62,7 +52,6 @@ public class MainFrame extends JFrame {
         userBranchDirectoryPanel = new UserBranchDirectoryPanel(this);
         outstandingViolationsReportPanel = new OutstandingViolationsReportPanel(this);
         //  DO NOT create userPaymentPanel here plz
-
 
         // Add panels
         mainPanel.add(homePanel, "home");
@@ -89,57 +78,46 @@ public class MainFrame extends JFrame {
         cardLayout.show(mainPanel, "home");
     }
 
-
     public void showUserLogin() {
         cardLayout.show(mainPanel, "userLogin");
     }
-
 
     public void showOfficerMenu() {
         cardLayout.show(mainPanel, "officerMenu");
     }
 
-
     public void showOfficerRecords() {
         cardLayout.show(mainPanel, "officerRecords");
     }
-
 
     public void showOfficerLogin() {
         cardLayout.show(mainPanel, "officerLogin");
     }
 
-
     public void showSignUp() {
         cardLayout.show(mainPanel, "userSignUp");
     }
 
-
     public void showBranchList() {
         cardLayout.show(mainPanel, "branchList");
     }
-
 
     public void showUserMenu() {
         userMenuPanel.setOwnerName(Session.loggedInOwnerId);
         cardLayout.show(mainPanel, "userMenu");
     }
 
-
     public void showRegistrationPanel() {
         cardLayout.show(mainPanel, "register");
     }
-
 
     public void showReportsMenu() {
         cardLayout.show(mainPanel, "reportsMenu");
     }
 
-
     public void showUserBranchDirectory() {
         cardLayout.show(mainPanel, "userBranchDirectory");
     }
-
 
     public void showUserPayment() { // DO NOT CHANGE !!
         System.out.println("[MainFrame] showUserPayment() called.");
@@ -166,5 +144,4 @@ public class MainFrame extends JFrame {
         new MainFrame();
     }
 }
-
 
