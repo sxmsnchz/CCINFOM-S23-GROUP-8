@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class ReportsMenuPanel extends JPanel {
 
@@ -44,16 +45,28 @@ public class ReportsMenuPanel extends JPanel {
         card.add(Box.createVerticalStrut(20));
 
         // === Buttons ===
-        card.add(createMenuButton("[1] Registrations by Branch"));
+        card.add(createMenuButton(
+                "[1] Registrations by Branch",
+                e -> showNotImplemented("Registrations by Branch")
+        ));
         card.add(Box.createVerticalStrut(10));
 
-        card.add(createMenuButton("[2] Renewal On Time"));
+        card.add(createMenuButton(
+                "[2] Renewal On Time",
+                e -> showNotImplemented("Renewal On Time")
+        ));
         card.add(Box.createVerticalStrut(10));
 
-        card.add(createMenuButton("[3] Violations Issued by Officer"));
+        card.add(createMenuButton(
+                "[3] Violations Issued by Officer",
+                e -> showNotImplemented("Violations Issued by Officer")
+        ));
         card.add(Box.createVerticalStrut(10));
 
-        card.add(createMenuButton("[4] Outstanding Violations"));
+        card.add(createMenuButton(
+                "[4] Outstanding Violations",
+                e -> mainFrame.showOutstandingViolationsReport()
+        ));
         card.add(Box.createVerticalStrut(25));
 
         // === Back button ===
@@ -71,7 +84,7 @@ public class ReportsMenuPanel extends JPanel {
         add(card, gbc);
     }
 
-    private JButton createMenuButton(String text) {
+    private JButton createMenuButton(String text, ActionListener action) {
         JButton b = new JButton(text);
         b.setAlignmentX(Component.CENTER_ALIGNMENT);
         b.setBackground(new Color(0, 90, 200));
@@ -84,15 +97,17 @@ public class ReportsMenuPanel extends JPanel {
         b.setPreferredSize(size);
         b.setMaximumSize(size);
 
-        // For now, all buttons just show "not implemented"
-        b.addActionListener(e -> JOptionPane.showMessageDialog(
+        b.addActionListener(action);
+        return b;
+    }
+
+    private void showNotImplemented(String featureName) {
+        JOptionPane.showMessageDialog(
                 this,
-                "Feature not implemented yet.",
+                featureName + " report screen is not yet implemented.",
                 "Info",
                 JOptionPane.INFORMATION_MESSAGE
-        ));
-
-        return b;
+        );
     }
 
     // === Rounded White Card ===
@@ -127,7 +142,6 @@ public class ReportsMenuPanel extends JPanel {
         }
     }
 }
-
 
 
 

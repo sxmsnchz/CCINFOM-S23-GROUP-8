@@ -24,7 +24,8 @@ public class MainFrame extends JFrame {
     private ReportsMenuPanel reportsMenuPanel;
     private RegistrationServicePanel registrationServicePanel;
     private UserBranchDirectoryPanel userBranchDirectoryPanel;
-    private UserPaymentPanel userPaymentPanel;
+    //private UserPaymentPanel userPaymentPanel;
+    private OutstandingViolationsReportPanel outstandingViolationsReportPanel;
 
 
     public MainFrame() {
@@ -59,6 +60,7 @@ public class MainFrame extends JFrame {
         registrationServicePanel = new RegistrationServicePanel(this);
         reportsMenuPanel = new ReportsMenuPanel(this);
         userBranchDirectoryPanel = new UserBranchDirectoryPanel(this);
+        outstandingViolationsReportPanel = new OutstandingViolationsReportPanel(this);
         //  DO NOT create userPaymentPanel here plz
 
 
@@ -74,6 +76,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(registrationServicePanel, "register");
         mainPanel.add(reportsMenuPanel, "reportsMenu");
         mainPanel.add(userBranchDirectoryPanel, "userBranchDirectory");
+        mainPanel.add(outstandingViolationsReportPanel, "outstandingViolationsReport");
         //  DO NOT create userPaymentPanel here plz
 
         add(mainPanel);
@@ -138,7 +141,7 @@ public class MainFrame extends JFrame {
     }
 
 
-    public void showUserPayment() { // DO NOT CHANGE !!
+    /*public void showUserPayment() { // DO NOT CHANGE !!
         System.out.println("[MainFrame] showUserPayment() called.");
         System.out.println("[MainFrame] Session.loggedInOwnerId = " + Session.loggedInOwnerId);
 
@@ -152,6 +155,10 @@ public class MainFrame extends JFrame {
         // Always refresh data when we open it
         userPaymentPanel.refreshData();
         cardLayout.show(mainPanel, "userPayment");
+    }*/
+
+    public void showOutstandingViolationsReport() {
+        cardLayout.show(mainPanel, "outstandingViolationsReport");
     }
 
 
