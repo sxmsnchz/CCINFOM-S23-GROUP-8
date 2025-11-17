@@ -90,7 +90,7 @@ public class UserMenuPanel extends JPanel {
             btn.addActionListener(e -> {
                 System.out.println("Clicked: " + options[index]);
 
-                // ====== MENU HANDLERS ======
+                // ====== MENU HANDLERS (ONLY PART UPDATED) ======
 
                 if (options[index].equals("Logout")) {
                     Session.loggedInOwnerId = 0;
@@ -105,6 +105,11 @@ public class UserMenuPanel extends JPanel {
 
                 if (options[index].equals("LTO Branches")) {
                     mainFrame.showUserBranchDirectory();
+                    return;
+                }
+
+                if (options[index].equals("Payment Hub")) {
+                    mainFrame.showUserPayment();
                     return;
                 }
 
