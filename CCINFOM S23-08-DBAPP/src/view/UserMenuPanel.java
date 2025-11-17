@@ -89,23 +89,32 @@ public class UserMenuPanel extends JPanel {
             final int index = i;
             btn.addActionListener(e -> {
                 System.out.println("Clicked: " + options[index]);
+
+                // ====== MENU HANDLERS ======
+
                 if (options[index].equals("Logout")) {
                     Session.loggedInOwnerId = 0;
                     mainFrame.showHome();
-                } else {
-                    // Connect Register a Vehicle to the registration panel
-                    if (options[index].equals("Register a Vehicle")) {
-                        mainFrame.showRegistrationPanel();
-                        return;
-                    }
-                    JOptionPane.showMessageDialog(
-                            UserMenuPanel.this,
-                            options[index] + " panel is not yet implemented",
-                            "To Be Added",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
-        }
-                //TODO: connect other buttons to panels -------- HEREEEE
+                    return;
+                }
+
+                if (options[index].equals("Register a Vehicle")) {
+                    mainFrame.showRegistrationPanel();
+                    return;
+                }
+
+                if (options[index].equals("LTO Branches")) {
+                    mainFrame.showUserBranchDirectory();
+                    return;
+                }
+
+                // other buttons not implemented yet
+                JOptionPane.showMessageDialog(
+                        UserMenuPanel.this,
+                        options[index] + " panel is not yet implemented",
+                        "To Be Added",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
             });
         }
 
@@ -158,7 +167,7 @@ public class UserMenuPanel extends JPanel {
             ResultSet rs = ps.executeQuery();
             if (rs.next())
                 fullName = rs.getString("first_name") + " " + rs.getString("last_name");
-            
+
         } catch (Exception e) {
             System.out.println("Error fetching owner name: " + e.getMessage());
         }
