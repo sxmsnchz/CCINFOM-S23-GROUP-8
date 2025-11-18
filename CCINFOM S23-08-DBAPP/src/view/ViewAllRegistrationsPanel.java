@@ -97,28 +97,18 @@ public class ViewAllRegistrationsPanel extends JPanel {
             return;
         }
 
-        int officerBranch = getOfficerBranch(officerId);
-        if (officerBranch == -1) {
-            showError("You are not assigned to any branch.");
-            cardsContainer.revalidate();
-            cardsContainer.repaint();
-            return;
-        }
-
+        // Show all registrations across the system (no branch filter)
         String sql =
-                "SELECT reg.registration_id, reg.owner_id, CONCAT(o.first_name, ' ', o.last_name) AS owner_name, " +
-                " reg.vehicle_id, v.plate_number, reg.branch_id, reg.status, reg.first_date_registered, reg.current_date_registered, reg.expiry_date, rct.receipt_number " +
-                "FROM Registration reg " +
-                "JOIN Owner o ON reg.owner_id = o.owner_id " +
-                "JOIN Vehicle v ON reg.vehicle_id = v.vehicle_id " +
-                "LEFT JOIN Receipt rct ON reg.payment_id = rct.payment_id " +
-                "WHERE reg.branch_id = ? " +
-                "ORDER BY reg.current_date_registered DESC, reg.registration_id DESC";
+            "SELECT reg.registration_id, reg.owner_id, CONCAT(o.first_name, ' ', o.last_name) AS owner_name, " +
+            " reg.vehicle_id, v.plate_number, reg.branch_id, reg.status, reg.first_date_registered, reg.current_date_registered, reg.expiry_date, rct.receipt_number " +
+            "FROM Registration reg " +
+            "JOIN Owner o ON reg.owner_id = o.owner_id " +
+            "JOIN Vehicle v ON reg.vehicle_id = v.vehicle_id " +
+            "LEFT JOIN Receipt rct ON reg.payment_id = rct.payment_id " +
+            "ORDER BY reg.current_date_registered DESC, reg.registration_id DESC";
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, officerBranch);
 
             try (ResultSet rs = ps.executeQuery()) {
                 boolean hasResults = false;
