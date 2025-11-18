@@ -9,9 +9,47 @@ public class OfficerMenuPanel extends JPanel {
 
     public OfficerMenuPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+        
+        setLayout(new BorderLayout());
 
-        setLayout(new GridBagLayout());
-        setOpaque(false);
+        JPanel bgPanel = new JPanel() {
+            Image bgImage;
+
+            {
+                try {
+                    bgImage = new ImageIcon(
+                            getClass().getClassLoader().getResource("assets/lto5.png")
+                    ).getImage();
+                } catch (Exception e) {
+                    bgImage = null;
+                }
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                int w = getWidth();
+                int h = getHeight();
+
+                if (bgImage != null) {
+                    g.drawImage(bgImage, 0, 0, w, h, this);
+                } else {
+                    g.setColor(Color.WHITE);
+                    g.fillRect(0, 0, w, h);
+                }
+
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setPaint(new GradientPaint(
+                        0, 0, new Color(255, 255, 255, 80),
+                        0, h, new Color(255, 255, 255, 200)
+                ));
+                g2.fillRect(0, 0, w, h);
+            }
+        };
+
+        bgPanel.setLayout(new GridBagLayout());
+        add(bgPanel, BorderLayout.CENTER);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
@@ -45,7 +83,7 @@ public class OfficerMenuPanel extends JPanel {
         card.add(Box.createVerticalStrut(8));
         card.add(createMenuButton("View Owner List", e -> mainFrame.showOwnerList()));
         card.add(Box.createVerticalStrut(8));
-        card.add(createMenuButton("View Vehicle List", e -> mainFrame.showVehicleList()));
+        card.add(createMenuButton("View Vehicle List", e -> showNotImplemented("View Vehicle List")));
         card.add(Box.createVerticalStrut(8));
         card.add(createMenuButton("View Branch List", e -> mainFrame.showBranchList()));
         card.add(Box.createVerticalStrut(8));
@@ -62,7 +100,7 @@ public class OfficerMenuPanel extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(card, gbc);
+        bgPanel.add(card, gbc);
     }
 
     private JButton createMenuButton(String text, java.awt.event.ActionListener l) {
@@ -95,7 +133,6 @@ public class OfficerMenuPanel extends JPanel {
     }
 
     private void doLogout() {
-        // clear session if exists and return to home
         model.Session.clear();
         mainFrame.showHome();
     }
@@ -119,4 +156,3 @@ public class OfficerMenuPanel extends JPanel {
         }
     }
 }
-
