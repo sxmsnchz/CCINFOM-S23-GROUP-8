@@ -34,6 +34,7 @@ public class MainFrame extends JFrame {
     private ViewOwnerListPanel viewOwnerListPanel;
     private UserViolationsPanel userViolationsPanel;
     private PaymentRecordsPanel paymentRecordsPanel;
+    private ViewVehicleListPanel viewVehicleListPanel;
 
 
     public MainFrame() {
@@ -75,6 +76,7 @@ public class MainFrame extends JFrame {
         recordViolationPanel = new RecordViolationPanel(this);
         viewOwnerListPanel = new ViewOwnerListPanel(this);
         userViolationsPanel = new UserViolationsPanel(this);
+        viewVehicleListPanel = new ViewVehicleListPanel(this);
         //  DO NOT create userPaymentPanel here plz
 
 
@@ -101,6 +103,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(recordViolationPanel, "recordViolation");
         mainPanel.add(viewOwnerListPanel, "viewOwnerList");
         mainPanel.add(userViolationsPanel, "userViolations");
+        mainPanel.add(viewVehicleListPanel, "viewVehicleList");
         //  DO NOT create userPaymentPanel here plz
 
         add(mainPanel);
@@ -244,6 +247,10 @@ public class MainFrame extends JFrame {
         }
         paymentRecordsPanel.reloadTable();
         cardLayout.show(mainPanel, "paymentRecords");
+    }
+
+    public void showVehicleList(){
+        cardLayout.show(mainPanel, "viewVehicleList");
     }
 
 
