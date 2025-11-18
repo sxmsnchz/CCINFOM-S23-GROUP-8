@@ -25,6 +25,7 @@ public class MainFrame extends JFrame {
     private int lastPaymentId;
     private ReceiptHistoryPanel receiptHistoryPanel;
     private RegistrationsByBranchReportPanel registrationsByBranchReportPanel;
+    private ViolationsByOfficerReportPanel violationsByOfficerReportPanel;
     private ViewRegistrationPanel viewRegistrationPanel;
     private RenewRegistrationPanel renewRegistrationPanel;
     private RecordViolationPanel recordViolationPanel;
@@ -66,6 +67,7 @@ public class MainFrame extends JFrame {
         receiptPanel = new ReceiptPanel(this);
         receiptHistoryPanel = new ReceiptHistoryPanel(this);
         registrationsByBranchReportPanel = new RegistrationsByBranchReportPanel(this);
+        violationsByOfficerReportPanel = new ViolationsByOfficerReportPanel(this);
         renewRegistrationPanel = new RenewRegistrationPanel(this);
         viewAllViolationsPanel = new ViewAllViolationsPanel(this);
         recordViolationPanel = new RecordViolationPanel(this);
@@ -90,6 +92,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(receiptPanel, "receipt");
         mainPanel.add(receiptHistoryPanel, "receiptHistory");
         mainPanel.add(registrationsByBranchReportPanel, "registrationsByBranchReport");
+        mainPanel.add(violationsByOfficerReportPanel, "violationsByOfficerReport");
         mainPanel.add(renewRegistrationPanel, "renewRegistration");
         mainPanel.add(viewAllViolationsPanel, "viewAllViolations");
         mainPanel.add(recordViolationPanel, "recordViolation");
@@ -181,6 +184,10 @@ public class MainFrame extends JFrame {
 
     public void showRegistrationsByBranchReport() {
         cardLayout.show(mainPanel, "registrationsByBranchReport");
+    }
+
+    public void showViolationsByOfficerReportPanel() {
+        cardLayout.show(mainPanel, "violationsByOfficerReport");
     }
 
     public void createAndShowViewRegistrationPanel() {

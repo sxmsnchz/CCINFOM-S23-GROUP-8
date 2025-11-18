@@ -5,8 +5,7 @@ import database.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,7 +14,7 @@ import java.util.Scanner;
  * ViolationsIssuedByOfficerByDate
  *
  * Report: total number of violations issued by each officer for a selected month and year.
- * Produces console output and a CSV file.
+ * Produces console output
  */
 public class ViolationsIssuedByOfficerByDate {
 
@@ -70,36 +69,27 @@ public class ViolationsIssuedByOfficerByDate {
                     System.out.printf("%-10s %-35s %s%n", "Officer ID", "Officer Name", "Total Violations");
                     System.out.println("---------------------------------------------------------------");
 
-                    String fileName = String.format("violations-issued-by-officer-%02d-%d.csv", month, year);
-                    try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
-                        writer.println("Officer ID,Officer Name,Total Violations");
+                    boolean hasRows = false;
+                    int grandTotal = 0;
 
-                        boolean hasRows = false;
-                        int grandTotal = 0;
+                    while (rs.next()) {
+                        hasRows = true;
+                        int officerId = rs.getInt("officer_id");
+                        String name = rs.getString("officer_name");
+                        int total = rs.getInt("total_violations");
 
-                        while (rs.next()) {
-                            hasRows = true;
-                            int officerId = rs.getInt("officer_id");
-                            String name = rs.getString("officer_name");
-                            int total = rs.getInt("total_violations");
+                        System.out.printf("%-10d %-35s %d%n", officerId, name, total);
 
-                            System.out.printf("%-10d %-35s %d%n", officerId, name, total);
-                            writer.printf("%d,%s,%d%n", officerId, name.replace(",", ""), total);
-
-                            grandTotal += total;
-                        }
-
-                        if (!hasRows) {
-                            System.out.println("No officers found in the system.");
-                        }
-
-                        System.out.println("---------------------------------------------------------------");
-                        System.out.println("GRAND TOTAL: " + grandTotal + " violation(s)");
-                        System.out.println("===============================================================");
-
-                        writer.printf("\nGrand Total,,%d%n", grandTotal);
-                        System.out.println("\nReport saved as: " + fileName);
+                        grandTotal += total;
                     }
+
+                    if (!hasRows) {
+                        System.out.println("No officers found in the system.");
+                    }
+
+                    System.out.println("---------------------------------------------------------------");
+                    System.out.println("GRAND TOTAL: " + grandTotal + " violation(s)");
+                    System.out.println("===============================================================");
                 }
             }
 
@@ -128,44 +118,34 @@ public class ViolationsIssuedByOfficerByDate {
 
         List<String[]> rows = new ArrayList<>();
         int grandTotal = 0;
-        String fileName = String.format("violations-issued-by-officer-%02d-%d.csv", month, year);
-
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, month);
             ps.setInt(2, year);
             try (ResultSet rs = ps.executeQuery()) {
-                try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
-                    writer.println("Officer ID,Officer Name,Total Violations");
-                    while (rs.next()) {
-                        int officerId = rs.getInt("officer_id");
-                        String name = rs.getString("officer_name");
-                        int total = rs.getInt("total_violations");
-                        rows.add(new String[]{String.valueOf(officerId), name, String.valueOf(total)});
-                        writer.printf("%d,%s,%d%n", officerId, name.replace(",", ""), total);
-                        grandTotal += total;
-                    }
-                    writer.printf("\nGrand Total,,%d%n", grandTotal);
+                while (rs.next()) {
+                    int officerId = rs.getInt("officer_id");
+                    String name = rs.getString("officer_name");
+                    int total = rs.getInt("total_violations");
+                    rows.add(new String[]{String.valueOf(officerId), name, String.valueOf(total)});
+                    grandTotal += total;
                 }
             }
         }
 
-        return new ReportResult(rows, grandTotal, fileName);
+        return new ReportResult(rows, grandTotal);
     }
 
     public static class ReportResult {
         private final List<String[]> rows;
         private final int grandTotal;
-        private final String fileName;
 
-        public ReportResult(List<String[]> rows, int grandTotal, String fileName) {
+        public ReportResult(List<String[]> rows, int grandTotal) {
             this.rows = rows;
             this.grandTotal = grandTotal;
-            this.fileName = fileName;
         }
 
         public List<String[]> getRows() { return rows; }
         public int getGrandTotal() { return grandTotal; }
-        public String getFileName() { return fileName; }
     }
 
     private String getMonthName(int month) {

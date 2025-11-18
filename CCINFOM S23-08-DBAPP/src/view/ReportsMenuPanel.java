@@ -59,7 +59,7 @@ public class ReportsMenuPanel extends JPanel {
 
         card.add(createMenuButton(
             "[3] Violations Issued by Officer",
-            e -> mainFrame.showViolationsByOfficerReport()
+            e -> mainFrame.showViolationsByOfficerReportPanel()
         ));
         card.add(Box.createVerticalStrut(10));
 

@@ -57,7 +57,7 @@ public class ViolationsByOfficerReportPanel extends JPanel {
         add(controls, BorderLayout.PAGE_START);
 
         // Table
-        table = new JTable(new DefaultTableModel(new Object[]{"Officer ID", "Officer Name", "Total Violations"}, 0));
+        table = new JTable(new DefaultTableModel(new Object[]{"Officer ID", "Officer Name", "Total Violations Issued"}, 0));
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         // Footer
@@ -92,8 +92,7 @@ public class ViolationsByOfficerReportPanel extends JPanel {
                 model.addRow(new Object[]{row[0], row[1], Integer.parseInt(row[2])});
             }
             totalLabel.setText("Grand Total: " + result.getGrandTotal());
-
-            JOptionPane.showMessageDialog(this, "Report generated and saved as: " + result.getFileName(), "Report Saved", JOptionPane.INFORMATION_MESSAGE);
+            // CSV export removed: report is shown in-app only
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error generating report: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
