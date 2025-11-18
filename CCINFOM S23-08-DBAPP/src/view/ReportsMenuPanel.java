@@ -1,8 +1,8 @@
 package view;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class ReportsMenuPanel extends JPanel {
 
@@ -53,7 +53,7 @@ public class ReportsMenuPanel extends JPanel {
 
         card.add(createMenuButton(
                 "[2] Renewal On Time",
-                e -> showNotImplemented("Renewal On Time")
+                e -> mainFrame.showRenewOnTimeReport()
         ));
         card.add(Box.createVerticalStrut(10));
 
