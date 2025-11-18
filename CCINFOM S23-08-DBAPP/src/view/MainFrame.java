@@ -27,7 +27,6 @@ public class MainFrame extends JFrame {
     private RegistrationsByBranchReportPanel registrationsByBranchReportPanel;
     private ViewRegistrationPanel viewRegistrationPanel;
     private RenewRegistrationPanel renewRegistrationPanel;
-    private ViolationsByOfficerReportPanel violationsByOfficerReportPanel;
 
 
     public MainFrame() {
@@ -64,6 +63,10 @@ public class MainFrame extends JFrame {
         receiptHistoryPanel = new ReceiptHistoryPanel(this);
         registrationsByBranchReportPanel = new RegistrationsByBranchReportPanel(this);
         renewRegistrationPanel = new RenewRegistrationPanel(this);
+        viewAllViolationsPanel = new ViewAllViolationsPanel(this);
+        recordViolationPanel = new RecordViolationPanel(this);
+        viewOwnerListPanel = new ViewOwnerListPanel(this);
+        userViolationsPanel = new UserViolationsPanel(this);
         //  DO NOT create userPaymentPanel here plz
 
 
@@ -85,6 +88,10 @@ public class MainFrame extends JFrame {
         mainPanel.add(receiptHistoryPanel, "receiptHistory");
         mainPanel.add(registrationsByBranchReportPanel, "registrationsByBranchReport");
         mainPanel.add(renewRegistrationPanel, "renewRegistration");
+        mainPanel.add(viewAllViolationsPanel, "viewAllViolations");
+        mainPanel.add(recordViolationPanel, "recordViolation");
+        mainPanel.add(viewOwnerListPanel, "viewOwnerList");
+        mainPanel.add(userViolationsPanel, "userViolations");
         //  DO NOT create userPaymentPanel here plz
 
         add(mainPanel);
@@ -195,6 +202,34 @@ public class MainFrame extends JFrame {
 
     public void showRenewRegistration(){
         cardLayout.show(mainPanel, "renewRegistration");
+    }
+
+    public void showRecordViolation() {
+        cardLayout.show(mainPanel, "recordViolation");
+    }
+
+    public void showAllViolations() {
+        viewAllViolationsPanel.loadViolations();
+        cardLayout.show(mainPanel, "viewAllViolations");
+    }
+
+    public void showOwnerList() {
+        viewOwnerListPanel.loadOwners();
+        cardLayout.show(mainPanel, "viewOwnerList");
+    }
+
+    public void showUserViolations() {
+        userViolationsPanel.loadViolations();
+        cardLayout.show(mainPanel, "userViolations");
+    }
+
+    public void showPaymentRecords() {
+        if (paymentRecordsPanel == null) {
+            paymentRecordsPanel = new PaymentRecordsPanel(this);
+            mainPanel.add(paymentRecordsPanel, "paymentRecords");
+        }
+        paymentRecordsPanel.reloadTable();
+        cardLayout.show(mainPanel, "paymentRecords");
     }
 
 

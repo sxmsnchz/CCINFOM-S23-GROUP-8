@@ -14,7 +14,7 @@ public class ViewAllViolationsPanel extends JPanel {
 
     private final MainFrame mainFrame;
 
-    private JPanel cardsContainer;  // where cards will be added
+    private JPanel cardsContainer;
     private JScrollPane scrollPane;
 
     private JButton refreshButton;
@@ -94,7 +94,7 @@ public class ViewAllViolationsPanel extends JPanel {
 
     /** Loads violations and creates cards */
     public void loadViolations() {
-        cardsContainer.removeAll(); 
+        cardsContainer.removeAll();
 
         int officerId = Session.loggedInOfficerId;
 
@@ -177,6 +177,7 @@ public class ViewAllViolationsPanel extends JPanel {
         card.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 140));
 
+        // TOP: ID + status
         JPanel top = new JPanel(new BorderLayout());
         top.setOpaque(false);
 
@@ -184,22 +185,28 @@ public class ViewAllViolationsPanel extends JPanel {
         idLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
         idLabel.setForeground(new Color(20, 40, 90));
 
-        JLabel statusLabel = new JLabel(status);
+        JLabel statusLabel = new JLabel(status == null ? "Unpaid" : status);
         statusLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
         statusLabel.setOpaque(true);
         statusLabel.setBorder(BorderFactory.createEmptyBorder(3, 6, 3, 6));
 
-        if (status != null && status.equalsIgnoreCase("Paid")) {
-            statusLabel.setBackground(new Color(0, 140, 70));
+        // ✅ GREEN for Paid or Cleared, RED for others
+        if (status != null &&
+                (status.equalsIgnoreCase("Paid")
+                        || status.equalsIgnoreCase("Cleared"))) {
+
+            statusLabel.setBackground(new Color(0, 140, 70));   // green
             statusLabel.setForeground(Color.WHITE);
+
         } else {
-            statusLabel.setBackground(new Color(200, 50, 50));
+            statusLabel.setBackground(new Color(200, 50, 50));  // red
             statusLabel.setForeground(Color.WHITE);
         }
 
         top.add(idLabel, BorderLayout.WEST);
         top.add(statusLabel, BorderLayout.EAST);
 
+        // BODY
         JPanel body = new JPanel();
         body.setOpaque(false);
         body.setLayout(new GridLayout(4, 2, 5, 4));
@@ -280,3 +287,4 @@ public class ViewAllViolationsPanel extends JPanel {
         }
     }
 }
+
