@@ -11,21 +11,56 @@ import java.sql.ResultSet;
 
 public class OfficerLoginPanel extends JPanel {
 
-    // Reference to MainFrame
     private final MainFrame mainFrame;
 
     private JTextField officerIdField;
     private JPasswordField passwordField;
     private JLabel statusLabel;
 
-
     public OfficerLoginPanel(MainFrame parentFrame) {
-
 
         this.mainFrame = parentFrame;
 
-        setLayout(new GridBagLayout());
-        setOpaque(false);
+        setLayout(new BorderLayout()); // changed to allow bgPanel insertion
+
+        // Background Panel
+        JPanel bgPanel = new JPanel() {
+            Image bgImage;
+            {
+                try {
+                    bgImage = new ImageIcon(
+                            getClass().getClassLoader().getResource("assets/lto2.jpg")
+                    ).getImage();
+                } catch (Exception e) {
+                    bgImage = null;
+                }
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int w = getWidth();
+                int h = getHeight();
+
+                if (bgImage != null) {
+                    g.drawImage(bgImage, 0, 0, w, h, this);
+                } else {
+                    g.setColor(Color.WHITE);
+                    g.fillRect(0, 0, w, h);
+                }
+
+                // FADED OVERLAY
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setPaint(new GradientPaint(
+                        0, 0, new Color(255, 255, 255, 80),
+                        0, h, new Color(255, 255, 255, 200)
+                ));
+                g2.fillRect(0, 0, w, h);
+            }
+        };
+
+        bgPanel.setLayout(new GridBagLayout());
+        add(bgPanel, BorderLayout.CENTER);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -83,7 +118,9 @@ public class OfficerLoginPanel extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(card, gbc);
+
+        // now added to bgPanel 
+        bgPanel.add(card, gbc);
     }
 
     // LOGIN LOGIC
@@ -125,7 +162,6 @@ public class OfficerLoginPanel extends JPanel {
                         JOptionPane.INFORMATION_MESSAGE
                 );
 
-                // Open the officer dashboard panel
                 mainFrame.showOfficerMenu();
 
             } else {
@@ -138,7 +174,7 @@ public class OfficerLoginPanel extends JPanel {
         }
     }
 
-    // UI HELPERS
+    // UI HELPERS (unchanged)
     private JButton createPrimaryButton(String text) {
         JButton b = new JButton(text);
         b.setBackground(new Color(0, 90, 200));
@@ -175,4 +211,3 @@ public class OfficerLoginPanel extends JPanel {
         }
     }
 }
-
