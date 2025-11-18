@@ -30,6 +30,7 @@ public class MainFrame extends JFrame {
     private RenewRegistrationPanel renewRegistrationPanel;
     private RecordViolationPanel recordViolationPanel;
     private ViewAllViolationsPanel viewAllViolationsPanel;
+    private ViewAllRegistrationsPanel viewAllRegistrationsPanel;
     private ViewOwnerListPanel viewOwnerListPanel;
     private UserViolationsPanel userViolationsPanel;
     private PaymentRecordsPanel paymentRecordsPanel;
@@ -70,6 +71,7 @@ public class MainFrame extends JFrame {
         violationsByOfficerReportPanel = new ViolationsByOfficerReportPanel(this);
         renewRegistrationPanel = new RenewRegistrationPanel(this);
         viewAllViolationsPanel = new ViewAllViolationsPanel(this);
+        viewAllRegistrationsPanel = new ViewAllRegistrationsPanel(this);
         recordViolationPanel = new RecordViolationPanel(this);
         viewOwnerListPanel = new ViewOwnerListPanel(this);
         userViolationsPanel = new UserViolationsPanel(this);
@@ -95,6 +97,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(violationsByOfficerReportPanel, "violationsByOfficerReport");
         mainPanel.add(renewRegistrationPanel, "renewRegistration");
         mainPanel.add(viewAllViolationsPanel, "viewAllViolations");
+        mainPanel.add(viewAllRegistrationsPanel, "viewAllRegistrations");
         mainPanel.add(recordViolationPanel, "recordViolation");
         mainPanel.add(viewOwnerListPanel, "viewOwnerList");
         mainPanel.add(userViolationsPanel, "userViolations");
@@ -217,6 +220,11 @@ public class MainFrame extends JFrame {
     public void showAllViolations() {
         viewAllViolationsPanel.loadViolations();
         cardLayout.show(mainPanel, "viewAllViolations");
+    }
+
+    public void showAllRegistrations() {
+        viewAllRegistrationsPanel.loadRegistrations();
+        cardLayout.show(mainPanel, "viewAllRegistrations");
     }
 
     public void showOwnerList() {
