@@ -41,7 +41,7 @@ public class UserPaymentPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(new Color(243, 246, 251));
 
-        // ===== TOP BAR =====
+        // TOP BAR 
         JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 12));
         topBar.setBackground(new Color(243, 246, 251));
 
@@ -57,7 +57,7 @@ public class UserPaymentPanel extends JPanel {
 
         add(topBar, BorderLayout.NORTH);
 
-        // ===== CARD CONTAINER =====
+        // CARD CONTAINER
         cardLayout = new CardLayout();
         cardContainer = new JPanel(cardLayout);
 
@@ -77,9 +77,7 @@ public class UserPaymentPanel extends JPanel {
         cardLayout.show(cardContainer, "list");
     }
 
-    // =====================================================================================
     // LOAD UNPAID TRANSACTIONS WITH DATE
-    // =====================================================================================
     private void loadUnpaidTransactions() {
         unpaidList.clear();
 
@@ -166,9 +164,7 @@ public class UserPaymentPanel extends JPanel {
         }
     }
 
-    // =====================================================================================
     // LIST CARD
-    // =====================================================================================
     private JPanel createListCard() {
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -227,7 +223,7 @@ public class UserPaymentPanel extends JPanel {
         plate.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         amount.setFont(new Font("Segoe UI", Font.PLAIN, 13));
 
-        // ★ Only show date for Violations
+        // Only show date for Violations
         JLabel dateLbl = null;
         if (item.type.equalsIgnoreCase("Violation")) {
             dateLbl = new JLabel("Date Issued: " + item.dateIssued);
@@ -251,9 +247,7 @@ public class UserPaymentPanel extends JPanel {
         return card;
     }
 
-    // =====================================================================================
     // PAYMENT FORM — 2 COLUMN PROFESSIONAL
-    // =====================================================================================
     private JPanel createPaymentCard() {
 
         JPanel outer = new JPanel(new GridBagLayout());
@@ -349,7 +343,7 @@ public class UserPaymentPanel extends JPanel {
         itemTitleLabel.setText(item.type + " • " + item.description);
         amountLabel.setText("Amount Due: ₱" + item.amount);
 
-        // ★ Show date label ONLY for violations
+        // Show date label ONLY for violations
         if (item.type.equalsIgnoreCase("Violation")) {
             dateLabel.setText("Date Issued: " + item.dateIssued);
             dateLabel.setVisible(true);
@@ -367,9 +361,7 @@ public class UserPaymentPanel extends JPanel {
         cardLayout.show(cardContainer, "payment");
     }
 
-    // =====================================================================================
     // PROCESS PAYMENT WITH CARD VALIDATION
-    // =====================================================================================
     private void processPayment() {
 
         if (selectedItem == null) {
@@ -516,9 +508,7 @@ public class UserPaymentPanel extends JPanel {
             int paymentId = 0;
             if (gen.next()) paymentId = gen.getInt(1);
 
-            // ======================================
             // STEP 3 — CREATE RECEIPT ROW
-            // ======================================
 
             String prefix = paymentType.equalsIgnoreCase("Violation") ? "V" : "R";
 
