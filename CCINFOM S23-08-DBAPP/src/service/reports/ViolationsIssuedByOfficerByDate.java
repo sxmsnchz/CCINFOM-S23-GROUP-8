@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -105,6 +107,65 @@ public class ViolationsIssuedByOfficerByDate {
             System.out.println("Error generating report: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Programmatic report generator for GUI use. Returns a ReportResult containing rows, grand total and CSV filename.
+     */
+    public ReportResult generateReport(int month, int year) throws Exception {
+        String sql = """
+                SELECT o.officer_id,
+                       CONCAT(o.first_name, ' ', o.last_name) AS officer_name,
+                       COUNT(v.violation_id) AS total_violations
+                FROM officer o
+                LEFT JOIN violation v
+                  ON o.officer_id = v.officer_id
+                  AND MONTH(v.violation_date) = ?
+                  AND YEAR(v.violation_date) = ?
+                GROUP BY o.officer_id, officer_name
+                ORDER BY total_violations DESC, officer_name ASC
+                """;
+
+        List<String[]> rows = new ArrayList<>();
+        int grandTotal = 0;
+        String fileName = String.format("violations-issued-by-officer-%02d-%d.csv", month, year);
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            try (ResultSet rs = ps.executeQuery()) {
+                try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
+                    writer.println("Officer ID,Officer Name,Total Violations");
+                    while (rs.next()) {
+                        int officerId = rs.getInt("officer_id");
+                        String name = rs.getString("officer_name");
+                        int total = rs.getInt("total_violations");
+                        rows.add(new String[]{String.valueOf(officerId), name, String.valueOf(total)});
+                        writer.printf("%d,%s,%d%n", officerId, name.replace(",", ""), total);
+                        grandTotal += total;
+                    }
+                    writer.printf("\nGrand Total,,%d%n", grandTotal);
+                }
+            }
+        }
+
+        return new ReportResult(rows, grandTotal, fileName);
+    }
+
+    public static class ReportResult {
+        private final List<String[]> rows;
+        private final int grandTotal;
+        private final String fileName;
+
+        public ReportResult(List<String[]> rows, int grandTotal, String fileName) {
+            this.rows = rows;
+            this.grandTotal = grandTotal;
+            this.fileName = fileName;
+        }
+
+        public List<String[]> getRows() { return rows; }
+        public int getGrandTotal() { return grandTotal; }
+        public String getFileName() { return fileName; }
     }
 
     private String getMonthName(int month) {
