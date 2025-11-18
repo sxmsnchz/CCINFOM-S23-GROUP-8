@@ -19,15 +19,52 @@ public class UserLoginPanel extends JPanel {
     public UserLoginPanel(MainFrame parentFrame) {
         this.mainFrame = parentFrame;
 
-        setLayout(new GridBagLayout());
-        setOpaque(false);
+        // Allow background panel
+        setLayout(new BorderLayout());
+
+        // Background Panel with Fade 
+        JPanel bgPanel = new JPanel() {
+            Image bgImage;
+            {
+                try {
+                    bgImage = new ImageIcon(
+                            getClass().getClassLoader().getResource("assets/lto3.jpg")
+                    ).getImage();
+                } catch (Exception e) {
+                    bgImage = null;
+                }
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                int w = getWidth();
+                int h = getHeight();
+
+                if (bgImage != null) {
+                    g.drawImage(bgImage, 0, 0, w, h, this);
+                } else {
+                    g.setColor(Color.WHITE);
+                    g.fillRect(0, 0, w, h);
+                }
+
+                // Faded overlay
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setPaint(new GradientPaint(
+                        0, 0, new Color(255, 255, 255, 80),
+                        0, h, new Color(255, 255, 255, 200)
+                ));
+                g2.fillRect(0, 0, w, h);
+            }
+        };
+
+        bgPanel.setLayout(new GridBagLayout());
+        add(bgPanel, BorderLayout.CENTER);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // -----------------------------------------------------------
-        // WHITE ROUNDED CARD
-        // -----------------------------------------------------------
         JPanel card = new RoundedPanel(25, new Color(255, 255, 255, 230));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(BorderFactory.createEmptyBorder(30, 40, 40, 40));
@@ -51,16 +88,13 @@ public class UserLoginPanel extends JPanel {
         statusLabel.setFont(new Font("Segoe UI", Font.ITALIC, 11));
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // ---------------- FORM ----------------
         JPanel form = new JPanel(new GridLayout(0, 1, 5, 8));
         form.setOpaque(false);
-
         form.add(new JLabel("Owner ID / License Number:"));
         form.add(idOrLicenseField);
         form.add(new JLabel("Password:"));
         form.add(passwordField);
 
-        // ---------------- BUTTONS ----------------
         JButton loginBtn = createPrimaryButton("Login");
         JButton backBtn = createSecondaryButton("Back");
 
@@ -73,7 +107,6 @@ public class UserLoginPanel extends JPanel {
         btnPanel.add(loginBtn);
         btnPanel.add(backBtn);
 
-        // ---------------- ASSEMBLE ----------------
         card.add(title);
         card.add(subtitle);
         card.add(Box.createVerticalStrut(20));
@@ -85,12 +118,12 @@ public class UserLoginPanel extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(card, gbc);
+
+        // ADD CARD TO BACKGROUND PANEL
+        bgPanel.add(card, gbc);
     }
 
-    // -----------------------------------------------------------
-    // LOGIN LOGIC
-    // -----------------------------------------------------------
+    // LOGIN LOGIC 
     private void doLogin() {
 
         String input = idOrLicenseField.getText().trim();
@@ -104,11 +137,9 @@ public class UserLoginPanel extends JPanel {
         try {
             Connection conn = DatabaseConnection.getConnection();
 
-            // Determine if numeric Owner ID or License Number
             PreparedStatement ps;
 
             if (input.matches("\\d+")) {
-                // Numeric? → Owner ID
                 ps = conn.prepareStatement(
                         "SELECT * FROM owner WHERE owner_id = ? AND password = ?"
                 );
@@ -116,7 +147,6 @@ public class UserLoginPanel extends JPanel {
                 ps.setString(2, pass);
 
             } else {
-                // Non-numeric? → License Number
                 ps = conn.prepareStatement(
                         "SELECT * FROM owner WHERE license_number = ? AND password = ?"
                 );
@@ -151,9 +181,6 @@ public class UserLoginPanel extends JPanel {
         }
     }
 
-    // -----------------------------------------------------------
-    // BUTTON STYLES
-    // -----------------------------------------------------------
     private JButton createPrimaryButton(String text) {
         JButton b = new JButton(text);
         b.setBackground(new Color(0, 90, 200));
@@ -172,7 +199,6 @@ public class UserLoginPanel extends JPanel {
         return b;
     }
 
-    // Rounded reusable panel
     class RoundedPanel extends JPanel {
         private final int radius;
         private final Color bgColor;
