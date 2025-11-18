@@ -10,23 +10,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ViewAllViolationsPanel extends JPanel {
+public class UserViolationsPanel extends JPanel {
 
     private final MainFrame mainFrame;
 
     private JPanel cardsContainer;
     private JScrollPane scrollPane;
-
-    private JButton refreshButton;
     private JButton backButton;
+    private JButton refreshButton;
 
-    public ViewAllViolationsPanel(MainFrame mainFrame) {
+    public UserViolationsPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initUI();
     }
 
     private void initUI() {
-
         setLayout(new GridBagLayout());
         setOpaque(false);
 
@@ -41,15 +39,15 @@ public class ViewAllViolationsPanel extends JPanel {
         mainCard.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         mainCard.setPreferredSize(new Dimension(850, 550));
 
-        // ----- Header Panel -----
+        // Header
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
 
-        JLabel title = new JLabel("Violations");
+        JLabel title = new JLabel("Your Violations");
         title.setFont(new Font("Segoe UI", Font.BOLD, 20));
         title.setForeground(new Color(20, 50, 100));
 
-        JLabel subtitle = new JLabel("Showing all violations for your assigned branch");
+        JLabel subtitle = new JLabel("List of violations recorded under your name");
         subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         subtitle.setForeground(Color.DARK_GRAY);
 
@@ -59,12 +57,11 @@ public class ViewAllViolationsPanel extends JPanel {
         titleBlock.add(title);
         titleBlock.add(subtitle);
 
-        // Buttons
         JPanel headerButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         headerButtons.setOpaque(false);
 
         refreshButton = new JButton("Refresh");
-        backButton = new JButton("Back");
+        backButton = new JButton("Back to Menu");
 
         headerButtons.add(refreshButton);
         headerButtons.add(backButton);
@@ -74,7 +71,7 @@ public class ViewAllViolationsPanel extends JPanel {
 
         mainCard.add(header, BorderLayout.NORTH);
 
-        // ----- Cards Container -----
+        // Cards container
         cardsContainer = new JPanel();
         cardsContainer.setLayout(new BoxLayout(cardsContainer, BoxLayout.Y_AXIS));
         cardsContainer.setOpaque(false);
@@ -89,45 +86,37 @@ public class ViewAllViolationsPanel extends JPanel {
 
         // Actions
         refreshButton.addActionListener(e -> loadViolations());
-        backButton.addActionListener(e -> mainFrame.showOfficerMenu());
+        backButton.addActionListener(e -> mainFrame.showUserMenu());
     }
 
-    /** Loads violations and creates cards */
+    /** Loads violations for the logged-in owner */
     public void loadViolations() {
         cardsContainer.removeAll();
 
-        int officerId = Session.loggedInOfficerId;
-
-        if (officerId == -1) {
-            showError("Officer is not logged in.");
-            cardsContainer.revalidate();
-            cardsContainer.repaint();
-            return;
-        }
-
-        int officerBranch = getOfficerBranch(officerId);
-        if (officerBranch == -1) {
-            showError("You are not assigned to any branch.");
+        int ownerId = Session.loggedInOwnerId;
+        if (ownerId <= 0) {
+            showError("User is not logged in.");
             cardsContainer.revalidate();
             cardsContainer.repaint();
             return;
         }
 
         String sql =
-            "SELECT v.violation_id, v.owner_id, " +
-            "       CONCAT(o.first_name, ' ', o.last_name) AS owner_name, " +
-            "       v.vehicle_id, ve.plate_number, v.branch_id, " +
-            "       v.violation_type, v.fine_amount, v.violation_date, v.payment_status " +
-            "FROM Violation v " +
-            "JOIN Owner o   ON v.owner_id = o.owner_id " +
-            "JOIN Vehicle ve ON v.vehicle_id = ve.vehicle_id " +
-            "WHERE v.branch_id = ? " +
-            "ORDER BY v.violation_date DESC, v.violation_id DESC";
+                "SELECT v.violation_id, v.vehicle_id, ve.plate_number, " +
+                "       v.violation_type, v.fine_amount, v.violation_date, " +
+                "       v.payment_status, b.branch_name, " +
+                "       CONCAT(ofc.first_name, ' ', ofc.last_name) AS officer_name " +
+                "FROM Violation v " +
+                "JOIN Vehicle ve ON v.vehicle_id = ve.vehicle_id " +
+                "JOIN Branch b   ON v.branch_id = b.branch_id " +
+                "JOIN Officer ofc ON v.officer_id = ofc.officer_id " +
+                "WHERE v.owner_id = ? " +
+                "ORDER BY v.violation_date DESC, v.violation_id DESC";
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, officerBranch);
+            ps.setInt(1, ownerId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 boolean hasResults = false;
@@ -136,27 +125,25 @@ public class ViewAllViolationsPanel extends JPanel {
                     hasResults = true;
                     JPanel card = createViolationCard(
                             rs.getInt("violation_id"),
-                            rs.getInt("owner_id"),
-                            rs.getString("owner_name"),
                             rs.getInt("vehicle_id"),
                             rs.getString("plate_number"),
-                            rs.getInt("branch_id"),
                             rs.getString("violation_type"),
                             rs.getDouble("fine_amount"),
                             rs.getDate("violation_date"),
-                            rs.getString("payment_status")
+                            rs.getString("payment_status"),
+                            rs.getString("branch_name"),
+                            rs.getString("officer_name")
                     );
                     cardsContainer.add(card);
                     cardsContainer.add(Box.createVerticalStrut(10));
                 }
 
                 if (!hasResults) {
-                    JLabel noData = new JLabel("No violations found for your branch.", SwingConstants.CENTER);
+                    JLabel noData = new JLabel("You currently have no recorded violations.", SwingConstants.CENTER);
                     noData.setForeground(Color.GRAY);
                     noData.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                     cardsContainer.add(noData);
                 }
-
             }
 
         } catch (SQLException ex) {
@@ -168,57 +155,60 @@ public class ViewAllViolationsPanel extends JPanel {
         cardsContainer.repaint();
     }
 
-    private JPanel createViolationCard(int vid, int oid, String ownerName, int vehId,
-                                       String plate, int branchId, String type,
-                                       double fine, java.util.Date date, String status) {
+    private JPanel createViolationCard(int violationId,
+                                       int vehicleId,
+                                       String plateNumber,
+                                       String violationType,
+                                       double fineAmount,
+                                       java.util.Date violationDate,
+                                       String paymentStatus,
+                                       String branchName,
+                                       String officerName) {
 
         JPanel card = new RoundedPanel(18, new Color(245, 248, 255));
         card.setLayout(new BorderLayout());
         card.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 140));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
-        // TOP: ID + status
+        // Top: Violation # + status
         JPanel top = new JPanel(new BorderLayout());
         top.setOpaque(false);
 
-        JLabel idLabel = new JLabel("Violation #" + vid);
+        JLabel idLabel = new JLabel("Violation #" + violationId + "  - Plate: " + plateNumber);
         idLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
         idLabel.setForeground(new Color(20, 40, 90));
 
-        JLabel statusLabel = new JLabel(status == null ? "Unpaid" : status);
+        JLabel statusLabel = new JLabel(paymentStatus == null ? "Unpaid" : paymentStatus);
         statusLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
         statusLabel.setOpaque(true);
         statusLabel.setBorder(BorderFactory.createEmptyBorder(3, 6, 3, 6));
 
-        // ✅ GREEN for Paid or Cleared, RED for others
-        if (status != null &&
-                (status.equalsIgnoreCase("Paid")
-                        || status.equalsIgnoreCase("Cleared"))) {
+        if (paymentStatus != null &&
+                (paymentStatus.equalsIgnoreCase("Paid")
+                        || paymentStatus.equalsIgnoreCase("Cleared"))) {
 
-            statusLabel.setBackground(new Color(0, 140, 70));   // green
+            statusLabel.setBackground(new Color(0, 140, 70));
             statusLabel.setForeground(Color.WHITE);
 
         } else {
-            statusLabel.setBackground(new Color(200, 50, 50));  // red
+            statusLabel.setBackground(new Color(200, 50, 50)); 
             statusLabel.setForeground(Color.WHITE);
         }
 
         top.add(idLabel, BorderLayout.WEST);
         top.add(statusLabel, BorderLayout.EAST);
 
-        // BODY
+        // Body
         JPanel body = new JPanel();
         body.setOpaque(false);
         body.setLayout(new GridLayout(4, 2, 5, 4));
 
-        body.add(makeField("Owner: ", ownerName));
-        body.add(makeField("Owner ID: ", String.valueOf(oid)));
-        body.add(makeField("Vehicle ID: ", String.valueOf(vehId)));
-        body.add(makeField("Plate No: ", plate));
-        body.add(makeField("Branch: ", String.valueOf(branchId)));
-        body.add(makeField("Violation: ", type));
-        body.add(makeField("Fine Amount: ", "₱" + fine));
-        body.add(makeField("Date: ", date != null ? date.toString() : ""));
+        body.add(makeField("Vehicle ID: ", String.valueOf(vehicleId)));
+        body.add(makeField("Branch: ", branchName));
+        body.add(makeField("Violation: ", violationType));
+        body.add(makeField("Fine Amount: ", "₱" + fineAmount));
+        body.add(makeField("Date: ", violationDate != null ? violationDate.toString() : ""));
+        body.add(makeField("Issuing Officer: ", officerName));
 
         card.add(top, BorderLayout.NORTH);
         card.add(body, BorderLayout.CENTER);
@@ -238,34 +228,11 @@ public class ViewAllViolationsPanel extends JPanel {
 
         p.add(l);
         p.add(v);
-
         return p;
     }
 
     private void showError(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    private int getOfficerBranch(int officerId) {
-        String sql = "SELECT branch_id FROM Officer WHERE officer_id = ?";
-        try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, officerId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    int bid = rs.getInt("branch_id");
-                    if (rs.wasNull()) return -1;
-                    return bid;
-                }
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            showError("Database error: " + ex.getMessage());
-        }
-        return -1;
     }
 
     class RoundedPanel extends JPanel {
@@ -287,4 +254,5 @@ public class ViewAllViolationsPanel extends JPanel {
         }
     }
 }
+
 

@@ -128,6 +128,11 @@ public class UserMenuPanel extends JPanel {
                     return;
                 }
 
+                if (options[index].equals("Violations")) {
+                    mainFrame.showUserViolations();
+                    return;
+                }
+
                 // other buttons not implemented yet
                 JOptionPane.showMessageDialog(
                         UserMenuPanel.this,

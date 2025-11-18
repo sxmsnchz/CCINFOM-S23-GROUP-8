@@ -43,7 +43,7 @@ public class OfficerMenuPanel extends JPanel {
         card.add(Box.createVerticalStrut(8));
         card.add(createMenuButton("View Officer Records", e -> mainFrame.showOfficerRecords()));
         card.add(Box.createVerticalStrut(8));
-        card.add(createMenuButton("View Owner List", e -> showNotImplemented("View Owner List")));
+        card.add(createMenuButton("View Owner List", e -> mainFrame.showOwnerList()));
         card.add(Box.createVerticalStrut(8));
         card.add(createMenuButton("View Vehicle List", e -> showNotImplemented("View Vehicle List")));
         card.add(Box.createVerticalStrut(8));
