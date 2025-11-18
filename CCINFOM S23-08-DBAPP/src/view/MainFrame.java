@@ -31,6 +31,7 @@ public class MainFrame extends JFrame {
     private ViewAllViolationsPanel viewAllViolationsPanel;
     private ViewOwnerListPanel viewOwnerListPanel;
     private UserViolationsPanel userViolationsPanel;
+    private PaymentRecordsPanel paymentRecordsPanel;
 
 
     public MainFrame() {
@@ -219,6 +220,15 @@ public class MainFrame extends JFrame {
     public void showUserViolations() {
         userViolationsPanel.loadViolations();
         cardLayout.show(mainPanel, "userViolations");
+    }
+
+    public void showPaymentRecords() {
+        if (paymentRecordsPanel == null) {
+            paymentRecordsPanel = new PaymentRecordsPanel(this);
+            mainPanel.add(paymentRecordsPanel, "paymentRecords");
+        }
+        paymentRecordsPanel.reloadTable();
+        cardLayout.show(mainPanel, "paymentRecords");
     }
 
 
