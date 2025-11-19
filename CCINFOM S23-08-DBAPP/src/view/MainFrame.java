@@ -79,7 +79,7 @@ public class MainFrame extends JFrame {
         userViolationsPanel = new UserViolationsPanel(this);
         viewVehicleListPanel = new ViewVehicleListPanel(this);
         renewRegistrationPanel = new RenewRegistrationPanel(this);
-        renewalOnTimeReportPanel = new RenewalOnTimeReportPanel(this);
+        renewalOnTimeReportPanel = new RenewalOnTimeReportPanel();
         //  DO NOT create userPaymentPanel here plz
 
 

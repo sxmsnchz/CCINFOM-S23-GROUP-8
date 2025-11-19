@@ -2,6 +2,8 @@ package view;
 
 import database.DatabaseConnection;
 import java.awt.*;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -16,13 +18,11 @@ public class RenewalOnTimeReportPanel extends JPanel {
     private JTable resultTable;
     private DefaultTableModel tableModel;
     private JLabel statusLabel;
-    private MainFrame mainFrame;
 
     // Custom blue color
     private final Color customBlue = new Color(10, 60, 120);
 
-    public RenewalOnTimeReportPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public RenewalOnTimeReportPanel() {
         conn = DatabaseConnection.getConnection();
         initializeUI();
     }
@@ -72,7 +72,7 @@ public class RenewalOnTimeReportPanel extends JPanel {
         backBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         backBtn.setBackground(customBlue);
         backBtn.setForeground(Color.WHITE);
-        backBtn.addActionListener(e -> mainFrame.showOfficerMenu());
+        backBtn.addActionListener(e -> SwingUtilities.getWindowAncestor(this).dispose());
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         rightPanel.setOpaque(false);
@@ -136,15 +136,13 @@ public class RenewalOnTimeReportPanel extends JPanel {
         String year = yearField.getText().trim();
 
         if (!year.matches("^\\d{4}$")) {
-            JOptionPane.showMessageDialog(this,
-                    "Invalid year format. Please enter a 4-digit year.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Invalid year format. Please enter a 4-digit year.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         String query = """
                 SELECT r.renewal_id, r.registration_id, re.expiry_date, r.last_renewal_date,
-                    CASE WHEN r.last_renewal_date <= re.expiry_date THEN 'On Time' ELSE 'Late' END AS renewal_status
+                       CASE WHEN r.last_renewal_date <= re.expiry_date THEN 'On Time' ELSE 'Late' END AS renewal_status
                 FROM Renewal r
                 JOIN Registration re ON r.registration_id = re.registration_id
                 WHERE YEAR(r.last_renewal_date) = ?
@@ -155,6 +153,9 @@ public class RenewalOnTimeReportPanel extends JPanel {
         int onTimeCount = 0;
         int counter = 1;
         boolean hasResults = false;
+
+        String filename = String.format("CCINFOM S23-08-DBAPP/generatedReports/renewal-on-time-report-%s.csv", year);
+        String filename2 = String.format("renewal-on-time-report-%s.csv", year);
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, year);
@@ -169,28 +170,37 @@ public class RenewalOnTimeReportPanel extends JPanel {
                 Date lastRenewalDate = rs.getDate("last_renewal_date");
                 String status = rs.getString("renewal_status");
 
-                if ("On Time".equalsIgnoreCase(status)) {
+                if ("On Time".equalsIgnoreCase(status))
                     onTimeCount++;
-                }
 
-                tableModel.addRow(new Object[] {
-                        counter, renewalID, registrationID, expiryDate, lastRenewalDate, status
-                });
+                tableModel.addRow(new Object[]{counter, renewalID, registrationID, expiryDate, lastRenewalDate, status});
                 counter++;
             }
 
             if (!hasResults) {
                 statusLabel.setText("No renewal records found for the year " + year);
             } else {
-                // Update status label with summary only (no CSV)
-                statusLabel.setText(String.format("Total of On-Time Renewals: %d | Overall Total of Renewals: %d",
-                        onTimeCount, counter - 1));
+                // Single line status like original console
+                statusLabel.setText(String.format("Report saved as %s | Total On-Time: %d | Total Renewals: %d",
+                        filename2, onTimeCount, counter - 1));
+
+                // Only generate CSV if results exist
+                try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+                    writer.println("#,Renewal ID,Registration ID,Expiry Date,Last Renewal Date,Status");
+                    for (int i = 0; i < tableModel.getRowCount(); i++) {
+                        for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                            writer.print(tableModel.getValueAt(i, j));
+                            if (j < tableModel.getColumnCount() - 1) writer.print(",");
+                        }
+                        writer.println();
+                    }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Error saving CSV: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Error generating report: " + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error generating report: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
