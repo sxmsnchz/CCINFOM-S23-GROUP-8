@@ -5,8 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.io.FileWriter;
 import java.sql.*;
+import java.io.*;
 
 public class RegistrationsByBranchReportPanel extends JPanel {
 
@@ -84,11 +84,10 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         generateBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         generateBtn.addActionListener(e -> generateReport());
 
-        // CSV EXPORT BUTTON
-        JButton exportBtn = new JButton("Export CSV");
-        styleSecondary(exportBtn);
-        exportBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        exportBtn.addActionListener(e -> exportToCSV());
+        JButton exportCsvBtn = new JButton("Export CSV");
+        styleSecondary(exportCsvBtn);
+        exportCsvBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exportCsvBtn.addActionListener(e -> exportCSV());
 
         filterPanel.add(lblMonth);
         filterPanel.add(monthBox);
@@ -98,7 +97,7 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         filterPanel.add(Box.createVerticalStrut(5));
         filterPanel.add(generateBtn);
         filterPanel.add(Box.createVerticalStrut(5));
-        filterPanel.add(exportBtn);
+        filterPanel.add(exportCsvBtn);
         filterPanel.add(Box.createVerticalStrut(8));
 
         center.add(filterPanel);
@@ -122,14 +121,12 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         reportCard.setLayout(new BoxLayout(reportCard, BoxLayout.Y_AXIS));
         reportCard.setBackground(Color.WHITE);
         reportCard.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
-
         reportCard.setPreferredSize(new Dimension(550, 450));
 
         scrollPane = new JScrollPane(reportCard);
         scrollPane.setBorder(null);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
-
         scrollPane.setPreferredSize(new Dimension(600, 500));
 
         pageWrapper.add(scrollPane);
@@ -321,11 +318,11 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         reportCard.repaint();
     }
 
-    // CSV EXPORT METHOD
-    private void exportToCSV() {
+    // EXPORT CSV
+    private void exportCSV() {
         if (monthBox.getSelectedIndex() == 0 || yearBox.getSelectedIndex() == 0) {
-            JOptionPane.showMessageDialog(this, "Select month and year first.",
-                    "Missing Selection", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Select month and year first.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -333,18 +330,20 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         int month = Integer.parseInt(monthVal);
         int year = Integer.parseInt(yearBox.getSelectedItem().toString());
 
-        try {
-            String folder = "src/view/generatedreports/";
-            java.io.File dir = new java.io.File(folder);
-            if (!dir.exists()) dir.mkdirs();
+        // Hardcoded EXACT path:
+        String dirPath = "CCINFOM S23-08-DBAPP/src/view/generatedreports/";
+        File dir = new File(dirPath);
+        if (!dir.exists()) dir.mkdirs();
 
-            String filename = folder + "RegistrationsByBranch_" + year + "_" + monthVal + ".csv";
-            FileWriter fw = new FileWriter(filename);
+        String fileName = String.format("registrations_by_branch_%02d_%d.csv", month, year);
+        File file = new File(dir, fileName);
 
-            fw.write("Branch ID,Branch Name,Total Registrations\n");
+        try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
 
-            Connection conn = DatabaseConnection.getConnection();
-            String query = """
+            pw.println("Summary Report");
+            pw.println("Branch ID,Branch Name,Total Registrations");
+
+            String summaryQuery = """
                 SELECT b.branch_id, b.branch_name,
                        COUNT(r.registration_id) AS total_registrations
                 FROM branch b
@@ -356,29 +355,59 @@ public class RegistrationsByBranchReportPanel extends JPanel {
                 ORDER BY b.branch_id;
             """;
 
-            PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, month);
-            ps.setInt(2, year);
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(summaryQuery)) {
 
-            ResultSet rs = ps.executeQuery();
+                ps.setInt(1, month);
+                ps.setInt(2, year);
+                ResultSet rs = ps.executeQuery();
 
-            while (rs.next()) {
-                fw.write(
-                        rs.getInt("branch_id") + "," +
-                        "\"" + rs.getString("branch_name") + "\"," +
-                        rs.getInt("total_registrations") +
-                        "\n"
-                );
+                while (rs.next()) {
+                    pw.printf("%d,%s,%d%n",
+                            rs.getInt("branch_id"),
+                            rs.getString("branch_name"),
+                            rs.getInt("total_registrations"));
+                }
             }
 
-            fw.close();
-            JOptionPane.showMessageDialog(this, "CSV generated:\n" + filename,
+            pw.println();
+            pw.println("Detailed Registrations");
+            pw.println("Plate Number,Branch,Date");
+
+            String detailsQuery = """
+                SELECT v.plate_number, b.branch_name, r.first_date_registered
+                FROM registration r
+                JOIN vehicle v ON r.vehicle_id = v.vehicle_id
+                JOIN branch b ON r.branch_id = b.branch_id
+                WHERE MONTH(r.first_date_registered) = ?
+                  AND YEAR(r.first_date_registered) = ?
+                ORDER BY b.branch_id, r.first_date_registered;
+            """;
+
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(detailsQuery)) {
+
+                ps.setInt(1, month);
+                ps.setInt(2, year);
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    pw.printf("%s,%s,%s%n",
+                            rs.getString("plate_number"),
+                            rs.getString("branch_name"),
+                            rs.getDate("first_date_registered").toString());
+                }
+            }
+
+            JOptionPane.showMessageDialog(this,
+                    "CSV saved at:\n" + file.getAbsolutePath(),
                     "Success", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "CSV Export Failed:\n" + ex.getMessage(),
+            JOptionPane.showMessageDialog(this,
+                    "Error exporting CSV:\n" + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
     }
 
