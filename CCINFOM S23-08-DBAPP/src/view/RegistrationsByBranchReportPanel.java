@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.FileWriter;
 import java.sql.*;
 
 public class RegistrationsByBranchReportPanel extends JPanel {
@@ -83,6 +84,12 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         generateBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         generateBtn.addActionListener(e -> generateReport());
 
+        // CSV EXPORT BUTTON
+        JButton exportBtn = new JButton("Export CSV");
+        styleSecondary(exportBtn);
+        exportBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exportBtn.addActionListener(e -> exportToCSV());
+
         filterPanel.add(lblMonth);
         filterPanel.add(monthBox);
         filterPanel.add(Box.createVerticalStrut(5));
@@ -90,6 +97,8 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         filterPanel.add(yearBox);
         filterPanel.add(Box.createVerticalStrut(5));
         filterPanel.add(generateBtn);
+        filterPanel.add(Box.createVerticalStrut(5));
+        filterPanel.add(exportBtn);
         filterPanel.add(Box.createVerticalStrut(8));
 
         center.add(filterPanel);
@@ -114,7 +123,6 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         reportCard.setBackground(Color.WHITE);
         reportCard.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
 
-        //SMALLER PAGE SIZE
         reportCard.setPreferredSize(new Dimension(550, 450));
 
         scrollPane = new JScrollPane(reportCard);
@@ -122,20 +130,18 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
 
-        // SMALLER SCROLLPANE (fits laptop)
         scrollPane.setPreferredSize(new Dimension(600, 500));
 
         pageWrapper.add(scrollPane);
         center.add(pageWrapper);
 
-        // Ensure resize stays small
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 int w = getWidth();
                 int targetWidth = Math.min(550, Math.max(420, w - 80));
 
-                reportCard.setPreferredSize(new Dimension(targetWidth, 450)); // smaller height
+                reportCard.setPreferredSize(new Dimension(targetWidth, 450));
                 scrollPane.setPreferredSize(new Dimension(targetWidth + 40, 500));
                 center.revalidate();
             }
@@ -313,6 +319,67 @@ public class RegistrationsByBranchReportPanel extends JPanel {
 
         reportCard.revalidate();
         reportCard.repaint();
+    }
+
+    // CSV EXPORT METHOD
+    private void exportToCSV() {
+        if (monthBox.getSelectedIndex() == 0 || yearBox.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(this, "Select month and year first.",
+                    "Missing Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String monthVal = monthBox.getSelectedItem().toString().substring(0, 2);
+        int month = Integer.parseInt(monthVal);
+        int year = Integer.parseInt(yearBox.getSelectedItem().toString());
+
+        try {
+            String folder = "src/view/generatedreports/";
+            java.io.File dir = new java.io.File(folder);
+            if (!dir.exists()) dir.mkdirs();
+
+            String filename = folder + "RegistrationsByBranch_" + year + "_" + monthVal + ".csv";
+            FileWriter fw = new FileWriter(filename);
+
+            fw.write("Branch ID,Branch Name,Total Registrations\n");
+
+            Connection conn = DatabaseConnection.getConnection();
+            String query = """
+                SELECT b.branch_id, b.branch_name,
+                       COUNT(r.registration_id) AS total_registrations
+                FROM branch b
+                LEFT JOIN registration r
+                    ON b.branch_id = r.branch_id
+                    AND MONTH(r.first_date_registered) = ?
+                    AND YEAR(r.first_date_registered) = ?
+                GROUP BY b.branch_id, b.branch_name
+                ORDER BY b.branch_id;
+            """;
+
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                fw.write(
+                        rs.getInt("branch_id") + "," +
+                        "\"" + rs.getString("branch_name") + "\"," +
+                        rs.getInt("total_registrations") +
+                        "\n"
+                );
+            }
+
+            fw.close();
+            JOptionPane.showMessageDialog(this, "CSV generated:\n" + filename,
+                    "Success", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "CSV Export Failed:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private JLabel makeLine() {
