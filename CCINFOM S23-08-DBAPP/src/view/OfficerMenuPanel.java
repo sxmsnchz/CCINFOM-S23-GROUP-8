@@ -1,7 +1,7 @@
 package view;
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class OfficerMenuPanel extends JPanel {
 
@@ -83,7 +83,7 @@ public class OfficerMenuPanel extends JPanel {
         card.add(Box.createVerticalStrut(8));
         card.add(createMenuButton("View Owner List", e -> mainFrame.showOwnerList()));
         card.add(Box.createVerticalStrut(8));
-        card.add(createMenuButton("View Vehicle List", e -> showNotImplemented("View Vehicle List")));
+        card.add(createMenuButton("View Vehicle List", e -> mainFrame.showVehicleList()));
         card.add(Box.createVerticalStrut(8));
         card.add(createMenuButton("View Branch List", e -> mainFrame.showBranchList()));
         card.add(Box.createVerticalStrut(8));
