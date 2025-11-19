@@ -27,7 +27,7 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(new Color(245, 246, 251));
 
-        //TOP BAR
+        // TOP BAR
         JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 12));
         topBar.setOpaque(false);
 
@@ -43,13 +43,13 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         topBar.add(title);
         add(topBar, BorderLayout.NORTH);
 
-        // CENTER WRAPPER 
+        // CENTER WRAPPER
         JPanel center = new JPanel();
         center.setOpaque(false);
         center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
         add(center, BorderLayout.CENTER);
 
-        //FILTER PANEL 
+        // FILTER PANEL
         JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
         filterPanel.setOpaque(false);
@@ -59,7 +59,6 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         lblMonth.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblMonth.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-
         monthBox = new JComboBox<>(new String[]{
                 "[Select Month]",
                 "01 - January", "02 - February", "03 - March", "04 - April",
@@ -68,7 +67,6 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         });
         monthBox.setMaximumSize(new Dimension(220, 35));
         monthBox.setAlignmentX(Component.CENTER_ALIGNMENT);
-
 
         JLabel lblYear = new JLabel("Select Year:");
         lblYear.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -96,7 +94,6 @@ public class RegistrationsByBranchReportPanel extends JPanel {
 
         center.add(filterPanel);
 
-
         JPanel pageWrapper = new JPanel(new GridBagLayout());
         pageWrapper.setOpaque(false);
 
@@ -117,31 +114,33 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         reportCard.setBackground(Color.WHITE);
         reportCard.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
 
-        reportCard.setPreferredSize(new Dimension(650, 900));
+        //SMALLER PAGE SIZE
+        reportCard.setPreferredSize(new Dimension(550, 450));
 
         scrollPane = new JScrollPane(reportCard);
         scrollPane.setBorder(null);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
 
-        scrollPane.setPreferredSize(new Dimension(700, 780));
+        // SMALLER SCROLLPANE (fits laptop)
+        scrollPane.setPreferredSize(new Dimension(600, 500));
 
         pageWrapper.add(scrollPane);
         center.add(pageWrapper);
 
+        // Ensure resize stays small
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 int w = getWidth();
-                int targetWidth = Math.min(650, Math.max(480, w - 80));
+                int targetWidth = Math.min(550, Math.max(420, w - 80));
 
-                reportCard.setPreferredSize(new Dimension(targetWidth, 900));
-                scrollPane.setPreferredSize(new Dimension(targetWidth + 40, 780));
+                reportCard.setPreferredSize(new Dimension(targetWidth, 450)); // smaller height
+                scrollPane.setPreferredSize(new Dimension(targetWidth + 40, 500));
                 center.revalidate();
             }
         });
     }
-
 
     // SUMMARY REPORT
     public void generateReport() {
@@ -271,7 +270,6 @@ public class RegistrationsByBranchReportPanel extends JPanel {
                 ORDER BY b.branch_id, r.first_date_registered;
             """;
 
-
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, month);
             ps.setInt(2, year);
@@ -287,16 +285,12 @@ public class RegistrationsByBranchReportPanel extends JPanel {
             reportCard.add(makeLine());
 
             while (rs.next()) {
-
-
                 JLabel row = new JLabel(String.format(
                         "%-12s %-40s %-15s",
                         rs.getString("plate_number"),
                         rs.getString("branch_name"),
                         rs.getDate("first_date_registered").toString()
                 ));
-
-
                 row.setFont(new Font("Monospaced", Font.PLAIN, 13));
                 row.setAlignmentX(Component.CENTER_ALIGNMENT);
                 reportCard.add(row);
@@ -362,6 +356,3 @@ public class RegistrationsByBranchReportPanel extends JPanel {
         b.setBorder(BorderFactory.createEmptyBorder(8, 18, 8, 18));
     }
 }
-
-
-
