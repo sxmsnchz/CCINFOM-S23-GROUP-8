@@ -154,7 +154,7 @@ public class RenewalOnTimeReportPanel extends JPanel {
         int counter = 1;
         boolean hasResults = false;
 
-        String filename = String.format("CCINFOM S23-08-DBAPP/generatedReports/renewal-on-time-report-%s.csv", year);
+        String filename = String.format("CCINFOM S23-08-DBAPP/src/view/generatedreports/renewal-on-time-report-%s.csv", year);
         String filename2 = String.format("renewal-on-time-report-%s.csv", year);
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
