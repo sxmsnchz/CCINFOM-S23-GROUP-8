@@ -121,9 +121,17 @@ public class ViolationsByOfficerReportPanel extends JPanel {
             String yearText = yearField.getText().trim();
             String suggested = String.format("violations_by_officer_%02d_%s.csv", month, yearText);
 
+            // ensure generatedReports folder exists in working directory
+            File reportsDir = new File(System.getProperty("user.dir"), "generatedReports");
+            if (!reportsDir.exists()) {
+                reportsDir.mkdirs();
+            }
+
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Save CSV");
-            chooser.setSelectedFile(new File(suggested));
+            File suggestedFile = new File(reportsDir, suggested);
+            chooser.setCurrentDirectory(reportsDir);
+            chooser.setSelectedFile(suggestedFile);
             chooser.setFileFilter(new FileNameExtensionFilter("CSV files", "csv"));
             int sel = chooser.showSaveDialog(this);
             if (sel != JFileChooser.APPROVE_OPTION) return;
