@@ -4,6 +4,9 @@ import database.DatabaseConnection;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,7 +37,7 @@ public class OutstandingViolationsReportPanel extends JPanel {
     }
 
     // ============================================================
-    // TOP BAR: Back + Month + Year + Search
+    // TOP BAR: Back + Month + Year + Search + Export CSV
     // ============================================================
     private JPanel buildTopBar() {
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -58,10 +61,15 @@ public class OutstandingViolationsReportPanel extends JPanel {
         search.setFocusPainted(false);
         search.addActionListener(e -> loadReportData());
 
+        JButton exportCsvBtn = new JButton("Export CSV");
+        exportCsvBtn.setFocusPainted(false);
+        exportCsvBtn.addActionListener(e -> exportToCsv());
+
         top.add(back);
         top.add(monthCombo);
         top.add(yearCombo);
         top.add(search);
+        top.add(exportCsvBtn);
 
         return top;
     }
@@ -74,7 +82,6 @@ public class OutstandingViolationsReportPanel extends JPanel {
         card.setLayout(new BorderLayout());
         card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Header: title + total
         JPanel header = new JPanel();
         header.setOpaque(false);
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
@@ -96,7 +103,6 @@ public class OutstandingViolationsReportPanel extends JPanel {
 
         card.add(header, BorderLayout.NORTH);
 
-        // Scrollable results panel
         resultPanel = new JPanel();
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
         resultPanel.setBackground(Color.WHITE);
@@ -111,7 +117,7 @@ public class OutstandingViolationsReportPanel extends JPanel {
     }
 
     // ============================================================
-    // LOAD DATA FROM DB USING SQL
+    // LOAD DATA FROM DB USING SQL (for on-screen display)
     // ============================================================
     private void loadReportData() {
         resultPanel.removeAll();
@@ -210,7 +216,135 @@ public class OutstandingViolationsReportPanel extends JPanel {
         refreshResultPanel();
     }
 
-    // Render grouped violations per owner
+    // ============================================================
+    // EXPORT CURRENT FILTERED DATA TO CSV (fixed folder path)
+    // ============================================================
+    private void exportToCsv() {
+
+        String selectedMonth = (String) monthCombo.getSelectedItem();
+        String selectedYear  = (String) yearCombo.getSelectedItem();
+
+        boolean filterMonth = selectedMonth != null && !"All".equals(selectedMonth);
+        boolean filterYear  = selectedYear  != null && !"All".equals(selectedYear);
+
+        // filename based on filters
+        String fileMonth = filterMonth ? selectedMonth : "ALL";
+        String fileYear  = filterYear ? selectedYear : "ALL";
+
+        String filename = "OutstandingViolations_" + fileYear + "_" + fileMonth + ".csv";
+
+        // Fixed save path (relative to your project)
+        String fixedFolderPath = "CCINFOM S23-08-DBAPP/src/view/generatedreports/";
+
+        File folder = new File(fixedFolderPath);
+        if (!folder.exists()) {
+            folder.mkdirs(); // create folder if missing
+        }
+
+        File fileToSave = new File(folder, filename);
+
+        StringBuilder sql = new StringBuilder("""
+            SELECT
+                v.violation_id,
+                vh.plate_number,
+                CONCAT(o.last_name, ', ', o.first_name) AS owner_name,
+                b.branch_name,
+                v.violation_type,
+                v.violation_date,
+                v.fine_amount
+            FROM Violation v
+            JOIN Vehicle  vh ON v.vehicle_id = vh.vehicle_id
+            JOIN Owner    o  ON v.owner_id   = o.owner_id
+            JOIN Branch   b  ON v.branch_id  = b.branch_id
+            WHERE TRIM(UPPER(v.payment_status)) = 'UNPAID'
+        """);
+
+        if (filterMonth) sql.append(" AND MONTH(v.violation_date) = ? ");
+        if (filterYear)  sql.append(" AND YEAR(v.violation_date) = ? ");
+
+        sql.append(" ORDER BY owner_name, v.violation_date");
+
+        try (Connection con = DatabaseConnection.getConnection()) {
+
+            if (con == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Database connection error.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try (PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+                int paramIndex = 1;
+                if (filterMonth) ps.setInt(paramIndex++, getMonthNumber(selectedMonth));
+                if (filterYear)  ps.setInt(paramIndex++, Integer.parseInt(selectedYear));
+
+                try (ResultSet rs = ps.executeQuery();
+                     FileWriter writer = new FileWriter(fileToSave)) {
+
+                    writer.write("Violation ID,Plate Number,Owner Name,Branch,Violation Type,Violation Date,Fine Amount\n");
+
+                    int count = 0;
+
+                    while (rs.next()) {
+                        int violationId     = rs.getInt("violation_id");
+                        String plate        = rs.getString("plate_number");
+                        String ownerName    = rs.getString("owner_name");
+                        String branch       = rs.getString("branch_name");
+                        String type         = rs.getString("violation_type");
+                        java.sql.Date date  = rs.getDate("violation_date");
+                        double fine         = rs.getDouble("fine_amount");
+
+                        String csvOwner  = escapeCsv(ownerName);
+                        String csvBranch = escapeCsv(branch);
+                        String csvType   = escapeCsv(type);
+
+                        String line = String.format(
+                                "%d,%s,%s,%s,%s,%s,%.2f%n",
+                                violationId,
+                                plate,
+                                csvOwner,
+                                csvBranch,
+                                csvType,
+                                date != null ? date.toString() : "",
+                                fine
+                        );
+
+                        writer.write(line);
+                        count++;
+                    }
+
+                    writer.flush();
+
+                    JOptionPane.showMessageDialog(this,
+                            "CSV exported successfully!\nSaved at:\n" +
+                                    fileToSave.getAbsolutePath() +
+                                    "\nRows exported: " + count,
+                            "Export Complete",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            }
+
+        } catch (SQLException | IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Error exporting CSV: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Basic CSV escaping (wrap in quotes if needed, escape internal quotes)
+    private String escapeCsv(String value) {
+        if (value == null) return "";
+        boolean needQuotes = value.contains(",") || value.contains("\"") || value.contains("\n");
+        String escaped = value.replace("\"", "\"\"");
+        return needQuotes ? "\"" + escaped + "\"" : escaped;
+    }
+
+    // Render grouped violations per owner (for screen)
     private void renderOwnerGroups(Map<String, java.util.List<String>> data) {
         for (Map.Entry<String, java.util.List<String>> entry : data.entrySet()) {
             String owner = entry.getKey();
@@ -297,4 +431,6 @@ public class OutstandingViolationsReportPanel extends JPanel {
         }
     }
 }
+
+
 
